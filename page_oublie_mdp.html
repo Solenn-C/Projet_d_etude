@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Wear — Mot de passe oublié</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ivoire: #FAFAF8;
+    --lin: #E8E4DE;
+    --marine: #1B3A6B;
+    --bleu-givré: #C2D4EC;
+    --poudre: #E8D5E0;
+    --ardoise: #7A9CC0;
+    --bleu-profond: #2C5F8A;
+    --ciel: #D6E8F0;
+    --vert-sage: #DDF0E4;
+    --terracotta: #F5E4D8;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--ivoire);
+    color: var(--marine);
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ─── NAVIGATION ─── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 32px 60px;
+    background: rgba(250,250,248,0.92);
+    backdrop-filter: blur(16px);
+    border-bottom: 0.5px solid rgba(27,58,107,0.12);
+  }
+
+  .nav-inner { display: flex; flex-direction: column; gap: 2px; }
+
+  .logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    color: var(--marine);
+    text-transform: uppercase;
+    line-height: 1;
+    text-decoration: none;
+  }
+
+  .logo span { color: var(--ardoise); }
+
+  .logo-tagline {
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ardoise);
+    opacity: 0.7;
+  }
+
+  .nav-back {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: var(--marine);
+    opacity: 0.55;
+    text-decoration: none;
+    transition: opacity 0.25s;
+  }
+
+  .nav-back:hover { opacity: 1; }
+  .nav-back::before { content: '←'; transition: transform 0.25s; }
+  .nav-back:hover::before { transform: translateX(-4px); }
+
+  /* ─── LAYOUT ─── */
+  .page {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 2fr 3fr;
+    min-height: 100vh;
+    padding-top: 96px;
+  }
+
+  /* ─── PANNEAU GAUCHE ─── */
+  .panel-left {
+    position: relative;
+    background: var(--marine);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 80px 48px;
+    overflow: hidden;
+  }
+
+  .panel-left::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(145deg, var(--bleu-profond) 0%, var(--marine) 50%, #0f2547 100%);
+  }
+
+  .deco-circle {
+    position: absolute;
+    border-radius: 50%;
+    border: 0.5px solid rgba(194,212,236,0.15);
+  }
+
+  .deco-circle-1 { width: 420px; height: 420px; top: -100px; right: -120px; }
+  .deco-circle-2 { width: 280px; height: 280px; bottom: -60px; left: -60px; }
+  .deco-circle-3 { width: 160px; height: 160px; top: 40%; right: 60px; border-color: rgba(232,213,224,0.12); }
+
+  .panel-content { position: relative; z-index: 2; }
+
+  .panel-eyebrow {
+    font-size: 15px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--ardoise);
+    opacity: 0.8;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .panel-eyebrow::before {
+    content: '';
+    display: block;
+    width: 28px;
+    height: 0.5px;
+    background: var(--ardoise);
+    opacity: 0.6;
+  }
+
+  .panel-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(38px, 4vw, 56px);
+    font-weight: 300;
+    line-height: 1.1;
+    color: var(--ivoire);
+    margin-bottom: 28px;
+  }
+
+  .panel-title em { font-style: italic; color: var(--bleu-givré); }
+
+  .panel-desc {
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--bleu-givré);
+    opacity: 0.7;
+    max-width: 340px;
+    margin-bottom: 52px;
+  }
+
+  /* étapes visuelles */
+  .steps { display: flex; flex-direction: column; gap: 0; }
+
+  .step-item {
+    display: flex;
+    gap: 18px;
+    align-items: flex-start;
+    position: relative;
+  }
+
+  .step-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 17px;
+    top: 36px;
+    width: 0.5px;
+    height: 36px;
+    background: rgba(194,212,236,0.2);
+  }
+
+  .step-num {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 0.5px solid rgba(194,212,236,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Serif Display', serif;
+    font-size: 16px;
+    color: var(--bleu-givré);
+    flex-shrink: 0;
+    transition: all 0.4s;
+  }
+
+  .step-num.active {
+    background: var(--ardoise);
+    border-color: var(--ardoise);
+    color: var(--ivoire);
+  }
+
+  .step-num.done {
+    background: rgba(221,240,228,0.15);
+    border-color: var(--vert-sage);
+    color: var(--vert-sage);
+  }
+
+  .step-body { padding-top: 6px; padding-bottom: 28px; }
+
+  .step-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ivoire);
+    margin-bottom: 3px;
+    opacity: 0.9;
+  }
+
+  .step-sub {
+    font-size: 12px;
+    color: var(--bleu-givré);
+    opacity: 0.55;
+    line-height: 1.5;
+  }
+
+  .panel-quote {
+    position: absolute;
+    bottom: 48px;
+    left: 48px;
+    right: 48px;
+    z-index: 2;
+    padding-top: 24px;
+    border-top: 0.5px solid rgba(194,212,236,0.15);
+  }
+
+  .panel-quote p {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: 18px;
+    color: var(--ivoire);
+    opacity: 0.45;
+    line-height: 1.6;
+  }
+
+  /* ─── PANNEAU DROIT ─── */
+  .panel-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 48px;
+    background: var(--ivoire);
+  }
+
+  .form-container {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  /* barre de progression */
+  .progress-bar {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 40px;
+  }
+
+  .progress-segment {
+    flex: 1;
+    height: 2px;
+    border-radius: 1px;
+    background: rgba(27,58,107,0.1);
+    transition: background 0.4s ease;
+  }
+
+  .progress-segment.active { background: var(--ardoise); }
+  .progress-segment.done   { background: var(--marine); }
+
+  /* icône centrale */
+  .form-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    transition: background 0.4s;
+  }
+
+  .form-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 32px;
+    font-weight: 300;
+    color: var(--marine);
+    margin-bottom: 8px;
+    line-height: 1.15;
+  }
+
+  .form-title em { font-style: italic; color: var(--ardoise); }
+
+  .form-subtitle {
+    font-size: 13px;
+    color: var(--marine);
+    opacity: 0.5;
+    margin-bottom: 32px;
+    line-height: 1.65;
+  }
+
+  .form-subtitle strong {
+    color: var(--marine);
+    opacity: 1;
+    font-weight: 500;
+  }
+
+  /* champs */
+  .field { margin-bottom: 18px; }
+
+  .field label {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--marine);
+    opacity: 0.55;
+    margin-bottom: 7px;
+  }
+
+  .field input {
+    width: 100%;
+    height: 46px;
+    padding: 0 16px;
+    background: var(--ivoire);
+    border: 0.5px solid rgba(27,58,107,0.2);
+    border-radius: 8px;
+    font-family: 'Jost', sans-serif;
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--marine);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .field input::placeholder { color: var(--marine); opacity: 0.25; }
+
+  .field input:focus {
+    border-color: var(--ardoise);
+    box-shadow: 0 0 0 3px rgba(122,156,192,0.12);
+  }
+
+  /* champs code OTP */
+  .otp-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    justify-content: center;
+  }
+
+  .otp-row input {
+    width: 44px;
+    height: 52px;
+    text-align: center;
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--marine);
+    background: var(--ivoire);
+    border: 0.5px solid rgba(27,58,107,0.2);
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    caret-color: var(--ardoise);
+    padding: 0;
+  }
+
+  .otp-row input:focus {
+    border-color: var(--ardoise);
+    box-shadow: 0 0 0 3px rgba(122,156,192,0.12);
+  }
+
+  .otp-row input.filled {
+    border-color: var(--marine);
+    background: var(--ciel);
+  }
+
+  /* mot de passe avec œil */
+  .input-wrap { position: relative; }
+  .input-wrap input { padding-right: 44px; }
+
+  .eye-btn {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    color: var(--marine);
+    opacity: 0.3;
+    transition: opacity 0.2s;
+  }
+
+  .eye-btn:hover { opacity: 0.6; }
+
+  /* indicateur force */
+  .pwd-strength { display: flex; gap: 4px; margin-top: 8px; margin-bottom: 16px; }
+
+  .pwd-bar {
+    flex: 1;
+    height: 2px;
+    border-radius: 1px;
+    background: rgba(27,58,107,0.1);
+    transition: background 0.3s;
+  }
+
+  .pwd-bar.weak   { background: #E24B4A; }
+  .pwd-bar.medium { background: var(--ardoise); }
+  .pwd-bar.strong { background: #1D9E75; }
+
+  /* critères mot de passe */
+  .pwd-criteria {
+    background: var(--lin);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+  }
+
+  .criteria-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: var(--marine);
+    opacity: 0.45;
+    transition: opacity 0.3s;
+  }
+
+  .criteria-item.valid {
+    opacity: 1;
+    color: var(--marine);
+  }
+
+  .criteria-check {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 1px solid rgba(27,58,107,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.3s;
+    background: transparent;
+  }
+
+  .criteria-item.valid .criteria-check {
+    background: var(--vert-sage);
+    border-color: #1D9E75;
+  }
+
+  .criteria-check svg {
+    width: 10px; height: 10px;
+    stroke: #085041;
+    fill: none;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+
+  .criteria-item.valid .criteria-check svg { opacity: 1; }
+
+  /* bouton principal */
+  .btn-submit {
+    width: 100%;
+    height: 50px;
+    background: var(--marine);
+    color: var(--ivoire);
+    border: none;
+    border-radius: 8px;
+    font-family: 'Jost', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.25s, transform 0.15s;
+    margin-bottom: 18px;
+  }
+
+  .btn-submit:hover { background: var(--bleu-profond); transform: translateY(-1px); }
+  .btn-submit:active { transform: scale(0.99); }
+
+  .btn-submit:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* lien secondaire */
+  .form-link {
+    text-align: center;
+    font-size: 12px;
+    color: var(--marine);
+    opacity: 0.5;
+  }
+
+  .form-link a {
+    color: var(--ardoise);
+    text-decoration: none;
+    font-weight: 500;
+    opacity: 1;
+    transition: opacity 0.2s;
+  }
+
+  .form-link a:hover { opacity: 0.75; }
+
+  /* renvoyer le code */
+  .resend-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--marine);
+    opacity: 0.5;
+    margin-bottom: 24px;
+  }
+
+  .resend-row a {
+    color: var(--ardoise);
+    text-decoration: none;
+    font-weight: 500;
+    opacity: 1;
+  }
+
+  /* écran succès */
+  .success-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: var(--vert-sage);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 28px;
+  }
+
+  .success-icon svg {
+    width: 32px; height: 32px;
+    stroke: #085041;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* panels */
+  .step-panel { display: none; }
+  .step-panel.active { display: block; }
+
+  /* animations */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(14px);
+    animation: fadeIn 0.45s ease forwards;
+  }
+
+  @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
+
+  .d1 { animation-delay: 0.05s; }
+  .d2 { animation-delay: 0.12s; }
+  .d3 { animation-delay: 0.2s; }
+  .d4 { animation-delay: 0.28s; }
+  .d5 { animation-delay: 0.36s; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="page_accueil_site.html" class="logo">Smart<span>Wear</span></a>
+    <div class="logo-tagline">Votre dressing intelligent</div>
+  </div>
+  <a href="page_connexion_inscription.html" class="nav-back">Retour à la connexion</a>
+</nav>
+
+<!-- PAGE -->
+<div class="page">
+
+  <!-- ══ PANNEAU GAUCHE ══ -->
+  <div class="panel-left">
+    <div class="deco-circle deco-circle-1"></div>
+    <div class="deco-circle deco-circle-2"></div>
+    <div class="deco-circle deco-circle-3"></div>
+
+    <div class="panel-content">
+      <p class="panel-eyebrow">Sécurité</p>
+      <h2 class="panel-title">
+        Récupérez<br>votre <em>accès</em><br>en 3 étapes
+      </h2>
+      <p class="panel-desc">
+        Pas d'inquiétude — nous allons vous aider à retrouver l'accès à votre dressing en quelques instants.
+      </p>
+
+      <!-- Étapes -->
+      <div class="steps" id="steps-visual">
+
+        <div class="step-item">
+          <div class="step-num active" id="snum-1">1</div>
+          <div class="step-body">
+            <div class="step-title">Votre adresse email</div>
+            <div class="step-sub">Renseignez l'email lié à votre compte Smart Wear</div>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-num" id="snum-2">2</div>
+          <div class="step-body">
+            <div class="step-title">Code de vérification</div>
+            <div class="step-sub">Entrez le code à 6 chiffres reçu par email</div>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-num" id="snum-3">3</div>
+          <div class="step-body">
+            <div class="step-title">Nouveau mot de passe</div>
+            <div class="step-sub">Choisissez un mot de passe sécurisé pour votre compte</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="panel-quote">
+      <p>« La sécurité, c'est aussi une façon de prendre soin de soi. »</p>
+    </div>
+  </div>
+
+  <!-- ══ PANNEAU DROIT ══ -->
+  <div class="panel-right">
+    <div class="form-container">
+
+      <!-- Barre de progression -->
+      <div class="progress-bar">
+        <div class="progress-segment active" id="seg1"></div>
+        <div class="progress-segment" id="seg2"></div>
+        <div class="progress-segment" id="seg3"></div>
+      </div>
+
+      <!-- ── ÉTAPE 1 : Email ── -->
+      <div class="step-panel active" id="panel-step1">
+
+        <div class="form-icon fade-in d1" style="background:var(--ciel);">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--bleu-profond)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>
+        </div>
+
+        <h1 class="form-title fade-in d1">Mot de passe<br><em>oublié ?</em></h1>
+        <p class="form-subtitle fade-in d2">Saisissez votre adresse email et nous vous enverrons un code de vérification pour réinitialiser votre mot de passe.</p>
+
+        <div class="field fade-in d3">
+          <label>Adresse email</label>
+          <input type="email" id="email-input" placeholder="votre@email.com">
+        </div>
+
+        <button class="btn-submit fade-in d4" onclick="goToStep(2)">Envoyer le code</button>
+
+        <p class="form-link fade-in d5">
+          <a href="page_connexion_inscription.html">← Retour à la connexion</a>
+        </p>
+
+      </div>
+
+      <!-- ── ÉTAPE 2 : Code OTP ── -->
+      <div class="step-panel" id="panel-step2">
+
+        <div class="form-icon fade-in d1" style="background:var(--poudre);">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#6B2045" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="5" y="11" width="14" height="10" rx="2"/>
+            <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+            <circle cx="12" cy="16" r="1" fill="#6B2045"/>
+          </svg>
+        </div>
+
+        <h1 class="form-title fade-in d1">Vérification<br><em>par email</em></h1>
+        <p class="form-subtitle fade-in d2">
+          Nous avons envoyé un code à 6 chiffres à <strong id="email-display"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="5c2a33282e391c39313d3530723f3331">[email&#160;protected]</a></strong>. Vérifiez vos spams si besoin.
+        </p>
+
+        <div class="otp-row fade-in d3">
+          <input type="text" maxlength="1" class="otp-digit" id="otp1" oninput="otpInput(this, null, 'otp2')">
+          <input type="text" maxlength="1" class="otp-digit" id="otp2" oninput="otpInput(this, 'otp1', 'otp3')">
+          <input type="text" maxlength="1" class="otp-digit" id="otp3" oninput="otpInput(this, 'otp2', 'otp4')">
+          <input type="text" maxlength="1" class="otp-digit" id="otp4" oninput="otpInput(this, 'otp3', 'otp5')">
+          <input type="text" maxlength="1" class="otp-digit" id="otp5" oninput="otpInput(this, 'otp4', 'otp6')">
+          <input type="text" maxlength="1" class="otp-digit" id="otp6" oninput="otpInput(this, 'otp5', null)">
+        </div>
+
+        <p class="resend-row fade-in d3">
+          Vous n'avez rien reçu ? <a href="#" onclick="resendCode(); return false;">Renvoyer le code</a>
+        </p>
+
+        <button class="btn-submit fade-in d4" id="btn-verify" onclick="goToStep(3)">Vérifier le code</button>
+
+        <p class="form-link fade-in d5">
+          <a href="#" onclick="goToStep(1); return false;">← Modifier l'adresse email</a>
+        </p>
+
+      </div>
+
+      <!-- ── ÉTAPE 3 : Nouveau mot de passe ── -->
+      <div class="step-panel" id="panel-step3">
+
+        <div class="form-icon fade-in d1" style="background:var(--vert-sage);">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#085041" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </div>
+
+        <h1 class="form-title fade-in d1">Nouveau<br><em>mot de passe</em></h1>
+        <p class="form-subtitle fade-in d2">Choisissez un mot de passe qui respecte tous les critères ci-dessous.</p>
+
+        <div class="field fade-in d3">
+          <label>Nouveau mot de passe</label>
+          <div class="input-wrap">
+            <input type="password" id="pwd-new" placeholder="••••••••" oninput="checkStrength(this)">
+            <button class="eye-btn" onclick="togglePwd('pwd-new', this)" type="button">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+          <div class="pwd-strength">
+            <div class="pwd-bar" id="bar1"></div>
+            <div class="pwd-bar" id="bar2"></div>
+            <div class="pwd-bar" id="bar3"></div>
+            <div class="pwd-bar" id="bar4"></div>
+          </div>
+        </div>
+
+        <!-- Critères -->
+        <div class="pwd-criteria fade-in d3">
+          <div class="criteria-item" id="c-length">
+            <div class="criteria-check">
+              <svg viewBox="0 0 12 12"><polyline points="2 6 5 9 10 3"/></svg>
+            </div>
+            Au moins 8 caractères
+          </div>
+          <div class="criteria-item" id="c-upper">
+            <div class="criteria-check">
+              <svg viewBox="0 0 12 12"><polyline points="2 6 5 9 10 3"/></svg>
+            </div>
+            Une lettre majuscule (A–Z)
+          </div>
+          <div class="criteria-item" id="c-number">
+            <div class="criteria-check">
+              <svg viewBox="0 0 12 12"><polyline points="2 6 5 9 10 3"/></svg>
+            </div>
+            Un chiffre (0–9)
+          </div>
+          <div class="criteria-item" id="c-special">
+            <div class="criteria-check">
+              <svg viewBox="0 0 12 12"><polyline points="2 6 5 9 10 3"/></svg>
+            </div>
+            Un caractère spécial (!@#$…)
+          </div>
+          <div class="criteria-item" id="c-match">
+            <div class="criteria-check">
+              <svg viewBox="0 0 12 12"><polyline points="2 6 5 9 10 3"/></svg>
+            </div>
+            Les deux mots de passe correspondent
+          </div>
+        </div>
+
+        <div class="field fade-in d4">
+          <label>Confirmer le mot de passe</label>
+          <div class="input-wrap">
+            <input type="password" id="pwd-confirm" placeholder="••••••••" oninput="checkMatch()">
+            <button class="eye-btn" onclick="togglePwd('pwd-confirm', this)" type="button">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <button class="btn-submit fade-in d5" id="btn-reset" onclick="goToSuccess()" disabled>Réinitialiser le mot de passe</button>
+
+      </div>
+
+      <!-- ── SUCCÈS ── -->
+      <div class="step-panel" id="panel-success">
+
+        <div class="success-icon fade-in d1">
+          <svg viewBox="0 0 24 24">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+
+        <h1 class="form-title fade-in d2" style="text-align:center;">Mot de passe<br><em>réinitialisé !</em></h1>
+        <p class="form-subtitle fade-in d3" style="text-align:center;">Votre mot de passe a été mis à jour avec succès. Vous pouvez maintenant vous connecter avec vos nouveaux identifiants.</p>
+
+        <a href="page_connexion_inscription.html">
+          <button class="btn-submit fade-in d4">Se connecter</button>
+        </a>
+
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  let currentStep = 1;
+
+  function goToStep(step) {
+    const email = document.getElementById('email-input')?.value || 'votre@email.com';
+    if (step === 2) {
+      document.getElementById('email-display').textContent = email || 'votre@email.com';
+    }
+
+    // panels
+    document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-step' + step).classList.add('active');
+
+    // progress bar
+    for (let i = 1; i <= 3; i++) {
+      const seg = document.getElementById('seg' + i);
+      seg.className = 'progress-segment';
+      if (i < step) seg.classList.add('done');
+      else if (i === step) seg.classList.add('active');
+    }
+
+    // étapes visuelles gauche
+    for (let i = 1; i <= 3; i++) {
+      const num = document.getElementById('snum-' + i);
+      num.className = 'step-num';
+      if (i < step) { num.classList.add('done'); num.innerHTML = '✓'; }
+      else if (i === step) num.classList.add('active');
+      else num.textContent = i;
+    }
+
+    // relance animations
+    const panel = document.getElementById('panel-step' + step);
+    panel.querySelectorAll('.fade-in').forEach(el => {
+      el.style.animation = 'none';
+      el.offsetHeight;
+      el.style.animation = '';
+    });
+
+    currentStep = step;
+
+    // focus premier OTP
+    if (step === 2) setTimeout(() => document.getElementById('otp1').focus(), 100);
+  }
+
+  function goToSuccess() {
+    document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-success').classList.add('active');
+
+    // tout coché
+    for (let i = 1; i <= 3; i++) {
+      const seg = document.getElementById('seg' + i);
+      seg.className = 'progress-segment done';
+      const num = document.getElementById('snum-' + i);
+      num.className = 'step-num done';
+      num.innerHTML = '✓';
+    }
+
+    document.getElementById('panel-success').querySelectorAll('.fade-in').forEach(el => {
+      el.style.animation = 'none';
+      el.offsetHeight;
+      el.style.animation = '';
+    });
+  }
+
+  function otpInput(el, prevId, nextId) {
+    el.value = el.value.replace(/[^0-9]/g, '');
+    if (el.value) {
+      el.classList.add('filled');
+      if (nextId) document.getElementById(nextId).focus();
+    } else {
+      el.classList.remove('filled');
+    }
+
+    // auto-valider si les 6 cases sont remplies
+    const allFilled = ['otp1','otp2','otp3','otp4','otp5','otp6']
+      .every(id => document.getElementById(id).value !== '');
+    document.getElementById('btn-verify').disabled = !allFilled;
+  }
+
+  function togglePwd(id, btn) {
+    const input = document.getElementById(id);
+    const isText = input.type === 'text';
+    input.type = isText ? 'password' : 'text';
+    btn.style.opacity = isText ? '0.3' : '0.7';
+  }
+
+  function checkStrength(input) {
+    const val = input.value;
+
+    // critères individuels
+    const rules = {
+      'c-length':  val.length >= 8,
+      'c-upper':   /[A-Z]/.test(val),
+      'c-number':  /[0-9]/.test(val),
+      'c-special': /[^A-Za-z0-9]/.test(val),
+    };
+
+    let score = 0;
+    for (const [id, ok] of Object.entries(rules)) {
+      const el = document.getElementById(id);
+      el.classList.toggle('valid', ok);
+      if (ok) score++;
+    }
+
+    // barres de force
+    const levels = ['weak', 'medium', 'medium', 'strong'];
+    ['bar1','bar2','bar3','bar4'].forEach((b, i) => {
+      const el = document.getElementById(b);
+      el.className = 'pwd-bar';
+      if (i < score) el.classList.add(levels[i]);
+    });
+
+    checkMatch();
+  }
+
+  function checkMatch() {
+    const pwd   = document.getElementById('pwd-new')?.value || '';
+    const conf  = document.getElementById('pwd-confirm')?.value || '';
+    const match = pwd.length > 0 && pwd === conf;
+
+    const el = document.getElementById('c-match');
+    if (el) el.classList.toggle('valid', match);
+
+    // activer le bouton uniquement si tous les critères sont cochés
+    const allValid = ['c-length','c-upper','c-number','c-special','c-match']
+      .every(id => document.getElementById(id)?.classList.contains('valid'));
+    const btn = document.getElementById('btn-reset');
+    if (btn) btn.disabled = !allValid;
+  }
+
+  function resendCode() {
+    const link = event.target;
+    link.style.opacity = '0.4';
+    link.textContent = 'Code envoyé ✓';
+    setTimeout(() => {
+      tyle.opacity = '1';
+      link.textContent = 'Renvoyer le code';
+    }, 4000);
+  }
+
+  // désactiver le bouton vérifier par défaut
+  document.getElementById('btn-verify').disabled = true;
+</script>
+
+</body>
+</html>

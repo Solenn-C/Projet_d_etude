@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Wear — Tendances</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+  :root {
+    --ivoire: #FAFAF8; --lin: #E8E4DE; --marine: #1B3A6B;
+    --bleu-givré: #C2D4EC; --poudre: #E8D5E0; --ardoise: #7A9CC0;
+    --bleu-profond: #2C5F8A; --ciel: #D6E8F0; --vert-sage: #DDF0E4; --terracotta: #F5E4D8;
+  }
+ 
+  html { scroll-behavior: smooth; }
+  body { background: var(--lin); color: var(--marine); font-family: 'Jost', sans-serif; font-weight: 300; min-height: 100vh; }
+ 
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 22px 60px; background: rgba(250,250,248,0.95);
+    backdrop-filter: blur(16px); border-bottom: 0.5px solid rgba(27,58,107,0.1);
+  }
+  .nav-left { display: flex; align-items: center; gap: 20px; }
+  .logo { font-family: 'DM Serif Display', serif; font-style: italic; font-size: 24px; letter-spacing: 0.14em; color: var(--marine); text-transform: uppercase; line-height: 1; text-decoration: none; }
+  .logo span { color: var(--ardoise); }
+  .nav-sep { width: 0.5px; height: 18px; background: rgba(27,58,107,0.15); }
+  .nav-page { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--marine); opacity: 0.4; }
+  .nav-right { display: flex; align-items: center; gap: 14px; }
+  .nav-btn { display: flex; align-items: center; gap: 7px; padding: 8px 14px; border-radius: 8px; border: 0.5px solid rgba(27,58,107,0.15); background: transparent; font-family: 'Jost', sans-serif; font-size: 11px; letter-spacing: 0.08em; color: var(--marine); cursor: pointer; text-decoration: none; transition: background 0.2s; opacity: 0.6; }
+  .nav-btn:hover { background: var(--ivoire); opacity: 1; }
+  .nav-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .nav-avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--marine); display: flex; align-items: center; justify-content: center; font-family: 'DM Serif Display', serif; font-size: 13px; color: var(--ivoire); text-decoration: none; }
+ 
+  /* ─── LAYOUT ─── */
+  .page { padding-top: 82px; display: flex; min-height: 100vh; }
+ 
+  /* ─── SIDEBAR ─── */
+  .sidebar { position: fixed; top: 82px; left: 0; width: 250px; height: calc(100vh - 82px); background: var(--ivoire); border-right: 0.5px solid rgba(27,58,107,0.08); display: flex; flex-direction: column; padding: 28px 0 20px; overflow-y: auto; z-index: 10; }
+  .sidebar-section { padding: 0 12px; margin-bottom: 4px; }
+  .sidebar-label { font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--marine); opacity: 0.3; padding: 8px 12px 6px; display: block; }
+  .sidebar-item { display: flex; align-items: center; gap: 12px; padding: 11px 12px; border-radius: 8px; cursor: pointer; transition: background 0.2s; text-decoration: none; color: var(--marine); opacity: 0.55; font-size: 13px; margin-bottom: 2px; }
+  .sidebar-item:hover { background: var(--lin); opacity: 0.9; }
+  .sidebar-item.active { background: var(--ciel); opacity: 1; font-weight: 500; color: var(--bleu-profond); }
+  .sidebar-item svg { width: 16px; height: 16px; flex-shrink: 0; stroke: currentColor; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .sidebar-item.active svg { stroke: var(--bleu-profond); }
+  .sidebar-item.danger { color: #A32D2D; opacity: 0.6; }
+  .sidebar-item.danger:hover { background: #FCEBEB; opacity: 1; }
+  .sidebar-bottom { margin-top: auto; padding: 16px 12px 0; border-top: 0.5px solid rgba(27,58,107,0.08); }
+ 
+  /* ─── MAIN ─── */
+  .main { margin-left: 250px; padding: 36px 48px 60px; width: 100%; }
+ 
+  /* ─── HEADER ─── */
+  .page-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 40px; }
+  .page-eyebrow { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ardoise); margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+  .page-eyebrow::before { content: ''; display: block; width: 24px; height: 0.5px; background: var(--ardoise); }
+  .page-title { font-family: 'DM Serif Display', serif; font-style: italic; font-size: 40px; color: var(--marine); line-height: 1.1; }
+  .page-title em { color: var(--ardoise); }
+  .season-badge { display: flex; align-items: center; gap: 8px; padding: 10px 18px; background: var(--marine); border-radius: 20px; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ivoire); }
+  .season-badge svg { width: 14px; height: 14px; stroke: var(--ardoise); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+ 
+  /* ─── SECTION TITLES ─── */
+  .section-title {
+    display: flex; align-items: baseline; gap: 14px;
+    margin-bottom: 22px;
+  }
+  .section-title h2 { font-family: 'DM Serif Display', serif; font-style: italic; font-size: 26px; color: var(--marine); }
+  .section-title span { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--marine); opacity: 0.35; }
+  .section-divider { height: 0.5px; background: rgba(27,58,107,0.1); margin-bottom: 28px; }
+ 
+  /* ─── LOOKS DU MOIS ─── */
+  .looks-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 52px; }
+
+  .look-card {
+    border-radius: 18px; overflow: hidden; cursor: pointer;
+    display: flex; flex-direction: column;
+    transition: transform 0.3s, box-shadow 0.3s;
+    box-shadow: 0 2px 12px rgba(27,58,107,0.06);
+    background: var(--ivoire);
+    border: 0.5px solid rgba(27,58,107,0.08);
+  }
+  .look-card:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(27,58,107,0.12); }
+
+  /* Zone visuelle en haut */
+  .look-visual {
+    height: 180px; position: relative;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  .look-bg-1 .look-visual { background: linear-gradient(135deg, #C2D4EC 0%, #7A9CC0 100%); }
+  .look-bg-2 .look-visual { background: linear-gradient(135deg, #E8D5E0 0%, #C4789A 100%); }
+
+  /* Cercles décoratifs dans le visuel */
+  .look-visual::before {
+    content: ''; position: absolute;
+    width: 160px; height: 160px; border-radius: 50%;
+    background: rgba(255,255,255,0.12);
+    top: -40px; right: -30px;
+  }
+  .look-visual::after {
+    content: ''; position: absolute;
+    width: 90px; height: 90px; border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    bottom: -20px; left: 20px;
+  }
+
+  /* Icônes vêtements dans le visuel */
+  .look-icons {
+    display: flex; gap: 16px; align-items: flex-end;
+    position: relative; z-index: 1;
+  }
+  .look-icon-item {
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+  }
+  .look-icon-item svg { opacity: 0.9; }
+  .look-icon-label {
+    font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: rgba(255,255,255,0.75);
+  }
+
+  /* Infos en bas */
+  .look-info { padding: 20px 22px 22px; }
+  .look-tag {
+    display: inline-block; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ardoise); background: var(--ciel); padding: 3px 10px;
+    border-radius: 8px; margin-bottom: 10px;
+  }
+  .look-name {
+    font-family: 'DM Serif Display', serif; font-style: italic;
+    font-size: 20px; color: var(--marine); line-height: 1.2; margin-bottom: 6px;
+  }
+  .look-pieces {
+    font-size: 12px; color: var(--marine); opacity: 0.5;
+    letter-spacing: 0.02em; line-height: 1.6; margin-bottom: 14px;
+  }
+  .look-ia-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 16px; border-radius: 20px;
+    background: var(--marine); border: none; cursor: pointer;
+    font-family: 'Jost', sans-serif; font-size: 10px; letter-spacing: 0.08em;
+    color: var(--ivoire); transition: background 0.2s;
+  }
+  .look-ia-btn:hover { background: var(--bleu-profond); }
+  .look-ia-btn svg { width: 12px; height: 12px; stroke: var(--ardoise); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+
+  .look-overlay { display: none; }
+  .look-figure { display: none; }
+ 
+  /* ─── COULEURS TENDANCE ─── */
+  .colors-section { margin-bottom: 52px; }
+ 
+  .colors-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+ 
+  .color-card {
+    border-radius: 16px; overflow: hidden; cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .color-card:hover { transform: translateY(-3px); }
+ 
+  .color-swatch { height: 100px; width: 100%; }
+ 
+  .color-info { background: var(--ivoire); padding: 12px 14px; }
+  .color-name { font-size: 13px; font-weight: 400; color: var(--marine); margin-bottom: 3px; }
+  .color-trend { font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--marine); opacity: 0.4; }
+ 
+  /* ─── STYLES POPULAIRES ─── */
+  .styles-section { margin-bottom: 52px; }
+ 
+  .styles-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+ 
+  .style-card {
+    background: var(--ivoire); border: 0.5px solid rgba(27,58,107,0.08);
+    border-radius: 16px; padding: 24px 22px; cursor: pointer;
+    transition: transform 0.2s, border-color 0.2s;
+    position: relative; overflow: hidden;
+  }
+  .style-card:hover { transform: translateY(-3px); border-color: rgba(27,58,107,0.2); }
+ 
+  .style-card::after {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+    height: 3px; border-radius: 0 0 16px 16px;
+    transition: opacity 0.3s; opacity: 0;
+  }
+  .style-card:hover::after { opacity: 1; }
+ 
+  .style-card.minimaliste::after { background: var(--marine); }
+  .style-card.boheme::after      { background: #C4956A; }
+  .style-card.classique::after   { background: var(--ardoise); }
+  .style-card.streetwear::after  { background: var(--bleu-profond); }
+ 
+  .style-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; }
+  .style-icon svg { width: 22px; height: 22px; fill: none; stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; }
+ 
+  .style-name { font-family: 'DM Serif Display', serif; font-style: italic; font-size: 20px; color: var(--marine); margin-bottom: 6px; }
+  .style-desc { font-size: 12px; color: var(--marine); opacity: 0.5; line-height: 1.6; margin-bottom: 16px; }
+ 
+  .style-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+  .style-tag { font-size: 10px; padding: 3px 10px; border-radius: 10px; background: var(--lin); color: var(--marine); opacity: 0.7; letter-spacing: 0.04em; }
+ 
+  .style-match { margin-top: 16px; padding-top: 14px; border-top: 0.5px solid rgba(27,58,107,0.06); font-size: 11px; color: var(--marine); opacity: 0.45; display: flex; align-items: center; gap: 6px; }
+  .style-match-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--vert-sage); border: 1px solid #1D9E75; flex-shrink: 0; }
+ 
+  /* ─── CONSEIL IA ─── */
+  .ia-section {
+    background: var(--marine); border-radius: 20px;
+    padding: 36px 40px; margin-bottom: 52px;
+    display: grid; grid-template-columns: 1fr auto;
+    gap: 32px; align-items: center;
+    position: relative; overflow: hidden;
+  }
+ 
+  .ia-section::before {
+    content: ''; position: absolute; top: -60px; right: -60px;
+    width: 220px; height: 220px; border-radius: 50%;
+    background: rgba(194,212,236,0.06);
+  }
+ 
+  .ia-section::after {
+    content: ''; position: absolute; bottom: -40px; right: 80px;
+    width: 140px; height: 140px; border-radius: 50%;
+    background: rgba(232,213,224,0.05);
+  }
+ 
+  .ia-left { position: relative; z-index: 1; }
+  .ia-eyebrow { display: flex; align-items: center; gap: 10px; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ardoise); margin-bottom: 14px; }
+  .ia-eyebrow svg { width: 14px; height: 14px; stroke: var(--ardoise); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .ia-title { font-family: 'DM Serif Display', serif; font-style: italic; font-size: 26px; color: var(--ivoire); line-height: 1.2; margin-bottom: 12px; }
+  .ia-text { font-size: 13px; color: var(--bleu-givré); opacity: 0.75; line-height: 1.75; max-width: 520px; }
+  .ia-text strong { color: var(--ivoire); opacity: 1; font-weight: 500; }
+ 
+  .ia-right { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 10px; align-items: flex-end; }
+ 
+  .ia-btn {
+    display: flex; align-items: center; gap: 9px;
+    padding: 12px 22px; border-radius: 10px;
+    background: var(--ivoire); border: none; cursor: pointer;
+    font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 400;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--marine);
+    transition: background 0.2s, transform 0.15s; white-space: nowrap;
+  }
+  .ia-btn:hover { background: var(--ciel); transform: translateY(-1px); }
+  .ia-btn svg { width: 14px; height: 14px; stroke: var(--ardoise); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+ 
+  .ia-loading { display: none; font-size: 12px; color: var(--bleu-givré); opacity: 0.5; letter-spacing: 0.06em; }
+ 
+  /* ─── MODAL LOOK ─── */
+  .modal-overlay { display: none; position: fixed; inset: 0; z-index: 200; background: rgba(27,58,107,0.2); backdrop-filter: blur(8px); align-items: center; justify-content: center; }
+  .modal-overlay.show { display: flex; }
+  .modal { background: var(--ivoire); border-radius: 20px; max-width: 580px; width: 90%; max-height: 88vh; overflow-y: auto; animation: modalIn 0.3s ease; }
+  @keyframes modalIn { from { opacity: 0; transform: translateY(14px) scale(0.98); } to { opacity: 1; transform: none; } }
+ 
+  /* ─── ANIMATIONS ─── */
+  .fade-up { opacity: 0; transform: translateY(16px); animation: fadeUp 0.5s ease forwards; }
+  @keyframes fadeUp { to { opacity: 1; transform: none; } }
+  .d1{animation-delay:0.05s} .d2{animation-delay:0.12s} .d3{animation-delay:0.18s}
+  .d4{animation-delay:0.24s} .d5{animation-delay:0.3s}  .d6{animation-delay:0.36s}
+  .d7{animation-delay:0.42s} .d8{animation-delay:0.48s}
+ 
+  /* Toast */
+  .toast { position: fixed; bottom: 32px; right: 32px; z-index: 300; background: var(--marine); color: var(--ivoire); padding: 14px 22px; border-radius: 10px; font-size: 13px; transform: translateY(80px); opacity: 0; transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1); pointer-events: none; }
+  .toast.show { transform: translateY(0); opacity: 1; }
+</style>
+<script src="sw-data.js"></script>
+</head>
+<body>
+ 
+<!-- ─── NAV ─── -->
+<nav>
+  <div class="nav-left">
+    <a href="page_apres_connection.html" class="logo">Smart<span>Wear</span></a>
+    <div class="nav-sep"></div>
+    <span class="nav-page">Tendances</span>
+  </div>
+  <div class="nav-right">
+    <a href="page_apres_connection.html" class="nav-btn">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Accueil
+    </a>
+    <a href="page_chatbot.html" class="nav-btn">
+      <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Assistant IA
+    </a>
+    <a href="page_gestion_compte.html" class="nav-avatar" id="nav-avatar">?</a>
+  </div>
+</nav>
+ 
+<div class="page">
+ 
+  <!-- ─── SIDEBAR ─── -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <span class="sidebar-label">Navigation</span>
+      <a class="sidebar-item" href="page_apres_connection.html">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Accueil
+      </a>
+      <a class="sidebar-item" href="page_garderobe.html">
+        <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        Ma garde-robe
+      </a>
+      <a class="sidebar-item" href="page_chatbot.html">
+        <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Assistant IA
+      </a>
+      <a class="sidebar-item active" href="page_tendances.html">
+        <svg viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+        Tendances
+      </a>
+    </div>
+    <div class="sidebar-section">
+      <span class="sidebar-label">Compte</span>
+      <a class="sidebar-item" href="page_gestion_compte.html">
+        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Mon compte
+      </a>
+    </div>
+    <div class="sidebar-bottom">
+      <a class="sidebar-item danger" href="#" onclick="SW.logout();return false;">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Se déconnecter
+      </a>
+    </div>
+  </aside>
+ 
+  <!-- ─── MAIN ─── -->
+  <main class="main">
+ 
+    <!-- Header -->
+    <div class="page-header fade-up d1">
+      <div>
+        <p class="page-eyebrow">Printemps 2026</p>
+        <h1 class="page-title">Ce qui fait <em>tendance</em></h1>
+      </div>
+      <div class="season-badge">
+        <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>
+        Printemps · Été 2026
+      </div>
+    </div>
+ 
+    <!-- ── SECTION : Looks du mois ── -->
+    <div class="fade-up d2">
+      <div class="section-title">
+        <h2>Looks du mois</h2>
+        <span>Mars 2026 · Sélection éditoriale</span>
+      </div>
+      <div class="section-divider"></div>
+    </div>
+ 
+    <div class="looks-grid fade-up d3">
+
+      <!-- Look 1 -->
+      <div class="look-card look-bg-1" onclick="openLook(0)">
+        <div class="look-visual">
+          <div class="look-icons">
+            <div class="look-icon-item">
+              <svg viewBox="0 0 40 40" width="44" height="44" fill="none" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 8 Q20 5 28 8 L31 17 L28 18 L28 34 L12 34 L12 18 L9 17 Z"/>
+                <path d="M14 8 Q14 14 20 14 Q26 14 26 8"/>
+              </svg>
+              <span class="look-icon-label">Robe</span>
+            </div>
+            <div class="look-icon-item" style="margin-bottom:6px;">
+              <svg viewBox="0 0 40 40" width="36" height="36" fill="none" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M8 28 Q8 23 13 22 L27 22 Q32 23 32 28 L32 33 L8 33Z"/>
+                <ellipse cx="20" cy="20" rx="6" ry="4"/>
+              </svg>
+              <span class="look-icon-label">Sandales</span>
+            </div>
+            <div class="look-icon-item">
+              <svg viewBox="0 0 40 40" width="40" height="40" fill="none" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="12" width="22" height="20" rx="3"/>
+                <path d="M14 12 Q14 7 20 7 Q26 7 26 12"/>
+              </svg>
+              <span class="look-icon-label">Sac</span>
+            </div>
+          </div>
+        </div>
+        <div class="look-info">
+          <div class="look-tag">Look du mois</div>
+          <div class="look-name">Élégance fluide printemps</div>
+          <div class="look-pieces">Robe midi · Sandales dorées · Sac tissé</div>
+          <button class="look-ia-btn" onclick="event.stopPropagation(); askIALook(0)">
+            <svg viewBox="0 0 24 24"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>
+            Conseil IA
+          </button>
+        </div>
+      </div>
+
+      <!-- Look 2 -->
+      <div class="look-card look-bg-2" onclick="openLook(1)">
+        <div class="look-visual">
+          <div class="look-icons">
+            <div class="look-icon-item">
+              <svg viewBox="0 0 40 40" width="44" height="44" fill="none" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M13 7 Q20 4 27 7 L30 14 L27 15 L27 33 L13 33 L13 15 L10 14 Z"/>
+                <path d="M15 7 Q15 12 20 12 Q25 12 25 7"/>
+              </svg>
+              <span class="look-icon-label">Blouse</span>
+            </div>
+            <div class="look-icon-item">
+              <svg viewBox="0 0 40 40" width="44" height="44" fill="none" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M13 8 L11 13 L13 13 L13 33 L17 33 L20 23 L23 33 L27 33 L27 13 L29 13 L27 8 Z"/>
+              </svg>
+              <span class="look-icon-label">Jean</span>
+            </div>
+            <div class="look-icon-item" style="margin-bottom:6px;">
+              <svg viewBox="0 0 40 40" width="36" height="36" fill="none" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 26 Q12 20 20 20 Q28 20 31 26 L31 33 L9 33Z"/>
+                <line x1="14" y1="20" x2="12" y2="33"/>
+              </svg>
+              <span class="look-icon-label">Mules</span>
+            </div>
+          </div>
+        </div>
+        <div class="look-info">
+          <div class="look-tag">Look du mois</div>
+          <div class="look-name">Douceur poudre</div>
+          <div class="look-pieces">Blouse en soie · Jean slim · Mules beige</div>
+          <button class="look-ia-btn" onclick="event.stopPropagation(); askIALook(1)">
+            <svg viewBox="0 0 24 24"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>
+            Conseil IA
+          </button>
+        </div>
+      </div>
+
+    </div>
+ 
+    <!-- Note scraping -->
+    <div style="display:flex;align-items:center;gap:10px;margin-top:-8px;margin-bottom:48px;padding:12px 16px;background:var(--ivoire);border-radius:10px;border:0.5px dashed rgba(27,58,107,0.18);">
+      <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:var(--ardoise);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span style="font-size:11px;color:var(--marine);opacity:0.45;letter-spacing:0.04em;">Ces looks seront automatiquement mis à jour chaque mois via scraping des magazines partenaires.</span>
+    </div>
+ 
+    <!-- ── SECTION : Couleurs tendance ── -->
+    <div class="fade-up d4">
+      <div class="section-title">
+        <h2>Couleurs de la saison</h2>
+        <span>Printemps · Été 2026</span>
+      </div>
+      <div class="section-divider"></div>
+    </div>
+ 
+    <div class="colors-grid colors-section fade-up d4">
+      <div class="color-card">
+        <div class="color-swatch" style="background:#C4A882;"></div>
+        <div class="color-info"><div class="color-name">Camel doux</div><div class="color-trend">Incontournable</div></div>
+      </div>
+      <div class="color-card">
+        <div class="color-swatch" style="background:#8BA888;"></div>
+        <div class="color-info"><div class="color-name">Vert sauge</div><div class="color-trend">En hausse</div></div>
+      </div>
+      <div class="color-card">
+        <div class="color-swatch" style="background:#C4956A;"></div>
+        <div class="color-info"><div class="color-name">Terracotta</div><div class="color-trend">Tendance forte</div></div>
+      </div>
+      <div class="color-card">
+        <div class="color-swatch" style="background:#B8CCDC;"></div>
+        <div class="color-info"><div class="color-name">Bleu givré</div><div class="color-trend">Fraîcheur</div></div>
+      </div>
+      <div class="color-card">
+        <div class="color-swatch" style="background:#E8C4B0;"></div>
+        <div class="color-info"><div class="color-name">Abricot</div><div class="color-trend">Nouveauté</div></div>
+      </div>
+      <div class="color-card">
+        <div class="color-swatch" style="background:#D4C4B8;"></div>
+        <div class="color-info"><div class="color-name">Lin naturel</div><div class="color-trend">Classique</div></div>
+      </div>
+    </div>
+ 
+    <!-- ── SECTION : Conseil IA ── -->
+    <div class="ia-section fade-up d5">
+      <div class="ia-left">
+        <div class="ia-eyebrow">
+          <svg viewBox="0 0 24 24"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>
+          Analyse personnalisée
+        </div>
+        <h2 class="ia-title" id="ia-title">Votre analyse tendances<br>par l'IA</h2>
+        <p class="ia-text" id="ia-text">Obtenez une analyse personnalisée des tendances actuelles en lien avec <strong>votre garde-robe</strong> et vos styles favoris. L'IA croise les tendances du moment avec vos vêtements pour vous proposer des associations inédites.</p>
+        <div class="ia-loading" id="ia-loading">Analyse en cours…</div>
+      </div>
+      <div class="ia-right">
+        <button class="ia-btn" onclick="getIAAnalysis()">
+          <svg viewBox="0 0 24 24"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>
+          Analyser mes tendances
+        </button>
+        <button class="ia-btn" onclick="askIAStyle()">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Quel est mon style ?
+        </button>
+      </div>
+    </div>
+ 
+    <!-- ── SECTION : Styles populaires ── -->
+    <div class="fade-up d6">
+      <div class="section-title">
+        <h2>Styles populaires</h2>
+        <span>Cette saison</span>
+      </div>
+      <div class="section-divider"></div>
+    </div>
+ 
+    <div class="styles-grid styles-section fade-up d6">
+ 
+      <div class="style-card minimaliste" onclick="openStyle('minimaliste')">
+        <div class="style-icon" style="background:var(--ciel);">
+          <svg viewBox="0 0 24 24" stroke="var(--bleu-profond)"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/></svg>
+        </div>
+        <div class="style-name">Minimaliste</div>
+        <div class="style-desc">Lignes épurées, palette neutre, matières nobles. Moins c'est plus.</div>
+        <div class="style-tags">
+          <span class="style-tag">Basiques</span>
+          <span class="style-tag">Neutre</span>
+          <span class="style-tag">Structuré</span>
+        </div>
+        <div class="style-match">
+          <div class="style-match-dot"></div>
+          Compatible avec votre garde-robe
+        </div>
+      </div>
+ 
+      <div class="style-card boheme" onclick="openStyle('boheme')">
+        <div class="style-icon" style="background:var(--terracotta);">
+          <svg viewBox="0 0 24 24" stroke="#7A3820"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M12 8 Q16 12 12 16 Q8 12 12 8"/></svg>
+        </div>
+        <div class="style-name">Bohème</div>
+        <div class="style-desc">Fluidité, imprimés naturels, superpositions légères et textures.</div>
+        <div class="style-tags">
+          <span class="style-tag">Floral</span>
+          <span class="style-tag">Fluide</span>
+          <span class="style-tag">Naturel</span>
+        </div>
+        <div class="style-match">
+          <div class="style-match-dot" style="background:var(--terracotta);border-color:#C4956A;"></div>
+          Quelques pièces compatibles
+        </div>
+      </div>
+ 
+      <div class="style-card classique" onclick="openStyle('classique')">
+        <div class="style-icon" style="background:var(--bleu-givré);">
+          <svg viewBox="0 0 24 24" stroke="var(--marine)"><path d="M6 4 L3 9 L6 10 L6 20 L18 20 L18 10 L21 9 L18 4 Q15 7 12 7 Q9 7 6 4Z"/></svg>
+        </div>
+        <div class="style-name">Classique</div>
+        <div class="style-desc">Intemporel, tailoring précis, couleurs sobres. L'élégance absolue.</div>
+        <div class="style-tags">
+          <span class="style-tag">Tailoring</span>
+          <span class="style-tag">Élégant</span>
+          <span class="style-tag">Sobre</span>
+        </div>
+        <div class="style-match">
+          <div class="style-match-dot"></div>
+          Votre style dominant
+        </div>
+      </div>
+ 
+      <div class="style-card streetwear" onclick="openStyle('streetwear')">
+        <div class="style-icon" style="background:var(--vert-sage);">
+          <svg viewBox="0 0 24 24" stroke="#085041"><path d="M8 4 L4 10 L7 11 L7 21 L17 21 L17 11 L20 10 L16 4 Q14 6 12 6 Q10 6 8 4Z"/><line x1="7" y1="14" x2="17" y2="14"/></svg>
+        </div>
+        <div class="style-name">Streetwear</div>
+        <div class="style-desc">Sport-chic, oversized, sneakers en vedette. L'urbain revisité.</div>
+        <div class="style-tags">
+          <span class="style-tag">Casual</span>
+          <span class="style-tag">Oversized</span>
+          <span class="style-tag">Sneakers</span>
+        </div>
+        <div class="style-match">
+          <div class="style-match-dot" style="background:var(--terracotta);border-color:#C4956A;"></div>
+          Quelques pièces compatibles
+        </div>
+      </div>
+ 
+    </div>
+ 
+  </main>
+</div>
+ 
+<!-- ─── MODAL LOOK ─── -->
+<div class="modal-overlay" id="modal-look">
+  <div class="modal">
+    <div id="modal-look-content" style="padding:32px;">
+      <!-- rempli par JS -->
+    </div>
+  </div>
+</div>
+ 
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+ 
+<script>
+  // ── Données looks ──
+  const LOOKS = [
+    {
+      titre: 'Élégance fluide printemps',
+      tag: 'Look vedette',
+      pieces: ['Robe midi fluide (crème ou pastel)', 'Sandales dorées à lanières', 'Sac tressé naturel', 'Accessoire doré discret'],
+      couleurs: ['Crème', 'Or', 'Naturel'],
+      conseil: "Ce look mise sur la fluidité et la légèreté. La robe midi est LA pièce clé du printemps 2026 — choisissez-la dans un tissu qui se déplace avec vous. Les sandales dorées apportent le point lumineux sans alourdir.",
+      compatibilite: "Vous avez déjà un manteau crème qui pourrait compléter ce look pour les soirées fraîches."
+    },
+    {
+      titre: 'Douceur poudre',
+      tag: 'Romantique',
+      pieces: ['Blouse à volants (rose poudré)', 'Jean slim bleu', 'Mules en cuir nude', 'Petit sac structuré'],
+      couleurs: ['Rose poudré', 'Bleu denim', 'Nude'],
+      conseil: "La combinaison romantique + casual est une des tendances fortes de cette saison. La blouse à volants donne du caractère sans effort, tandis que le jean ancre le look dans le quotidien.",
+      compatibilite: "Vous avez un jean slim bleu dans votre garde-robe — il est parfaitement adapté pour ce look !"
+    },
+    {
+      titre: 'Vert sauge & lin',
+      tag: 'Naturel',
+      pieces: ['Chemise en lin vert sauge', 'Pantalon large crème', 'Sneakers blanches', 'Sac en raphia'],
+      couleurs: ['Vert sauge', 'Crème', 'Blanc'],
+      conseil: "Le vert sauge est l'une des couleurs phares du printemps 2026. Associé au lin naturel et au blanc, il crée un look frais et sophistiqué qui traversera toute la saison avec aisance.",
+      compatibilite: "Vos sneakers blanches seraient parfaites pour compléter ce look. Le pantalon large vous manque peut-être !"
+    },
+    {
+      titre: 'Chaleur cuivrée',
+      tag: 'Terracotta',
+      pieces: ['Blazer terracotta', 'Top blanc ajusté', 'Pantalon taille haute caramel', 'Bottines camel'],
+      couleurs: ['Terracotta', 'Blanc', 'Caramel'],
+      conseil: "La palette terracotta-caramel est une association chaleureuse et très tendance. Le blazer structuré en terracotta est la pièce investissement de la saison — il se porte aussi bien au bureau qu'en soirée.",
+      compatibilite: "Vous avez des bottines camel dans votre dressing — elles s'associeraient parfaitement à ce look !"
+    }
+  ];
+ 
+  const STYLES = {
+    minimaliste: { titre: 'Style Minimaliste', desc: "Le minimalisme mise sur la qualité plutôt que la quantité. Quelques pièces parfaitement coupées valent mille vêtements médiocres. La palette neutre (blanc, crème, marine, gris) est votre meilleure alliée." },
+    boheme:      { titre: 'Style Bohème', desc: "La liberté, la fluidité, les imprimés naturels. Le style bohème célèbre la légèreté de vivre avec des pièces qui bougent et respirent. Superposez, mélangez les textures, ajoutez des accessoires ethniques." },
+    classique:   { titre: 'Style Classique', desc: "L'élégance intemporelle. Le tailoring précis, les matières nobles (cachemire, soie, laine), les coupes structurées. Un style qui ne se démode jamais et qui grandit avec vous." },
+    streetwear:  { titre: 'Style Streetwear', desc: "L'urbain revisité avec intention. Oversized, confort, sneakers en vedette, mais avec une touche de sophistication. Le streetwear d'aujourd'hui n'est plus synonyme de décontraction totale." }
+  };
+ 
+  // ── Ouvrir look ──
+  function openLook(idx) {
+    const look = LOOKS[idx];
+    document.getElementById('modal-look-content').innerHTML =
+      '<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;">'
+      + '<div>'
+      + '<div style="font-size:9px;letter-spacing:0.18em;text-transform:uppercase;color:var(--ardoise);margin-bottom:8px;">' + look.tag + '</div>'
+      + '<h2 style="font-family:\'DM Serif Display\',serif;font-style:italic;font-size:26px;color:var(--marine);">' + look.titre + '</h2>'
+      + '</div>'
+      + '<button onclick="closeLook()" style="width:32px;height:32px;border-radius:50%;background:var(--lin);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">'
+      + '<svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:var(--marine);fill:none;stroke-width:2;stroke-linecap:round;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>'
+      + '</div>'
+ 
+      + '<div style="font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--marine);opacity:0.4;margin-bottom:10px;">Pièces clés</div>'
+      + '<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:22px;">'
+      + look.pieces.map(p => '<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--lin);border-radius:10px;font-size:13px;color:var(--marine);">'
+        + '<svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:var(--ardoise);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;"><polyline points="20 6 9 17 4 12"/></svg>' + p + '</div>').join('')
+      + '</div>'
+ 
+      + '<div style="display:flex;gap:8px;margin-bottom:22px;">'
+      + look.couleurs.map(c => '<span style="padding:5px 14px;border-radius:20px;background:var(--ciel);color:var(--bleu-profond);font-size:11px;">' + c + '</span>').join('')
+      + '</div>'
+ 
+      + '<div style="background:var(--terracotta);border-radius:12px;padding:16px;margin-bottom:16px;">'
+      + '<div style="font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--marine);opacity:0.5;margin-bottom:8px;">Conseil style</div>'
+      + '<p style="font-size:13px;color:var(--marine);opacity:0.8;line-height:1.7;">' + look.conseil + '</p>'
+      + '</div>'
+ 
+      + '<div style="background:var(--vert-sage);border-radius:12px;padding:16px;">'
+      + '<div style="font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--marine);opacity:0.5;margin-bottom:8px;">Compatibilité avec votre garde-robe</div>'
+      + '<p style="font-size:13px;color:var(--marine);opacity:0.8;line-height:1.7;">' + look.compatibilite + '</p>'
+      + '</div>';
+ 
+    document.getElementById('modal-look').classList.add('show');
+  }
+ 
+  function closeLook() { document.getElementById('modal-look').classList.remove('show'); }
+  document.getElementById('modal-look').addEventListener('click', e => { if (e.target === e.currentTarget) closeLook(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLook(); });
+ 
+  // ── Ouvrir style ──
+  function openStyle(key) {
+    const s = STYLES[key];
+    document.getElementById('modal-look-content').innerHTML =
+      '<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;">'
+      + '<h2 style="font-family:\'DM Serif Display\',serif;font-style:italic;font-size:26px;color:var(--marine);">' + s.titre + '</h2>'
+      + '<button onclick="closeLook()" style="width:32px;height:32px;border-radius:50%;background:var(--lin);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">'
+      + '<svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:var(--marine);fill:none;stroke-width:2;stroke-linecap:round;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>'
+      + '</div>'
+      + '<p style="font-size:14px;color:var(--marine);opacity:0.7;line-height:1.75;margin-bottom:24px;">' + s.desc + '</p>'
+      + '<button onclick="closeLook();location.href=\'page_chatbot.html\'" style="width:100%;height:46px;background:var(--marine);border:none;border-radius:10px;font-family:\'Jost\',sans-serif;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ivoire);cursor:pointer;">Demander plus à l\'assistant IA →</button>';
+    document.getElementById('modal-look').classList.add('show');
+  }
+ 
+  // ── Conseil IA look ──
+  function askIALook(idx) {
+    const look = LOOKS[idx];
+    window.location.href = 'page_chatbot.html?q=' + encodeURIComponent('Comment adapter le look "' + look.titre + '" à ma garde-robe actuelle ?');
+  }
+ 
+  // ── Analyse IA tendances ──
+  async function getIAAnalysis() {
+    const btn      = document.querySelector('.ia-btn');
+    const loading  = document.getElementById('ia-loading');
+    const iaText   = document.getElementById('ia-text');
+    const iaTitle  = document.getElementById('ia-title');
+ 
+    btn.disabled = true;
+    btn.style.opacity = '0.5';
+    loading.style.display = 'block';
+    iaText.style.opacity = '0.3';
+ 
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 300,
+          system: "Tu es un expert en mode et tendances. Réponds toujours en français, de façon concise (3-4 phrases max), élégante et personnalisée.",
+          messages: [{
+            role: 'user',
+            content: "Analyse les tendances printemps-été 2026 pour une femme qui aime les styles Classique, Élégant et Smart casual, avec une garde-robe comprenant un manteau crème, un jean slim bleu, un pull marine, des bottines camel et une robe noire. Quelles tendances lui correspondent le mieux et comment les intégrer ?"
+          }]
+        })
+      });
+ 
+      const data    = await response.json();
+      const aiText  = data.content?.find(b => b.type === 'text')?.text || '';
+ 
+      iaTitle.textContent = 'Votre analyse tendances';
+      iaText.innerHTML    = aiText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+      iaText.style.opacity = '1';
+ 
+    } catch (err) {
+      iaText.textContent  = 'Lancez le serveur local (node server.js) pour activer l\'analyse IA personnalisée.';
+      iaText.style.opacity = '0.6';
+    }
+ 
+    loading.style.display = 'none';
+    btn.disabled = false;
+    btn.style.opacity = '1';
+  }
+ 
+  async function askIAStyle() {
+    window.location.href = 'page_chatbot.html';
+  }
+ 
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    const user = await SW.requireAuth();
+    if (!user) return;
+    // Afficher le nom dans la nav si possible
+    const avatar = document.getElementById('nav-avatar');
+    if (avatar && user.prenom) {
+      const initiales = (user.prenom[0] + (user.nom ? user.nom[0] : '')).toUpperCase();
+      avatar.textContent = initiales;
+    }
+  });
+</script>
+ 
+</body>
+</html>

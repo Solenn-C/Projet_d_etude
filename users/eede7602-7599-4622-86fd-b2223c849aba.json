@@ -1,0 +1,49 @@
+{
+  "user": {
+    "prenom": "Solenn",
+    "nom": "Coulon",
+    "email": "solenn.coulon17@gmail.com",
+    "telephone": "",
+    "dateNaissance": "",
+    "genre": "",
+    "ville": "Paris",
+    "pays": "France",
+    "langue": "Français",
+    "heureNotif": "08:00",
+    "unite": "Celsius",
+    "abonnement": "gratuit",
+    "tailleHaut": "",
+    "tailleBas": "",
+    "tailleChaussures": "",
+    "styles": [],
+    "contextes": [
+      "quotidien"
+    ],
+    "onboardingDone": false
+  },
+  "profiles": [],
+  "wardrobe": {
+    "manteau": [],
+    "haut": [],
+    "bas": [],
+    "ensemble": [],
+    "chaussures": [],
+    "accessoires": []
+  },
+  "preferences": {
+    "villes": [
+      "Paris"
+    ],
+    "notifications": {
+      "tenueDuJour": true,
+      "meteo": true,
+      "tendances": false,
+      "piecesManquantes": true,
+      "emails": false
+    }
+  },
+  "paiement": {
+    "cartes": [],
+    "factures": []
+  }
+}

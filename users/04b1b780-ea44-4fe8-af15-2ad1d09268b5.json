@@ -1,0 +1,88 @@
+{
+  "user": {
+    "prenom": "Solenn",
+    "nom": "Coulon",
+    "email": "solenn.coulon17@gmail.com",
+    "telephone": "",
+    "dateNaissance": "2003-10-29",
+    "genre": "Femme",
+    "ville": "Rennes",
+    "pays": "France",
+    "langue": "Français",
+    "heureNotif": "08:00",
+    "unite": "Celsius",
+    "abonnement": "gratuit",
+    "tailleHaut": "M",
+    "tailleBas": "42",
+    "tailleChaussures": "41",
+    "styles": [
+      "Casual chic",
+      "Minimaliste",
+      "Casual chic",
+      "Minimaliste",
+      "Élégant"
+    ],
+    "contextes": [
+      "quotidien",
+      "pro",
+      "soiree"
+    ],
+    "onboardingDone": true
+  },
+  "profiles": [
+    {
+      "id": 1775548793226,
+      "prenom": "Solenn",
+      "type": "Mon profil",
+      "genre": "Femme",
+      "initiales": "SM",
+      "bgColor": "var(--marine)",
+      "txtColor": "var(--ivoire)",
+      "contextes": [
+        "quotidien",
+        "pro",
+        "soiree"
+      ],
+      "styles": [
+        "Casual chic",
+        "Minimaliste",
+        "Casual chic",
+        "Minimaliste",
+        "Élégant"
+      ],
+      "tailles": {
+        "haut": "M",
+        "bas": "42",
+        "chaussures": "41",
+        "poitrine": "",
+        "tailleCm": "",
+        "pointure": ""
+      },
+      "createdAt": "2026-04-07T07:59:53.226Z"
+    }
+  ],
+  "wardrobe": {
+    "manteau": [],
+    "haut": [],
+    "bas": [],
+    "ensemble": [],
+    "chaussures": [],
+    "accessoires": []
+  },
+  "preferences": {
+    "villes": [
+      "Paris"
+    ],
+    "notifications": {
+      "tenueDuJour": true,
+      "meteo": true,
+      "tendances": false,
+      "piecesManquantes": true,
+      "emails": false
+    }
+  },
+  "paiement": {
+    "cartes": [],
+    "factures": []
+  }
+}

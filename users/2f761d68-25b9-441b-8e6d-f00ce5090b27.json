@@ -1,0 +1,132 @@
+{
+  "user": {
+    "prenom": "Solenn",
+    "nom": "Coulon",
+    "email": "solenn.coulon17@gmail.com",
+    "telephone": "0783248240",
+    "dateNaissance": "2003-10-29",
+    "genre": "Femme",
+    "ville": "Rennes",
+    "pays": "France",
+    "langue": "Français",
+    "heureNotif": "08:00",
+    "unite": "Celsius",
+    "abonnement": "gratuit",
+    "tailleHaut": "L",
+    "tailleBas": "42",
+    "tailleChaussures": "41",
+    "styles": [
+      "Bohème",
+      "Romantique",
+      "Vintage",
+      "Bohème",
+      "Romantique",
+      "Vintage"
+    ],
+    "contextes": [
+      "quotidien",
+      "bureau",
+      "soiree"
+    ],
+    "onboardingDone": true,
+    "twoFA": "sms"
+  },
+  "profiles": [],
+  "wardrobe": {
+    "manteau": [
+      {
+        "id": 1775567846226,
+        "nom": "Veste en jean rose",
+        "marque": "Stradivarus",
+        "couleur": "Rose pastel",
+        "taille": "S",
+        "porte": 1,
+        "desc": "",
+        "photo": null,
+        "bg": "#F0EDF8",
+        "saisons": [
+          "Été",
+          "Printemps"
+        ],
+        "createdAt": "2026-04-07T13:17:26.231Z"
+      }
+    ],
+    "haut": [
+      {
+        "id": 1775570073356,
+        "nom": "Top bretelle",
+        "marque": "Gemo",
+        "couleur": "Gris",
+        "taille": "M",
+        "porte": 5,
+        "desc": "",
+        "photo": null,
+        "bg": "#F0EDF8",
+        "saisons": [
+          "Été",
+          "Printemps"
+        ],
+        "createdAt": "2026-04-07T13:54:33.361Z",
+        "portes": 1
+      }
+    ],
+    "bas": [
+      {
+        "id": 1775570107233,
+        "nom": "Pantalon Fluide",
+        "marque": "Milano",
+        "couleur": "Bleu",
+        "taille": "40",
+        "porte": 2,
+        "desc": "",
+        "photo": null,
+        "bg": "#F0EDF8",
+        "saisons": [
+          "Été",
+          "Printemps"
+        ],
+        "createdAt": "2026-04-07T13:55:07.238Z",
+        "portes": 1
+      }
+    ],
+    "ensemble": [],
+    "chaussures": [
+      {
+        "id": 1775570162466,
+        "nom": "Converse haute",
+        "marque": "Converse",
+        "couleur": "rouge bordeaux",
+        "taille": "41",
+        "porte": 3,
+        "desc": "",
+        "photo": null,
+        "bg": "#F0EDF8",
+        "saisons": [
+          "Été",
+          "Automne",
+          "Hiver",
+          "Printemps"
+        ],
+        "createdAt": "2026-04-07T13:56:02.479Z",
+        "portes": 1
+      }
+    ],
+    "accessoires": []
+  },
+  "preferences": {
+    "villes": [
+      "Paris"
+    ],
+    "notifications": {
+      "tenueDuJour": true,
+      "meteo": true,
+      "tendances": false,
+      "piecesManquantes": true,
+      "emails": false
+    }
+  },
+  "paiement": {
+    "cartes": [],
+    "factures": []
+  }
+}

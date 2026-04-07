@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Wear — Assistant IA</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ivoire: #FAFAF8;
+    --lin: #E8E4DE;
+    --marine: #1B3A6B;
+    --bleu-givré: #C2D4EC;
+    --poudre: #E8D5E0;
+    --ardoise: #7A9CC0;
+    --bleu-profond: #2C5F8A;
+    --ciel: #D6E8F0;
+    --vert-sage: #DDF0E4;
+    --terracotta: #F5E4D8;
+  }
+
+  html, body { height: 100%; }
+
+  body {
+    background: var(--ivoire);
+    color: var(--marine);
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 48px;
+    background: rgba(250,250,248,0.97);
+    backdrop-filter: blur(16px);
+    border-bottom: 0.5px solid rgba(27,58,107,0.1);
+    z-index: 100;
+  }
+
+  .nav-left { display: flex; align-items: center; gap: 24px; }
+
+  .logo {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: 24px;
+    font-weight: 400;
+    letter-spacing: 0.14em;
+    color: var(--marine);
+    text-transform: uppercase;
+    line-height: 1;
+    text-decoration: none;
+  }
+
+  .logo span { color: var(--ardoise); }
+
+  .nav-sep { width: 0.5px; height: 20px; background: rgba(27,58,107,0.15); }
+
+  .nav-page-title {
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--marine);
+    opacity: 0.45;
+  }
+
+  .nav-right { display: flex; align-items: center; gap: 14px; }
+
+  .nav-btn {
+    display: flex; align-items: center; gap: 7px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 0.5px solid rgba(27,58,107,0.15);
+    background: transparent;
+    font-family: 'Jost', sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    color: var(--marine);
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s;
+    opacity: 0.6;
+  }
+
+  .nav-btn:hover { background: var(--lin); opacity: 1; }
+  .nav-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+
+  .nav-avatar {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: var(--marine);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Serif Display', serif;
+    font-size: 13px; font-weight: 400;
+    color: var(--ivoire);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  /* ─── LAYOUT ─── */
+  .page {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+  }
+
+  /* ─── SIDEBAR CONVERSATIONS ─── */
+  .sidebar {
+    width: 260px;
+    flex-shrink: 0;
+    border-right: 0.5px solid rgba(27,58,107,0.08);
+    background: var(--ivoire);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .sidebar-header {
+    padding: 20px 16px 14px;
+    border-bottom: 0.5px solid rgba(27,58,107,0.06);
+  }
+
+  .sidebar-header-title {
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--marine);
+    opacity: 0.35;
+    margin-bottom: 10px;
+  }
+
+  .btn-new-chat {
+    width: 100%;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: var(--marine);
+    color: var(--ivoire);
+    border: none;
+    border-radius: 8px;
+    font-family: 'Jost', sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .btn-new-chat:hover { background: var(--bleu-profond); }
+  .btn-new-chat svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; }
+
+  .conv-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 8px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--lin) transparent;
+  }
+
+  .conv-list::-webkit-scrollbar { width: 3px; }
+  .conv-list::-webkit-scrollbar-thumb { background: var(--lin); border-radius: 2px; }
+
+  .conv-section-label {
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--marine);
+    opacity: 0.3;
+    padding: 10px 8px 5px;
+  }
+
+  .conv-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s;
+    margin-bottom: 1px;
+  }
+
+  .conv-item:hover { background: var(--lin); }
+  .conv-item.active { background: var(--ciel); }
+
+  .conv-icon {
+    width: 28px; height: 28px;
+    border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 14px;
+  }
+
+  .conv-info { flex: 1; min-width: 0; }
+
+  .conv-title {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--marine);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 2px;
+  }
+
+  .conv-meta {
+    font-size: 10px;
+    color: var(--marine);
+    opacity: 0.35;
+  }
+
+  /* ─── ZONE PRINCIPALE ─── */
+  .chat-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--ivoire);
+  }
+
+  /* ─── MESSAGES ─── */
+  .messages-wrap {
+    flex: 1;
+    overflow-y: auto;
+    padding: 32px 0;
+    scrollbar-width: thin;
+    scrollbar-color: var(--lin) transparent;
+  }
+
+  .messages-wrap::-webkit-scrollbar { width: 3px; }
+  .messages-wrap::-webkit-scrollbar-thumb { background: var(--lin); border-radius: 2px; }
+
+  .messages-inner {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* Message utilisateur */
+  .msg {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 24px;
+    animation: msgIn 0.3s ease forwards;
+  }
+
+  @keyframes msgIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  .msg.user { flex-direction: row-reverse; }
+
+  .msg-avatar {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Serif Display', serif;
+    font-size: 13px;
+    margin-top: 2px;
+  }
+
+  .msg.user .msg-avatar { background: var(--marine); color: var(--ivoire); }
+
+  .msg.ai .msg-avatar {
+    background: linear-gradient(135deg, var(--bleu-profond), var(--ardoise));
+    color: var(--ivoire);
+    font-size: 16px;
+  }
+
+  .msg-body { flex: 1; max-width: 580px; }
+
+  .msg.user .msg-body { display: flex; flex-direction: column; align-items: flex-end; }
+
+  .msg-name {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--marine);
+    opacity: 0.4;
+    margin-bottom: 6px;
+  }
+
+  .msg-bubble {
+    padding: 14px 18px;
+    border-radius: 14px;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--marine);
+  }
+
+  .msg.user .msg-bubble {
+    background: var(--marine);
+    color: var(--ivoire);
+    border-radius: 14px 14px 4px 14px;
+  }
+
+  .msg.ai .msg-bubble {
+    background: var(--lin);
+    border-radius: 14px 14px 14px 4px;
+  }
+
+  .msg-bubble strong { font-weight: 500; }
+
+  .msg-bubble ul { padding-left: 18px; margin: 8px 0; }
+  .msg-bubble li { margin-bottom: 4px; }
+
+  .msg-time {
+    font-size: 10px;
+    color: var(--marine);
+    opacity: 0.3;
+    margin-top: 5px;
+    letter-spacing: 0.04em;
+  }
+
+  /* Chips suggestions */
+  .suggestion-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .chip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border-radius: 20px;
+    border: 0.5px solid rgba(27,58,107,0.18);
+    background: var(--ivoire);
+    font-family: 'Jost', sans-serif;
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--marine);
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .chip:hover { background: var(--ciel); border-color: var(--ardoise); }
+  .chip svg { width: 13px; height: 13px; stroke: var(--ardoise); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* Typing indicator */
+  .typing-indicator {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 24px;
+    align-items: flex-start;
+  }
+
+  .typing-avatar {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--bleu-profond), var(--ardoise));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .typing-bubble {
+    background: var(--lin);
+    border-radius: 14px 14px 14px 4px;
+    padding: 14px 18px;
+    display: flex;
+    gap: 5px;
+    align-items: center;
+  }
+
+  .typing-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--ardoise);
+    animation: bounce 1.2s infinite ease-in-out;
+    opacity: 0.6;
+  }
+
+  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes bounce { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-6px); } }
+
+  /* ─── ÉCRAN D'ACCUEIL ─── */
+  .welcome-screen {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px;
+    text-align: center;
+  }
+
+  .welcome-orb {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--bleu-profond), var(--ardoise));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px;
+    margin-bottom: 24px;
+    box-shadow: 0 8px 32px rgba(44,95,138,0.2);
+  }
+
+  .welcome-title {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: 36px;
+    font-weight: 400;
+    color: var(--marine);
+    margin-bottom: 10px;
+    line-height: 1.1;
+  }
+
+  .welcome-sub {
+    font-size: 14px;
+    color: var(--marine);
+    opacity: 0.5;
+    max-width: 420px;
+    line-height: 1.7;
+    margin-bottom: 36px;
+  }
+
+  .welcome-chips {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    max-width: 500px;
+    width: 100%;
+    margin-bottom: 12px;
+  }
+
+  .welcome-chip {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+    border-radius: 12px;
+    border: 0.5px solid rgba(27,58,107,0.12);
+    background: var(--ivoire);
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
+    font-family: 'Jost', sans-serif;
+  }
+
+  .welcome-chip:hover { background: var(--ciel); border-color: var(--ardoise); transform: translateY(-2px); }
+
+  .welcome-chip-icon {
+    width: 36px; height: 36px;
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 18px;
+  }
+
+  .welcome-chip-text { flex: 1; }
+
+  .welcome-chip-title {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--marine);
+    margin-bottom: 3px;
+  }
+
+  .welcome-chip-desc {
+    font-size: 11px;
+    color: var(--marine);
+    opacity: 0.45;
+    line-height: 1.5;
+  }
+
+  /* ─── ZONE DE SAISIE ─── */
+  .input-area {
+    flex-shrink: 0;
+    padding: 16px 24px 20px;
+    border-top: 0.5px solid rgba(27,58,107,0.07);
+    background: var(--ivoire);
+  }
+
+  .input-inner {
+    max-width: 720px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .input-box {
+    width: 100%;
+    min-height: 52px;
+    max-height: 140px;
+    padding: 14px 52px 14px 18px;
+    background: var(--lin);
+    border: 0.5px solid rgba(27,58,107,0.12);
+    border-radius: 14px;
+    font-family: 'Jost', sans-serif;
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--marine);
+    outline: none;
+    resize: none;
+    overflow-y: auto;
+    line-height: 1.6;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .input-box::placeholder { color: var(--marine); opacity: 0.35; }
+
+  .input-box:focus {
+    border-color: var(--ardoise);
+    box-shadow: 0 0 0 3px rgba(122,156,192,0.1);
+    background: var(--ivoire);
+  }
+
+  .send-btn {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    width: 34px; height: 34px;
+    border-radius: 10px;
+    background: var(--marine);
+    border: none;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s, transform 0.15s;
+  }
+
+  .send-btn:hover { background: var(--bleu-profond); transform: translateY(-1px); }
+  .send-btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+  .send-btn svg { width: 16px; height: 16px; stroke: var(--ivoire); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  .input-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 8px;
+    padding: 0 4px;
+  }
+
+  .input-hint {
+    font-size: 10px;
+    color: var(--marine);
+    opacity: 0.3;
+    letter-spacing: 0.04em;
+  }
+
+  .input-actions { display: flex; gap: 6px; }
+
+  .input-action-btn {
+    display: flex; align-items: center; gap: 5px;
+    padding: 5px 10px;
+    border-radius: 6px;
+    border: 0.5px solid rgba(27,58,107,0.12);
+    background: transparent;
+    font-family: 'Jost', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    color: var(--marine);
+    opacity: 0.5;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .input-action-btn:hover { background: var(--lin); opacity: 1; }
+  .input-action-btn svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* Carte vêtement dans message */
+  .clothing-card {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: var(--ivoire);
+    border: 0.5px solid rgba(27,58,107,0.12);
+    border-radius: 10px;
+    margin-top: 8px;
+    margin-right: 6px;
+  }
+
+  .clothing-card-icon {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .clothing-card-info { line-height: 1.4; }
+  .clothing-card-name { font-size: 12px; font-weight: 400; color: var(--marine); }
+  .clothing-card-meta { font-size: 10px; color: var(--marine); opacity: 0.45; }
+
+  /* Erreur */
+  .error-msg {
+    background: #FCEBEB;
+    border: 0.5px solid #F7C1C1;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: #A32D2D;
+    margin-top: 8px;
+  }
+</style>
+<script src="sw-data.js"></script>
+</head>
+<body>
+
+<!-- ─── NAV ─── -->
+<nav>
+  <div class="nav-left">
+    <a href="page_apres_connection.html" class="logo">Smart<span>Wear</span></a>
+    <div class="nav-sep"></div>
+    <span class="nav-page-title">Assistant IA</span>
+  </div>
+  <div class="nav-right">
+    <a href="page_apres_connection.html" class="nav-btn">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Accueil
+    </a>
+    <a href="page_gestion_compte.html" class="nav-avatar" id="nav-avatar">?</a>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- ─── SIDEBAR ─── -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-header-title">Conversations</div>
+      <button class="btn-new-chat" onclick="newConversation()">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Nouvelle conversation
+      </button>
+    </div>
+    <div class="conv-list" id="conv-list">
+      <div style="text-align:center;padding:32px 16px;font-size:12px;color:var(--marine);opacity:0.35;line-height:1.8;">
+        Aucune conversation.<br>Commencez en posant une question.
+      </div>
+    </div>
+  </aside>
+
+  <!-- ─── CHAT PRINCIPAL ─── -->
+  <div class="chat-main">
+
+    <!-- Écran d'accueil -->
+    <div class="welcome-screen" id="welcome-screen">
+      <div class="welcome-orb"><svg viewBox="0 0 24 24" style="width:32px;height:32px;stroke:var(--ivoire);fill:none;stroke-width:1.2;stroke-linecap:round;stroke-linejoin:round;"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg></div>
+      <h1 class="welcome-title" id="welcome-title">Bonjour,<br>comment puis-je vous aider ?</h1>
+      <p class="welcome-sub">Je suis votre assistant style personnel. Posez-moi vos questions sur votre garde-robe, les tendances ou les pièces manquantes.</p>
+
+      <div class="welcome-chips">
+        <div class="welcome-chip" onclick="sendSuggestion('Quelles pièces me manquent pour compléter ma garde-robe ?')">
+          <div class="welcome-chip-icon" style="background:var(--terracotta);"><svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:#7A3820;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+          <div class="welcome-chip-text">
+            <div class="welcome-chip-title">Pièces manquantes</div>
+            <div class="welcome-chip-desc">Analysez les lacunes de votre dressing</div>
+          </div>
+        </div>
+        <div class="welcome-chip" onclick="sendSuggestion('Donne-moi des conseils de style personnalisés pour mon profil')">
+          <div class="welcome-chip-icon" style="background:var(--ciel);"><svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:#2C5F8A;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;"><line x1="9" y1="18" x2="15" y2="18"/><line x1="10" y1="22" x2="14" y2="22"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg></div>
+          <div class="welcome-chip-text">
+            <div class="welcome-chip-title">Conseils style</div>
+            <div class="welcome-chip-desc">Conseils adaptés à votre morphologie</div>
+          </div>
+        </div>
+        <div class="welcome-chip" onclick="sendSuggestion('Recherche dans ma garde-robe un vêtement adapté pour une soirée élégante')">
+          <div class="welcome-chip-icon" style="background:var(--vert-sage);"><svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:#085041;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;"><path d="M9 3 L5 9 L8 10 L8 21 L16 21 L16 10 L19 9 L15 3 Q12 6 9 3Z"/></svg></div>
+          <div class="welcome-chip-text">
+            <div class="welcome-chip-title">Chercher une tenue</div>
+            <div class="welcome-chip-desc">Trouvez le vêtement idéal pour l'occasion</div>
+          </div>
+        </div>
+        <div class="welcome-chip" onclick="sendSuggestion('Quelles tendances de mode correspondent à mon style ?')">
+          <div class="welcome-chip-icon" style="background:var(--poudre);"><svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:#6B2045;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg></div>
+          <div class="welcome-chip-text">
+            <div class="welcome-chip-title">Tendances du moment</div>
+            <div class="welcome-chip-desc">Découvrez ce qui est en vogue</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Zone messages -->
+    <div class="messages-wrap" id="messages-wrap" style="display:none;">
+      <div class="messages-inner" id="messages-inner"></div>
+    </div>
+
+    <!-- Zone de saisie -->
+    <div class="input-area">
+      <div class="input-inner">
+        <textarea
+          class="input-box"
+          id="input-box"
+          placeholder="Demandez conseil à votre assistant style…"
+          rows="1"
+          onkeydown="handleKey(event)"
+          oninput="autoResize(this)"
+        ></textarea>
+        <button class="send-btn" id="send-btn" onclick="sendMessage()" disabled>
+          <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+      <div class="input-inner">
+        <div class="input-footer">
+          <span class="input-hint">Entrée pour envoyer · Maj+Entrée pour une nouvelle ligne</span>
+          <div class="input-actions">
+            <button class="input-action-btn" onclick="sendSuggestion('Quelles pièces me manquent ?')">
+              <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              Pièces manquantes
+            </button>
+            <button class="input-action-btn" onclick="sendSuggestion('Conseils style pour mon profil')">
+              <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              Conseils style
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // ── Contexte utilisateur (chargé dynamiquement) ──
+  let userContext = { name: '…', prenom: '…', initiales: '?', wardrobe: [], plan: 'gratuit' };
+  let SYSTEM_PROMPT = '';
+
+  function buildSystemPrompt() {
+    const wardrobeStr = userContext.wardrobe.length > 0
+      ? userContext.wardrobe.map(w => w.name + ' (' + w.type + ')').join(', ')
+      : 'Garde-robe vide — encourager l\'utilisateur à ajouter ses vêtements';
+    return `Tu es l'assistant style personnel de Smart Wear, une application de dressing intelligent. Tu t'appelles "Stylist IA" et tu parles français.
+
+Ton rôle est d'aider ${userContext.prenom} avec :
+1. Recherche dans la garde-robe : retrouver des vêtements adaptés à une occasion
+2. Conseils de style personnalisés : recommandations basées sur son profil
+3. Pièces manquantes : identifier ce qui manque pour compléter la garde-robe
+
+Informations sur l'utilisateur :
+- Prénom : ${userContext.prenom}
+- Garde-robe actuelle : ${wardrobeStr}
+- Plan : ${userContext.plan}
+
+Règles de comportement :
+- Réponds de façon concise, élégante et personnalisée
+- Utilise le prénom naturellement
+- Mets en avant des vêtements de la garde-robe réelle quand c'est pertinent
+- Ne jamais inventer des vêtements que l'utilisateur ne possède pas
+- Sois enthousiaste mais pas excessif
+- Utilise des listes quand c'est clair, du texte fluide sinon`;
+  }
+
+  // ── Historique de conversation ──
+  let conversationHistory = [];
+  let currentConvId = null;
+  let isTyping = false;
+
+  // ── Persistance localStorage ──
+  function storageKey() { return 'sw_convs_' + (userContext.name || 'user'); }
+
+  function loadConversations() {
+    try { return JSON.parse(localStorage.getItem(storageKey())) || []; }
+    catch { return []; }
+  }
+
+  function saveConversations(convs) {
+    localStorage.setItem(storageKey(), JSON.stringify(convs));
+  }
+
+  function saveCurrentConversation() {
+    if (conversationHistory.length === 0) return;
+    const convs = loadConversations();
+    const firstMsg = conversationHistory.find(m => m.role === 'user');
+    const title = firstMsg ? (firstMsg.content.length > 40 ? firstMsg.content.substring(0, 40) + '…' : firstMsg.content) : 'Conversation';
+
+    if (currentConvId) {
+      const idx = convs.findIndex(c => c.id === currentConvId);
+      if (idx !== -1) { convs[idx].messages = [...conversationHistory]; convs[idx].title = title; }
+      else { convs.unshift({ id: currentConvId, title, date: new Date().toISOString(), messages: [...conversationHistory] }); }
+    } else {
+      currentConvId = Date.now().toString();
+      convs.unshift({ id: currentConvId, title, date: new Date().toISOString(), messages: [...conversationHistory] });
+    }
+    saveConversations(convs);
+    renderSidebar();
+  }
+
+  function renderSidebar() {
+    const list = document.getElementById('conv-list');
+    const convs = loadConversations();
+
+    if (convs.length === 0) {
+      list.innerHTML = '<div style="text-align:center;padding:32px 16px;font-size:12px;color:var(--marine);opacity:0.35;line-height:1.8;">Aucune conversation.<br>Commencez en posant une question.</div>';
+      return;
+    }
+
+    const now = new Date();
+    const today = now.toDateString();
+    const yesterday = new Date(now - 86400000).toDateString();
+
+    const groups = { 'Aujourd\'hui': [], 'Hier': [], 'Cette semaine': [], 'Plus ancien': [] };
+    convs.forEach(c => {
+      const d = new Date(c.date);
+      const ds = d.toDateString();
+      const diffDays = Math.floor((now - d) / 86400000);
+      if (ds === today) groups['Aujourd\'hui'].push(c);
+      else if (ds === yesterday) groups['Hier'].push(c);
+      else if (diffDays < 7) groups['Cette semaine'].push(c);
+      else groups['Plus ancien'].push(c);
+    });
+
+    let html = '';
+    Object.entries(groups).forEach(([label, items]) => {
+      if (items.length === 0) return;
+      html += '<div class="conv-section-label">' + label + '</div>';
+      items.forEach(c => {
+        const isActive = c.id === currentConvId;
+        html += '<div class="conv-item' + (isActive ? ' active' : '') + '" onclick="loadConvById(\'' + c.id + '\')">'
+          + '<div class="conv-icon" style="background:var(--ciel);"><svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--ardoise);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>'
+          + '<div class="conv-info">'
+          + '<div class="conv-title">' + c.title + '</div>'
+          + '<div class="conv-meta">' + c.messages.length + ' messages</div>'
+          + '</div>'
+          + '<button onclick="event.stopPropagation();deleteConv(\'' + c.id + '\')" style="background:none;border:none;cursor:pointer;opacity:0.3;padding:4px;flex-shrink:0;" title="Supprimer">'
+          + '<svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:var(--marine);fill:none;stroke-width:1.5;stroke-linecap:round;"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>'
+          + '</button>'
+          + '</div>';
+      });
+    });
+    list.innerHTML = html;
+  }
+
+  function loadConvById(id) {
+    const convs = loadConversations();
+    const conv = convs.find(c => c.id === id);
+    if (!conv) return;
+
+    currentConvId = id;
+    conversationHistory = [...conv.messages];
+
+    // Afficher les messages
+    document.getElementById('welcome-screen').style.display = 'none';
+    document.getElementById('messages-wrap').style.display = 'block';
+    document.getElementById('messages-inner').innerHTML = '';
+    conv.messages.forEach(m => appendMessage(m.role === 'assistant' ? 'ai' : 'user', m.content));
+
+    renderSidebar();
+  }
+
+  function deleteConv(id) {
+    let convs = loadConversations();
+    convs = convs.filter(c => c.id !== id);
+    saveConversations(convs);
+    if (currentConvId === id) { currentConvId = null; newConversation(); }
+    else renderSidebar();
+  }
+
+  // ── Fonctions principales ──
+  function handleKey(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  }
+
+  function autoResize(el) {
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 140) + 'px';
+    document.getElementById('send-btn').disabled = el.value.trim() === '';
+  }
+
+  function sendSuggestion(text) {
+    document.getElementById('input-box').value = text;
+    autoResize(document.getElementById('input-box'));
+    sendMessage();
+  }
+
+  function showChat() {
+    document.getElementById('welcome-screen').style.display = 'none';
+    document.getElementById('messages-wrap').style.display = 'block';
+  }
+
+  function scrollToBottom() {
+    const wrap = document.getElementById('messages-wrap');
+    wrap.scrollTop = wrap.scrollHeight;
+  }
+
+  function getTime() {
+    return new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  function appendMessage(role, content) {
+    showChat();
+    const inner = document.getElementById('messages-inner');
+    const isUser = role === 'user';
+    const div = document.createElement('div');
+    div.className = 'msg ' + (isUser ? 'user' : 'ai');
+
+    const formattedContent = formatContent(content);
+
+    div.innerHTML = '<div class="msg-avatar">' + (isUser ? userContext.initiales : '<svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:var(--ivoire);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;"><path d=\"M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z\"/></svg>') + '</div>'
+      + '<div class="msg-body">'
+      + '<div class="msg-name">' + (isUser ? userContext.prenom : 'Stylist IA') + '</div>'
+      + '<div class="msg-bubble">' + formattedContent + '</div>'
+      + '<div class="msg-time">' + getTime() + '</div>'
+      + '</div>';
+
+    inner.appendChild(div);
+    scrollToBottom();
+  }
+
+  function formatContent(text) {
+    // Markdown-like formatting
+    text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
+    // Listes
+    text = text.replace(/^[-•] (.+)$/gm, '<li>$1</li>');
+    text = text.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
+    // Sauts de ligne
+    text = text.replace(/\n\n/g, '</p><p style="margin-top:8px;">');
+    text = text.replace(/\n/g, '<br>');
+    return text;
+  }
+
+  function showTyping() {
+    const inner = document.getElementById('messages-inner');
+    const div = document.createElement('div');
+    div.className = 'typing-indicator';
+    div.id = 'typing-indicator';
+    div.innerHTML = '<div class="typing-avatar"><svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--ivoire);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg></div>'
+      + '<div class="typing-bubble">'
+      + '<div class="typing-dot"></div>'
+      + '<div class="typing-dot"></div>'
+      + '<div class="typing-dot"></div>'
+      + '</div>';
+    inner.appendChild(div);
+    scrollToBottom();
+  }
+
+  function hideTyping() {
+    const el = document.getElementById('typing-indicator');
+    if (el) el.remove();
+  }
+
+  async function sendMessage() {
+    const input = document.getElementById('input-box');
+    const text  = input.value.trim();
+    if (!text || isTyping) return;
+
+    // Reset input
+    input.value = '';
+    input.style.height = 'auto';
+    document.getElementById('send-btn').disabled = true;
+
+    // Afficher le message utilisateur
+    appendMessage('user', text);
+
+    // Ajouter à l'historique
+    conversationHistory.push({ role: 'user', content: text });
+
+    // Afficher le typing indicator
+    isTyping = true;
+    showTyping();
+
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + SW.getToken()
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-6',
+          max_tokens: 1000,
+          system: buildSystemPrompt(),
+          messages: conversationHistory
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || data.error) {
+        const msg = (data.error && (data.error.message || data.error)) || 'Erreur ' + response.status;
+        throw new Error(msg);
+      }
+
+      const aiText = data.content.find(b => b.type === 'text')?.text || '';
+
+      hideTyping();
+      appendMessage('ai', aiText);
+      conversationHistory.push({ role: 'assistant', content: aiText });
+
+      // Sauvegarder la conversation
+      saveCurrentConversation();
+
+      // Ajouter chips de suggestions après la réponse IA
+      addSuggestionChips();
+
+    } catch (err) {
+      hideTyping();
+      const inner = document.getElementById('messages-inner');
+      const errDiv = document.createElement('div');
+      errDiv.className = 'error-msg';
+      errDiv.textContent = 'Erreur : ' + err.message;
+      inner.appendChild(errDiv);
+      scrollToBottom();
+      console.error('Chat error:', err);
+    }
+
+    isTyping = false;
+  }
+
+  function addSuggestionChips() {
+    const inner = document.getElementById('messages-inner');
+    const last  = inner.lastElementChild;
+    if (!last) return;
+
+    const chips = document.createElement('div');
+    chips.className = 'suggestion-chips';
+
+    const suggestions = [
+      { svg: '<svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:var(--ardoise);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;"><circle cx=\"11\" cy=\"11\" r=\"8\"/><line x1=\"21\" y1=\"21\" x2=\"16.65\" y2=\"16.65\"/></svg>', text: 'Quelles pièces me manquent ?' },
+      { svg: '<svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:var(--ardoise);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;"><path d=\"M9 3 L5 9 L8 10 L8 21 L16 21 L16 10 L19 9 L15 3 Q12 6 9 3Z\"/></svg>', text: 'Propose-moi une tenue pour demain' },
+      { svg: '<svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:var(--ardoise);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;"><line x1=\"9\" y1=\"18\" x2=\"15\" y2=\"18\"/><line x1=\"10\" y1=\"22\" x2=\"14\" y2=\"22\"/><path d=\"M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14\"/></svg>', text: 'Conseils pour mon style' },
+    ];
+
+    suggestions.forEach(s => {
+      const chip = document.createElement('button');
+      chip.className = 'chip';
+      chip.innerHTML = s.svg + s.text;
+      chip.onclick = () => { chips.remove(); sendSuggestion(s.text); };
+      chips.appendChild(chip);
+    });
+
+    inner.appendChild(chips);
+    scrollToBottom();
+  }
+
+  function newConversation() {
+    currentConvId = null;
+    conversationHistory = [];
+    document.getElementById('messages-inner').innerHTML = '';
+    document.getElementById('welcome-screen').style.display = 'flex';
+    document.getElementById('messages-wrap').style.display = 'none';
+    document.getElementById('input-box').value = '';
+    document.getElementById('send-btn').disabled = true;
+    renderSidebar();
+  }
+
+  // Activer/désactiver le bouton envoyer selon le contenu
+  document.getElementById('input-box').addEventListener('input', function() {
+    document.getElementById('send-btn').disabled = this.value.trim() === '';
+  });
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    const user = await SW.requireAuth();
+    if (!user) return;
+
+    const initiales = (user.prenom[0] + (user.nom ? user.nom[0] : '')).toUpperCase();
+
+    // Avatar nav
+    const avatar = document.getElementById('nav-avatar');
+    if (avatar) avatar.textContent = initiales;
+
+    // Titre d'accueil
+    const title = document.getElementById('welcome-title');
+    if (title) title.innerHTML = 'Bonjour ' + user.prenom + ',<br>comment puis-je vous aider ?';
+
+    // Charger les vraies données pour le contexte IA
+    userContext.prenom   = user.prenom;
+    userContext.name     = user.prenom + ' ' + (user.nom || '');
+    userContext.initiales = initiales;
+    userContext.plan   = 'gratuit';
+
+    try {
+      const wardrobe = await SW.getWardrobe();
+      const cats = ['manteau','haut','bas','ensemble','chaussures','accessoires'];
+      const labels = { manteau:'Manteau', haut:'Haut', bas:'Bas', ensemble:'Ensemble', chaussures:'Chaussures', accessoires:'Accessoire' };
+      userContext.wardrobe = [];
+      cats.forEach(cat => {
+        (wardrobe[cat] || []).forEach(item => {
+          userContext.wardrobe.push({ name: item.nom || item.name || 'Article', type: labels[cat] });
+        });
+      });
+    } catch {}
+
+    // Afficher les conversations sauvegardées
+    renderSidebar();
+  });
+</script>
+
+</body>
+</html>
