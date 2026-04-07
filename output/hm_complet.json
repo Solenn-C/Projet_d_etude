@@ -1,0 +1,3135 @@
+[
+    {
+        "Name": "TOP CÔTELÉ À ENCOLURE EN V",
+        "price_value": 9.99,
+        "Currency": "€",
+        "Description": "Top en jersey doux et côtelé. Modèle ajusté avec encolure en V plongeante bordée de dentelle et manches courtes.",
+        "Genre": "Adultes",
+        "Sexe": "Femme",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "Top",
+        "Sizes": [
+            "XS",
+            "S",
+            "M",
+            "L",
+            "XL"
+        ],
+        "Color": [
+            "Blanc",
+            "Noir",
+            "Lilas"
+        ],
+        "Rating": null,
+        "Image": "https://image.hm.com/assets/hm/3a/97/3a9779825d579fc59e861cc62fac658e86c5f072.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1330326002.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "CHEMISE VOLANTÉE EN DENIM",
+        "price_value": 29.99,
+        "Currency": "€",
+        "Description": "Chemise en denim de coton souple. Modèle avec col sans rabat et bande de boutonnage bordés d'un volant. Manches longues terminées par fente et poignet boutonnés. Empiècement souligné d'un pli rond dans le dos. Base légèrement arrondie.",
+        "Genre": "Adultes",
+        "Sexe": "Femme",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "Chemise",
+        "Sizes": [
+            "XS",
+            "S",
+            "M",
+            "L"
+        ],
+        "Color": [
+            "Bleu denim clair"
+        ],
+        "Rating": null,
+        "Image": "https://image.hm.com/assets/hm/9f/ec/9fec9a9c02d89ecd33042b71882b123e76bdc8cc.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1331084001.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "GILET EN MAILLE POINTELLE",
+        "price_value": 19.99,
+        "Currency": "€",
+        "Description": "Gilet court en douce maille pointelle. Modèle avec encolure ronde et boutonnage devant. Courtes manches bouffantes. Finition côtelée à l'encolure, en bas de manche et à la base.",
+        "Genre": "Adultes",
+        "Sexe": "Femme",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "Pull",
+        "Sizes": [
+            "XXS",
+            "XS",
+            "S",
+            "M",
+            "L",
+            "XL",
+            "XXL"
+        ],
+        "Color": [
+            "Beige clair",
+            "Violet clair"
+        ],
+        "Rating": null,
+        "Image": "https://image.hm.com/assets/hm/9a/f4/9af4ee6e91fdf6fb8491eea33f10dcec37610e15.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1332154001.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "BOUCLES D'OREILLES FLEURS",
+        "price_value": 4.99,
+        "Currency": "€",
+        "Description": "Boucles d'oreilles fleurs en métal brillant.",
+        "Genre": "Adultes",
+        "Sexe": "Femme",
+        "Type": "Accessoires",
+        "Categorie": "Accessoires",
+        "Style": "Bijoux",
+        "Sizes": [],
+        "Color": [
+            "Doré"
+        ],
+        "Rating": null,
+        "Image": "https://image.hm.com/assets/hm/d2/a0/d2a07815d900099848ec87e0e457072123323df2.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1342801001.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "TOP VOLANTÉ EN MAILLE CÔTELÉE",
+        "price_value": 24.99,
+        "Currency": "€",
+        "Description": "Top en maille finement côtelée. Modèle avec encolure dégagée en maille pointelle, agrémentée de petits liens à nouer et d'une fente goutte d'eau devant, et manches courtes. Finition volantée en bas de manche et à la base.",
+        "Genre": "Adultes",
+        "Sexe": "Femme",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "Top",
+        "Sizes": [
+            "XXS",
+            "XS",
+            "S",
+            "M",
+            "L",
+            "XL",
+            "XXL"
+        ],
+        "Color": [
+            "Beige clair",
+            "Marron foncé"
+        ],
+        "Rating": null,
+        "Image": "https://image.hm.com/assets/hm/bd/57/bd5748f75d8c6daa124f59b5c486d9331c7ef4ef.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1331318001.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "ROBE EN POPELINE AVEC JUPE ÉVASÉE",
+        "price_value": 29.99,
+        "Currency": "€",
+        "Description": "Robe courte en popeline de coton craquante avec imprimé all-over. Modèle avec encolure carrée bordée d'un élastique et ouverture en V agrémentée d'un petit cordon de serrage devant. Courtes manches bouffantes terminées par élastique. Partie ajustée à la taille avec fronces au-dessus et au-dessous, coutures en forme devant et smocks dans le dos. Jupe évasée. Non doublée.",
+        "Genre": "Adultes",
+        "Sexe": "Femme",
+        "Type": "Vêtement",
+        "Categorie": "Haut/Bas",
+        "Style": "Robe",
+        "Sizes": [
+            "XXS",
+            "XS",
+            "S",
+            "M",
+            "L",
+            "XL",
+            "XXL"
+        ],
+        "Color": [
+            "Blanc/fleuri"
+        ],
+        "Rating": null,
+        "Image": "https://image.hm.com/assets/hm/5d/cf/5dcf154c7db74da5fe0fa4ebcacf8409c2d68bd7.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1329869001.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "ROBE TUNIQUE EN VISCOSE MÉLANGÉE",
+        "price_value": 29.99,
+        "Currency": "€",
+        "Description": "Robe tunique courte en tissu aérien de viscose et coton mélangés avec plis nervure et incrustations de dentelle devant. Modèle avec col volanté, ouverture en V et boutonnage devant. Courtes manches bouffantes. Coutures obliques froncées sur les hanches et bord volanté à la base. Jupe doublée.",
+        "Genre": "Adultes",
+        "Sexe": "Femme",
+        "Type": "Vêtement",
+        "Categorie": "Haut/Bas",
+        "Style": "Robe",
+        "Sizes": [
+            "XS",
+            "S",
+            "M",
+            "L"
+        ],
+        "Color": [
+            "Crème",
+            "Marron foncé"
+        ],
+        "Rating": null,
+        "Image": "https://image.hm.com/assets/hm/ab/ed/abedcb464280a856c756ce7f00d820c1a9106c4d.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1333211001.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "STRAIGHT HIGH JEANS",
+        "price_value": 29.99,
+        "Currency": "€",
+        "Description": "Jean en denim de coton rigide qui peut paraître ferme au départ, mais qui s'assouplit et se relâche avec l'usage. Coupe classique de la taille jusqu'aux hanches avec jambes droites et plutôt flottantes des cuisses jusqu'à l'ourlet. Modèle taille haute avec braguette zippée surmontée d'un bouton dissimulé. Poches italiennes et fausses poches raglan dans le dos. Plis marqués devant et dans le dos. Longueur classique, conçue pour tomber juste au-dessus du pied sans effet stacking ou presque. Un modèle classique qui accompagne aussi bien les hoodies que les blazers.",
+        "Genre": "Adultes",
+        "Sexe": "Femme",
+        "Type": "Vêtement",
+        "Categorie": "Bas",
+        "Style": "Jean",
+        "Sizes": [
+            "32",
+            "34",
+            "36",
+            "38",
+            "40",
+            "42",
+            "44",
+            "46",
+            "48",
+            "50"
+        ],
+        "Color": [
+            "Bleu denim",
+            "Blanc",
+            "Bleu denim clair"
+        ],
+        "Rating": null,
+        "Image": "https://image.hm.com/assets/hm/26/f7/26f7e9bf94c8e58f4a57d3df6493aedb28f180b6.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1325339003.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "VESTE EN COTON AVEC BRODERIE ANGLAISE",
+        "price_value": 49.99,
+        "Currency": "€",
+        "Description": "Veste courte en coton tissé avec broderie anglaise. Modèle oversize avec col droit et boutonnage devant. Coutures d'épaule décalées vers l'avant et agrémentées de fronces, et longues manches bouffantes terminées par poignet boutonné surmonté de fronces. Empiècement souligné de fronces dans le dos. Poche raglan de chaque côté. Doublure en coton.",
+        "Genre": "Adultes",
+        "Sexe": "Femme",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "Veste/Manteau",
+        "Sizes": [
+            "XS",
+            "S",
+            "M",
+            "L"
+        ],
+        "Color": [
+            "Rose clair"
+        ],
+        "Rating": null,
+        "Image": "https://image.hm.com/assets/hm/b8/3c/b83cb6e727ae03dbc19f58d13f1b9f3dc0071753.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1332844001.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "SHORT EN COTON AVEC BRODERIE ANGLAISE",
+        "price_value": 29.99,
+        "Currency": "€",
+        "Description": "Short en coton tissé avec broderie anglaise. Modèle taille haute avec ceinture prolongée agrémentée d'une boucle à anneaux en métal à la taille, pinces devant et braguette zippée. Poches italiennes et revers cousu en bas de jambe. Doublure en coton.",
+        "Genre": "Adultes",
+        "Sexe": "Femme",
+        "Type": "Vêtement",
+        "Categorie": "Bas",
+        "Style": "Short",
+        "Sizes": [
+            "34",
+            "36",
+            "38",
+            "40",
+            "42",
+            "44",
+            "46"
+        ],
+        "Color": [
+            "Rose pâle"
+        ],
+        "Rating": null,
+        "Image": "https://image.hm.com/assets/hm/10/54/1054f48a7cc6faa99bebb9e596f318b7a8b71de4.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1333345001.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "VESTE",
+        "price_value": 59.99,
+        "Currency": "€",
+        "Description": "Veste à col cheminée avec rabat coupe-vent pressionné et fermeture à glissière devant. Coutures d'épaule décalées vers l'avant et soulignées de fronces devant, emmanchures descendues et manches ballon volumineuses terminées par poignet muni d'un bouton-pression dissimulé. Empiècement dans le dos. Poches raglan devant et élastique smocké à la base. Plis dans le dos pour plus de volume. Doublée.",
+        "Genre": "Adultes",
+        "Sexe": "Femme",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "Veste/Manteau",
+        "Sizes": [
+            "XXS",
+            "XS",
+            "S",
+            "M",
+            "L",
+            "XL",
+            "XXL"
+        ],
+        "Color": [
+            "Marron",
+            "Bordeaux"
+        ],
+        "Rating": null,
+        "Image": "https://image.hm.com/assets/hm/79/4b/794b1e49e908aa6fe18f876b652840130e4d0701.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1332819001.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "FOULARD TRIANGULAIRE AVEC DENTELLE",
+        "price_value": 19.99,
+        "Currency": "€",
+        "Description": "Grand foulard triangulaire en satin au tombé fluide avec bord en dentelle sur deux côtés.",
+        "Genre": "Adultes",
+        "Sexe": "Femme",
+        "Type": "Autre",
+        "Categorie": "Accessoires",
+        "Style": "Autre",
+        "Sizes": [],
+        "Color": [
+            "Violet clair",
+            "Beige clair/rayé"
+        ],
+        "Rating": null,
+        "Image": "https://image.hm.com/assets/hm/05/a6/05a60f12eda1d01b00b5156fbb16550be968c03c.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1338609002.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "ROBE À DOS OUVERT AVEC DENTELLE",
+        "price_value": 79.99,
+        "Currency": "€",
+        "Description": "Robe de longueur cheville en coton tissé avec rubans de dentelle, broderies ton sur ton et incrustations de dentelle. Modèle à encolure carrée avec fines bretelles passant par des petites boucles et se nouant dans le dos. Petits liens horizontaux à nouer en haut du dos ouvert et fermeture par agrafe et zip dissimulés au-dessous. Couture froncée à la taille et jupe légèrement évasée. Non doublée.",
+        "Genre": "Adultes",
+        "Sexe": "Femme",
+        "Type": "Vêtement",
+        "Categorie": "Haut/Bas",
+        "Style": "Robe",
+        "Sizes": [
+            "XS",
+            "S",
+            "M",
+            "L"
+        ],
+        "Color": [
+            "Crème"
+        ],
+        "Rating": null,
+        "Image": "https://image.hm.com/assets/hm/3a/ff/3aff444e3372ffa06c91af3909082b8ac8765b0f.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1331141001.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "ROBE AVEC DÉTAIL À NOUER",
+        "price_value": 69.99,
+        "Currency": "€",
+        "Description": "Robe de longueur mi-mollet en matière tissée. Modèle à encolure droite avec larges bretelles croisées, passant par des petites boucles et se nouant dans le dos. Corsage ajusté avec coutures en forme devant et fermeture par agrafe et zip dissimulés dans le dos. Couture incurvée soulignée de fronces sur les hanches et jupe légèrement évasée. Non doublée.",
+        "Genre": "Adultes",
+        "Sexe": "Femme",
+        "Type": "Vêtement",
+        "Categorie": "Haut/Bas",
+        "Style": "Robe",
+        "Sizes": [
+            "XXS",
+            "XS",
+            "S",
+            "M",
+            "L",
+            "XL",
+            "XXL"
+        ],
+        "Color": [
+            "Crème/fleuri",
+            "Bleu foncé/motif"
+        ],
+        "Rating": 5,
+        "Image": "https://image.hm.com/assets/hm/24/91/249183cc39ee9c96b4165d8cd0fd101180b5c200.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1329339003.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "WIDE HIGH WAIST JEANS",
+        "price_value": 29.99,
+        "Currency": "€",
+        "Description": "Jean 5 poches en denim de coton rigide qui peut paraître ferme au départ, mais qui s'assouplit et se relâche avec l'usage. Coupe classique de la taille jusqu'aux hanches avec jambes larges des cuisses jusqu'à l'ourlet. Modèle taille haute avec braguette zippée surmontée d'un bouton. Longueur classique, conçue pour tomber juste au-dessus du pied sans effet stacking ou presque.",
+        "Genre": "Adultes",
+        "Sexe": "Femme",
+        "Type": "Vêtement",
+        "Categorie": "Bas",
+        "Style": "Jean",
+        "Sizes": [
+            "32",
+            "34",
+            "36",
+            "38",
+            "40",
+            "42",
+            "44",
+            "46",
+            "48",
+            "50"
+        ],
+        "Color": [
+            "Noir délavé",
+            "Bleu denim clair",
+            "Noir",
+            "Gris foncé",
+            "Bleu denim",
+            "Bleu denim foncé",
+            "Bleu denim marine",
+            "Blanc",
+            "Gris denim"
+        ],
+        "Rating": 4.5,
+        "Image": "https://image.hm.com/assets/hm/87/74/8774fd9fa416e5e4b093ed1806eb00ca5ef0bc29.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1222670034.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "WIDE HIGH WAIST JEANS",
+        "price_value": 29.99,
+        "Currency": "€",
+        "Description": "Jean 5 poches en denim de coton rigide qui peut paraître ferme au départ, mais qui s'assouplit et se relâche avec l'usage. Coupe classique de la taille jusqu'aux hanches avec jambes larges des cuisses jusqu'à l'ourlet. Modèle taille haute avec braguette zippée surmontée d'un bouton. Longueur classique, conçue pour tomber juste au-dessus du pied sans effet stacking ou presque.",
+        "Genre": "Adultes",
+        "Sexe": "Femme",
+        "Type": "Vêtement",
+        "Categorie": "Bas",
+        "Style": "Jean",
+        "Sizes": [
+            "32",
+            "34",
+            "36",
+            "38",
+            "40",
+            "42",
+            "44",
+            "46",
+            "48",
+            "50"
+        ],
+        "Color": [
+            "Bleu denim",
+            "Bleu denim clair",
+            "Noir",
+            "Gris foncé",
+            "Bleu denim foncé",
+            "Noir délavé",
+            "Bleu denim marine",
+            "Blanc",
+            "Gris denim"
+        ],
+        "Rating": 4.5,
+        "Image": "https://image.hm.com/assets/hm/27/91/27914a19f9f23709c1f8637de880dbd165b0ef72.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1222670044.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "BODY À MANCHES COURTES EN MICROFIBRE",
+        "price_value": 9.99,
+        "Currency": "€",
+        "Description": "Body en microfibre douce. Modèle avec encolure ronde et manches courtes. Fond fermé par boutons-pression dissimulés. Dos échancré.",
+        "Genre": "Adultes",
+        "Sexe": "Femme",
+        "Type": "Autre",
+        "Categorie": "Accessoires",
+        "Style": "Autre",
+        "Sizes": [
+            "XXS",
+            "XS",
+            "S",
+            "M",
+            "L",
+            "XL",
+            "XXL"
+        ],
+        "Color": [
+            "Marron foncé",
+            "Noir",
+            "Rose ancien foncé",
+            "Taupe clair"
+        ],
+        "Rating": 5,
+        "Image": "https://image.hm.com/assets/hm/dc/c5/dcc5048562659d4453e93e4fffc881afbd46812f.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1306119002.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "WIDE HIGH WAIST JEANS",
+        "price_value": 29.99,
+        "Currency": "€",
+        "Description": "Jean 5 poches en denim de coton rigide qui peut paraître ferme au départ, mais qui s'assouplit et se relâche avec l'usage. Coupe classique de la taille jusqu'aux hanches avec jambes larges des cuisses jusqu'à l'ourlet. Modèle taille haute avec braguette zippée surmontée d'un bouton. Longueur classique, conçue pour tomber juste au-dessus du pied sans effet stacking ou presque.",
+        "Genre": "Adultes",
+        "Sexe": "Femme",
+        "Type": "Vêtement",
+        "Categorie": "Bas",
+        "Style": "Jean",
+        "Sizes": [
+            "32",
+            "34",
+            "36",
+            "38",
+            "40",
+            "42",
+            "44",
+            "46",
+            "48",
+            "50"
+        ],
+        "Color": [
+            "Bleu denim foncé",
+            "Bleu denim clair",
+            "Noir",
+            "Gris foncé",
+            "Bleu denim",
+            "Noir délavé",
+            "Bleu denim marine",
+            "Blanc",
+            "Gris denim"
+        ],
+        "Rating": 4.5,
+        "Image": "https://image.hm.com/assets/hm/61/e7/61e72b2755608b3fc3af867f6ff1349e0ac0a699.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1222670036.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "WIDE HIGH WAIST JEANS",
+        "price_value": 29.99,
+        "Currency": "€",
+        "Description": "Jean 5 poches en denim de coton rigide qui peut paraître ferme au départ, mais qui s'assouplit et se relâche avec l'usage. Coupe classique de la taille jusqu'aux hanches avec jambes larges des cuisses jusqu'à l'ourlet. Modèle taille haute avec braguette zippée surmontée d'un bouton. Longueur classique, conçue pour tomber juste au-dessus du pied sans effet stacking ou presque.",
+        "Genre": "Adultes",
+        "Sexe": "Femme",
+        "Type": "Vêtement",
+        "Categorie": "Bas",
+        "Style": "Jean",
+        "Sizes": [
+            "32",
+            "34",
+            "36",
+            "38",
+            "40",
+            "42",
+            "44",
+            "46",
+            "48",
+            "50"
+        ],
+        "Color": [
+            "Bleu denim marine",
+            "Bleu denim clair",
+            "Noir",
+            "Gris foncé",
+            "Bleu denim",
+            "Bleu denim foncé",
+            "Noir délavé",
+            "Blanc",
+            "Gris denim"
+        ],
+        "Rating": 4.5,
+        "Image": "https://image.hm.com/assets/hm/65/a1/65a1ac75012c0f78e85d969272750ab7060db531.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1222670035.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "TOP AVEC DÉTAIL TORSADÉ",
+        "price_value": 9.99,
+        "Currency": "€",
+        "Description": "Top ajusté en jersey. Modèle à encolure ronde avec emmanchures descendues et larges manches longues. Taille agrémentée d'un détail torsadé sur un côté.",
+        "Genre": "Adultes",
+        "Sexe": "Femme",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "Top",
+        "Sizes": [
+            "XS",
+            "S",
+            "M",
+            "L",
+            "XL"
+        ],
+        "Color": [
+            "Taupe foncé",
+            "Noir",
+            "Beige clair",
+            "Bleu"
+        ],
+        "Rating": 5,
+        "Image": "https://image.hm.com/assets/hm/f4/6b/f46b2a091b0b07914b69c73b5d5b8ecb88a382f8.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1322860004.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "VESTE EN TWILL",
+        "price_value": 29.99,
+        "Currency": "€",
+        "Description": "Veste courte en twill. Modèle à manches raglan avec col et boutonnage devant. Poche raglan de chaque côté et cordon de serrage à la base. Doublure à motif.",
+        "Genre": "Adultes",
+        "Sexe": "Femme",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "Veste/Manteau",
+        "Sizes": [
+            "XXS",
+            "XS",
+            "S",
+            "M",
+            "L",
+            "XL",
+            "XXL"
+        ],
+        "Color": [
+            "Marron foncé"
+        ],
+        "Rating": 5,
+        "Image": "https://image.hm.com/assets/hm/9d/50/9d50d453b7b9e3525b93854eacfaf6ce16f1a27d.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1315959001.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "WIDE HIGH WAIST ANKLE JEANS",
+        "price_value": 29.99,
+        "Currency": "€",
+        "Description": "Jeans in cotton denim with a slight stretch for good comfort. Wide leg with a slim fit from the waist to the hip and a wide cut from the thigh to the hem. High waist with a zip fly and button. Patch front pockets with a button, and creases down the front and back. Ankle length, designed to hit at the ankle bone.",
+        "Genre": "Adultes",
+        "Sexe": "Femme",
+        "Type": "Vêtement",
+        "Categorie": "Bas",
+        "Style": "Jean",
+        "Sizes": [
+            "32",
+            "34",
+            "36",
+            "38",
+            "40",
+            "42",
+            "44",
+            "46",
+            "48",
+            "50"
+        ],
+        "Color": [
+            "Bleu denim",
+            "Blanc",
+            "Bleu denim foncé",
+            "Bleu denim marine",
+            "Rouge vif",
+            "Bleu denim clair"
+        ],
+        "Rating": 5,
+        "Image": "https://image.hm.com/assets/hm/b0/13/b0132995cb9925afddd6464031e14e388af0fc6c.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1324699005.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "T-SHIRT AJUSTÉ",
+        "price_value": 7.99,
+        "Currency": "€",
+        "Description": "T-shirt en jersey de coton doux. Modèle ajusté avec petite bande d'encolure et base droite.",
+        "Genre": "Adultes",
+        "Sexe": "Femme",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "T-shirt",
+        "Sizes": [
+            "XXS",
+            "XS",
+            "S",
+            "M",
+            "L",
+            "XL",
+            "XXL"
+        ],
+        "Color": [
+            "Blanc",
+            "Noir/rayé",
+            "Bleu clair",
+            "Blanc/rayé"
+        ],
+        "Rating": 4.5,
+        "Image": "https://image.hm.com/assets/hm/db/58/db587573b1eaf6ecc8686380962eadf7a50e811e.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1272268001.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "WIDE HIGH JEANS",
+        "price_value": 34.99,
+        "Currency": "€",
+        "Description": "Jean en denim de coton enrichi d'une légère touche de stretch pour plus de confort. Coupe classique de la taille jusqu'aux hanches avec jambes larges des cuisses jusqu'à l'ourlet. Modèle taille haute avec braguette zippée surmontée d'un bouton. Poches plaquées et plis marqués devant et dans le dos. Jambes de longueur classique, conçues pour tomber juste au-dessus du pied sans effet stacking ou presque. Une pièce naturellement flatteuse, quelle que soit la tenue.",
+        "Genre": "Adultes",
+        "Sexe": "Femme",
+        "Type": "Vêtement",
+        "Categorie": "Bas",
+        "Style": "Jean",
+        "Sizes": [
+            "32",
+            "34",
+            "36",
+            "38",
+            "40",
+            "42",
+            "44",
+            "46",
+            "48",
+            "50"
+        ],
+        "Color": [
+            "Blanc",
+            "Bleu denim marine",
+            "Bleu denim foncé",
+            "Marron foncé",
+            "Bleu denim clair",
+            "Rouge clair",
+            "Rose poudré"
+        ],
+        "Rating": 4,
+        "Image": "https://image.hm.com/assets/hm/2f/d0/2fd0efbb898c2e293b2692ee62b45ef2562eaa64.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1314869005.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "WIDE HIGH JEANS",
+        "price_value": 34.99,
+        "Currency": "€",
+        "Description": "Jean en denim de coton enrichi d'une légère touche de stretch pour plus de confort. Coupe classique de la taille jusqu'aux hanches avec jambes larges des cuisses jusqu'à l'ourlet. Modèle taille haute avec braguette zippée surmontée d'un bouton en métal à la finition rainurée. Poches plaquées et plis marqués devant et dans le dos. Longueur classique, conçue pour tomber juste au-dessus du pied sans effet stacking ou presque. Le jean à jambes larges, un indispensable dans votre garde-robe.",
+        "Genre": "Adultes",
+        "Sexe": "Femme",
+        "Type": "Vêtement",
+        "Categorie": "Bas",
+        "Style": "Jean",
+        "Sizes": [
+            "32",
+            "34",
+            "36",
+            "38",
+            "40",
+            "42",
+            "44",
+            "46",
+            "48",
+            "50"
+        ],
+        "Color": [
+            "Bleu denim foncé",
+            "Bleu denim",
+            "Blanc",
+            "Bleu denim clair",
+            "Jaune pâle"
+        ],
+        "Rating": 5,
+        "Image": "https://image.hm.com/assets/hm/ab/71/ab7166dd54ed3f3a19934da761987a1bccc2b8ce.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1314621002.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "BLOUSE PÉPLUM AVEC DENTELLE",
+        "price_value": 15.99,
+        "Currency": "€",
+        "Description": "Blouse en tissu de coton doux avec incrustations en dentelle et plis nervure. Modèle à encolure ronde avec manches volantées et fente goutte d'eau surmontée d'un bouton dans le dos. Basque évasée.",
+        "Genre": "Adultes",
+        "Sexe": "Femme",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "Chemise",
+        "Sizes": [
+            "XS",
+            "S",
+            "M",
+            "L"
+        ],
+        "Color": [
+            "Crème",
+            "Marron",
+            "Vert clair"
+        ],
+        "Rating": 4.5,
+        "Image": "https://image.hm.com/assets/hm/fd/8c/fd8ca1dfcc70ee615ba543ed1a59eb7677cae293.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1290571001.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "PULL ÉPAULES NUES EN MAILLE POINTELLE",
+        "price_value": 19.99,
+        "Currency": "€",
+        "Description": "Pull en douce maille pointelle enrichie d'une touche de laine. Modèle épaules nues avec emmanchures descendues et manches longues. Finition côtelée en haut, aux poignets et à la base.",
+        "Genre": "Adultes",
+        "Sexe": "Femme",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "Pull",
+        "Sizes": [
+            "XXS",
+            "XS",
+            "S",
+            "M",
+            "L",
+            "XL"
+        ],
+        "Color": [
+            "Rose clair",
+            "Bleu clair",
+            "Gris clair"
+        ],
+        "Rating": null,
+        "Image": "https://image.hm.com/assets/hm/df/65/df657737251a2ad1171e68420c42d718aad2e1e7.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1316086002.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "PANTALON EN DENIM AVEC CORDON DE SERRAGE",
+        "price_value": 29.99,
+        "Currency": "€",
+        "Description": "Pantalon en denim léger de coton et lyocell mélangés. Coupe flottante avec taille haute soulignée par élastique habillé et cordon de serrage. Poches latérales discrètes et jambes droites.",
+        "Genre": "Adultes",
+        "Sexe": "Femme",
+        "Type": "Vêtement",
+        "Categorie": "Bas",
+        "Style": "Pantalon",
+        "Sizes": [
+            "XXS",
+            "XS",
+            "S",
+            "M",
+            "L",
+            "XL",
+            "XXL"
+        ],
+        "Color": [
+            "Bleu denim",
+            "Bleu denim foncé",
+            "Blanc",
+            "Bleu denim clair"
+        ],
+        "Rating": 4.5,
+        "Image": "https://image.hm.com/assets/hm/3a/8d/3a8d9ea9d6011c930fe69c51d4a74c65367b6460.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1324501004.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "BATWING-SLEEVED JERSEY TOP",
+        "price_value": 14.99,
+        "Currency": "€",
+        "Description": "Top in textured jersey with a boat neckline and short batwing sleeves.",
+        "Genre": "Adultes",
+        "Sexe": "Femme",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "Top",
+        "Sizes": [
+            "XXS",
+            "XS",
+            "S",
+            "M",
+            "L",
+            "XL"
+        ],
+        "Color": [
+            "Vert olive foncé",
+            "Noir"
+        ],
+        "Rating": null,
+        "Image": "https://image.hm.com/assets/hm/20/fc/20fc1dc50bc31b024c6fdd5ab7cbc4c0ed152686.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1312005002.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "FLARED HIGH JEANS",
+        "price_value": 29.99,
+        "Currency": "€",
+        "Description": "Jean 5 poches en denim enrichi d'une légère touche de stretch pour plus de confort. Coupe près du corps de la taille jusqu'aux cuisses avec jambes évasées du genou jusqu'à l'ourlet. Modèle taille haute avec et braguette zippée surmontée d'un bouton. Jambes plutôt longues, conçues pour tomber sur le pied avec un effet stacking. Il s'associe avec tout, depuis les crop tops jusqu'aux pulls en maille épaisse.",
+        "Genre": "Adultes",
+        "Sexe": "Femme",
+        "Type": "Vêtement",
+        "Categorie": "Bas",
+        "Style": "Jean",
+        "Sizes": [
+            "32",
+            "34",
+            "36",
+            "38",
+            "40",
+            "42",
+            "44",
+            "46",
+            "48",
+            "50"
+        ],
+        "Color": [
+            "Blanc",
+            "Bleu denim",
+            "Bleu denim foncé",
+            "Gris foncé",
+            "Bleu denim clair"
+        ],
+        "Rating": 4.5,
+        "Image": "https://image.hm.com/assets/hm/84/bf/84bf0b052f1afa5889b800c5eb409fd59dc81308.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1302894009.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "SNEAKERS",
+        "price_value": 34.99,
+        "Currency": "€",
+        "Description": "Tennis avec bord matelassé en haut et laçage sur le dessus. Hauteur de la semelle 2,5 cm.",
+        "Genre": "Adultes",
+        "Sexe": "Femme",
+        "Type": "Chaussures",
+        "Categorie": "Chaussures",
+        "Style": "Baskets",
+        "Sizes": [
+            "35",
+            "36",
+            "37",
+            "38",
+            "39",
+            "40",
+            "41",
+            "42"
+        ],
+        "Color": [
+            "Marron/imprimé léopard",
+            "Grège/crème",
+            "Jaune clair",
+            "Beige/blanc",
+            "Gris clair"
+        ],
+        "Rating": 5,
+        "Image": "https://image.hm.com/assets/hm/2c/cf/2ccfa6a75499865145a47b2f0fce82ca537b863b.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1273075013.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "VESTE EN SCUBA",
+        "price_value": 29.99,
+        "Currency": "€",
+        "Description": "Veste en scuba. Modèle avec col cheminée, emmanchures descendues et fermeture à glissière devant. Plis à la base. Non doublée.",
+        "Genre": "Adultes",
+        "Sexe": "Femme",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "Veste/Manteau",
+        "Sizes": [
+            "XS",
+            "S",
+            "M",
+            "L",
+            "XL"
+        ],
+        "Color": [
+            "Vert kaki foncé",
+            "Marron foncé"
+        ],
+        "Rating": 5,
+        "Image": "https://image.hm.com/assets/hm/8e/5c/8e5c129552259453dbf3cfe20b0d9d340d04df0d.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1336506004.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "ROBE DOS NU EN SATIN",
+        "price_value": 24.99,
+        "Currency": "€",
+        "Description": "Robe courte en satin au tombé fluide. Modèle à encolure bénitier avec dos ouvert agrémenté d'un large bord en dentelle remontant sur le devant pour former des bretelles se boutonnant sur la nuque. Base asymétrique avec large bord en dentelle.",
+        "Genre": "Adultes",
+        "Sexe": "Femme",
+        "Type": "Vêtement",
+        "Categorie": "Haut/Bas",
+        "Style": "Robe",
+        "Sizes": [
+            "XS",
+            "S",
+            "M",
+            "L"
+        ],
+        "Color": [
+            "Beige clair",
+            "Noir"
+        ],
+        "Rating": null,
+        "Image": "https://image.hm.com/assets/hm/66/66/6666ca7d325636f1c3f3e09cc07a1c95363e00c1.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1322271002.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "COLLARLESS JERSEY BLAZER",
+        "price_value": 19.99,
+        "Currency": "€",
+        "Description": "Fitted blazer in heavy jersey with shoulder pads and a nipped-in waist creating a defined silhouette. V-neckline, a button at the front and fake front pockets with a flap. Unlined.",
+        "Genre": "Adultes",
+        "Sexe": "Femme",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "Veste/Manteau",
+        "Sizes": [
+            "XS",
+            "S",
+            "M",
+            "L",
+            "XL"
+        ],
+        "Color": [
+            "Beige",
+            "Noir",
+            "Marron foncé"
+        ],
+        "Rating": null,
+        "Image": "https://image.hm.com/assets/hm/8b/b9/8bb95307ce2123dabbb3ae74ee2ab55719a9e19e.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1323911002.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "VESTE MATELASSÉE EN NYLON",
+        "price_value": 34.99,
+        "Currency": "€",
+        "Description": "Veste légèrement matelassée en nylon. Modèle avec encolure ronde et boutons-pression devant. Poche raglan de chaque côté. Base droite avec fentes latérales incurvées. Doublée.",
+        "Genre": "Adultes",
+        "Sexe": "Femme",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "Veste/Manteau",
+        "Sizes": [
+            "XXS",
+            "XS",
+            "S",
+            "M",
+            "L",
+            "XL"
+        ],
+        "Color": [
+            "Rose poudré",
+            "Bleu clair"
+        ],
+        "Rating": 4.5,
+        "Image": "https://image.hm.com/assets/hm/5d/34/5d34b5d3604f730abfc5b9cf3a6cc7faed41c0ab.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1319957002.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "GILET À ENCOLURE EN V",
+        "price_value": 19.99,
+        "Currency": "€",
+        "Description": "Gilet en maille douce et légèrement brossée, enrichie d'une touche de laine. Modèle avec encolure en V plongeante et boutonnage devant. Finition côtelée aux poignets et à la base.",
+        "Genre": "Adultes",
+        "Sexe": "Femme",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "Pull",
+        "Sizes": [
+            "XXS",
+            "XS",
+            "S",
+            "M",
+            "L",
+            "XL"
+        ],
+        "Color": [
+            "Beige clair",
+            "Gris clair chiné"
+        ],
+        "Rating": null,
+        "Image": "https://image.hm.com/assets/hm/60/ed/60eddbfcefe4c8565aa606e7e4e0880c7ddc5946.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1327145003.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "JEAN DÉCONTRACTÉ",
+        "price_value": 29.99,
+        "Currency": "€",
+        "Description": "Jean 5 poches en denim de coton rigide. Coupe décontractée des hanches jusqu'à l'ourlet avec jambes droites offrant plus d'ampleur à partir des cuisses. Modèle avec taille de hauteur classique et braguette boutonnée. Un classique à la coupe authentique.",
+        "Genre": "Adultes",
+        "Sexe": "Homme",
+        "Type": "Vêtement",
+        "Categorie": "Bas",
+        "Style": "Jean",
+        "Sizes": [],
+        "Color": [
+            "Bleu denim",
+            "Bleu denim clair",
+            "Bleu denim foncé",
+            "Noir",
+            "Gris denim",
+            "Crème"
+        ],
+        "Rating": 4,
+        "Image": "https://image.hm.com/assets/hm/58/15/581536d678285d76ca17166980928d2f21d5bfff.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1316883006.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "VESTE SLIM FIT",
+        "price_value": 79.99,
+        "Currency": "€",
+        "Description": "Veste en tissu souple. Modèle avec col à petits revers crantés, agrémenté d'une boutonnière décorative, et fermeture droite au moyen de deux boutons devant. Boutons décoratifs en bas de manche. Poche raglan sur la poitrine et poches à rabat devant. Deux fentes dans le dos. Deux poches intérieures. Coupe slim qui épouse la silhouette et met le corps en valeur. Doublée.",
+        "Genre": "Adultes",
+        "Sexe": "Homme",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "Veste/Manteau",
+        "Sizes": [
+            "44",
+            "46",
+            "48",
+            "50",
+            "56"
+        ],
+        "Color": [
+            "Bleu marine",
+            "Noir",
+            "Gris foncé",
+            "Beige",
+            "Beige foncé",
+            "Marron foncé"
+        ],
+        "Rating": 4.5,
+        "Image": "https://image.hm.com/assets/hm/ef/28/ef282b190e3c3bd7592e9a76510034c4288d1203.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1250484004.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "CHEMISE SLIM FIT REPASSAGE FACILE",
+        "price_value": 19.99,
+        "Currency": "€",
+        "Description": "Chemise en tissu repassage facile. Modèle avec col rabattu et boutonnage classique devant. Manches longues terminées par fente boutonnée et poignet à boutonnage ajustable. Empiècement dans le dos. Base légèrement arrondie. Coupe slim qui épouse la silhouette et met le corps en valeur.",
+        "Genre": "Adultes",
+        "Sexe": "Homme",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "Chemise",
+        "Sizes": [
+            "XS",
+            "S",
+            "M",
+            "L",
+            "XL",
+            "XXL"
+        ],
+        "Color": [
+            "Blanc",
+            "Noir",
+            "Bleu marine",
+            "Bleu clair",
+            "Bleu clair/rayé",
+            "Rose clair/rayé"
+        ],
+        "Rating": 4.5,
+        "Image": "https://image.hm.com/assets/hm/d8/09/d8098e830cf0a03c5e2a8267ed8acde29e22c7f8.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1242812001.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "VESTE SLIM FIT",
+        "price_value": 79.99,
+        "Currency": "€",
+        "Description": "Veste en tissu souple. Modèle avec col à petits revers crantés, agrémenté d'une boutonnière décorative, et fermeture droite au moyen de deux boutons devant. Boutons décoratifs en bas de manche. Poche raglan sur la poitrine et poches à rabat devant. Deux fentes dans le dos. Deux poches intérieures. Coupe slim qui épouse la silhouette et met le corps en valeur. Doublée.",
+        "Genre": "Adultes",
+        "Sexe": "Homme",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "Veste/Manteau",
+        "Sizes": [
+            "44",
+            "46",
+            "48",
+            "50",
+            "56"
+        ],
+        "Color": [
+            "Noir",
+            "Gris foncé",
+            "Bleu marine",
+            "Beige",
+            "Beige foncé",
+            "Marron foncé"
+        ],
+        "Rating": 4.5,
+        "Image": "https://image.hm.com/assets/hm/c5/0c/c50cdba1b192cdd0ed1f87a17b495c52810209c0.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1250484001.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "T-SHIRT REGULAR FIT",
+        "price_value": 6.99,
+        "Currency": "€",
+        "Description": "T-shirt en jersey de coton léger. Modèle avec bord-côte autour de l’encolure ronde et base droite. Coupe regular pour une silhouette classique et un plus grand confort.",
+        "Genre": "Adultes",
+        "Sexe": "Homme",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "T-shirt",
+        "Sizes": [
+            "XS",
+            "S",
+            "M",
+            "L",
+            "XL",
+            "XXL"
+        ],
+        "Color": [
+            "Blanc",
+            "Noir",
+            "Gris chiné",
+            "Gris foncé",
+            "Bleu marine",
+            "Prune",
+            "Vert forêt",
+            "Bleu clair",
+            "Rose",
+            "Marron",
+            "Vert kaki",
+            "Bleu canard foncé"
+        ],
+        "Rating": 4.5,
+        "Image": "https://image.hm.com/assets/hm/d0/47/d047a59f10d335e2351218f2bb286be6fc0a94b4.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.0685816001.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "BAGGY JEANS",
+        "price_value": 39.99,
+        "Currency": "€",
+        "Description": "Jean 5 poches en denim de coton rigide. Coupe baggy des hanches jusqu'à l'ourlet avec fond descendu et beaucoup d'ampleur le long des jambes arrondies à effet stacking. Modèle avec taille de hauteur classique et braguette zippée. La perfection du denim.",
+        "Genre": "Adultes",
+        "Sexe": "Homme",
+        "Type": "Vêtement",
+        "Categorie": "Bas",
+        "Style": "Jean",
+        "Sizes": [],
+        "Color": [
+            "Bleu denim",
+            "Gris denim foncé",
+            "Bleu denim pâle",
+            "Denim blue",
+            "Noir",
+            "Gris clair",
+            "Gris",
+            "Bleu denim foncé",
+            "Gris denim moyen",
+            "Bleu denim clair"
+        ],
+        "Rating": 4.5,
+        "Image": "https://image.hm.com/assets/hm/5e/a7/5ea71bbfd22e7c16756f8c3e9ec350adf0e843ba.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1235448019.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "VESTE REGULAR FIT À FERMETURE CROISÉE",
+        "price_value": 79.99,
+        "Currency": "€",
+        "Description": "Veste en twill souple. Modèle avec col à revers en pointe et fermeture croisée devant. Boutons décoratifs en bas de manche. Poche de poitrine et poches à rabat devant. Deux fentes dans le dos. Trois poches intérieures passepoilées. Coupe regular pour une silhouette classique et un plus grand confort. Doublée.",
+        "Genre": "Adultes",
+        "Sexe": "Homme",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "Veste/Manteau",
+        "Sizes": [
+            "44",
+            "46",
+            "48",
+            "50",
+            "56"
+        ],
+        "Color": [
+            "Noir"
+        ],
+        "Rating": null,
+        "Image": "https://image.hm.com/assets/hm/28/4b/284b40d535d3217c0980a6e7fb12919457349f7f.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1310620001.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "CHEMISE REGULAR FIT EN LIN MÉLANGÉ",
+        "price_value": 29.99,
+        "Currency": "€",
+        "Description": "Chemise en tissu aérien de coton et lin mélangés. Modèle avec col rabattu, poche de poitrine et boutonnage classique devant. Manches longues terminées par fente boutonnée et poignet à boutonnage ajustable. Empiècement dans le dos. Base arrondie. Coupe regular pour une silhouette classique et un plus grand confort. Les mélanges de coton et de lin associent la douceur du coton et la robustesse du lin pour créer un beau tissu texturé et respirant au tombé parfait.",
+        "Genre": "Adultes",
+        "Sexe": "Homme",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "Chemise",
+        "Sizes": [
+            "XS",
+            "S",
+            "M",
+            "L",
+            "XL",
+            "XXL"
+        ],
+        "Color": [
+            "Bleu clair",
+            "Beige clair",
+            "Noir",
+            "Vert kaki",
+            "Grège/rayé",
+            "Beige/rayé",
+            "Navy blue"
+        ],
+        "Rating": 4.5,
+        "Image": "https://image.hm.com/assets/hm/f0/72/f072175b46cc87130f6d988b9edeed0beba8a684.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1256945003.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "LOT DE 3 T-SHIRTS RELAXED FIT",
+        "price_value": 29.99,
+        "Currency": "€",
+        "Description": "T-shirts en jersey de coton d'épaisseur moyenne. Modèle avec bord-côte autour de l'encolure ronde et base droite. Coupe décontractée qui crée une silhouette casual sans être oversize.",
+        "Genre": "Adultes",
+        "Sexe": "Homme",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "T-shirt",
+        "Sizes": [
+            "XS",
+            "S",
+            "M",
+            "L",
+            "XL",
+            "XXL"
+        ],
+        "Color": [
+            "Blanc/gris foncé/noir",
+            "Noir/bleu canard/marron"
+        ],
+        "Rating": null,
+        "Image": "https://image.hm.com/assets/hm/e5/fe/e5fe0241b1083c5ca4fa9dba05e9a5077176d53a.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1332134002.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "PANTALON REGULAR FIT EN LIN MÉLANGÉ",
+        "price_value": 37.99,
+        "Currency": "€",
+        "Description": "Pantalon en tissu aérien de coton et lin mélangés. Modèle avec élastique habillé et cordon de serrage à la taille. Braguette zippée surmontée d'un bouton. Poches latérales et poche raglan dans le dos. Coupe regular pour une silhouette classique et un plus grand confort. Les mélanges de coton et de lin associent la douceur du coton et la robustesse du lin pour créer un beau tissu texturé et respirant au tombé parfait.",
+        "Genre": "Adultes",
+        "Sexe": "Homme",
+        "Type": "Vêtement",
+        "Categorie": "Bas",
+        "Style": "Pantalon",
+        "Sizes": [
+            "XS",
+            "S",
+            "M",
+            "L",
+            "XL",
+            "XXL"
+        ],
+        "Color": [
+            "Crème",
+            "Noir",
+            "Blanc",
+            "Beige foncé"
+        ],
+        "Rating": 4.5,
+        "Image": "https://image.hm.com/assets/hm/5b/85/5b85b190a43927598da0476e432f54f6a2631925.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1253401001.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "PANTALON CHIC SLIM FIT",
+        "price_value": 29.99,
+        "Currency": "€",
+        "Description": "Pantalon chic en tissu souple. Modèle avec braguette zippée surmontée d'un bouton, poches latérales et poches passepoilées munies d'un bouton dans le dos. Jambes avec plis marqués. Coupe slim qui épouse la silhouette et met le corps en valeur.",
+        "Genre": "Adultes",
+        "Sexe": "Homme",
+        "Type": "Vêtement",
+        "Categorie": "Bas",
+        "Style": "Pantalon",
+        "Sizes": [
+            "28",
+            "29",
+            "30",
+            "31",
+            "32",
+            "33",
+            "34",
+            "36",
+            "38",
+            "40",
+            "42"
+        ],
+        "Color": [
+            "Noir",
+            "Gris foncé",
+            "Beige",
+            "Bleu foncé",
+            "Marron foncé"
+        ],
+        "Rating": 4.5,
+        "Image": "https://image.hm.com/assets/hm/63/fc/63fc4c4940c671512294c809f17573956079ddc9.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1253395001.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "CHEMISE REGULAR FIT EN LIN MÉLANGÉ",
+        "price_value": 29.99,
+        "Currency": "€",
+        "Description": "Chemise en tissu aérien de coton et lin mélangés. Modèle avec col rabattu, poche de poitrine et boutonnage classique devant. Manches longues terminées par fente boutonnée et poignet à boutonnage ajustable. Empiècement dans le dos. Base arrondie. Coupe regular pour une silhouette classique et un plus grand confort. Les mélanges de coton et de lin associent la douceur du coton et la robustesse du lin pour créer un beau tissu texturé et respirant au tombé parfait.",
+        "Genre": "Adultes",
+        "Sexe": "Homme",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "Chemise",
+        "Sizes": [
+            "XS",
+            "S",
+            "M",
+            "L",
+            "XL",
+            "XXL"
+        ],
+        "Color": [
+            "Beige clair",
+            "Bleu clair",
+            "Noir",
+            "Vert kaki",
+            "Grège/rayé",
+            "Beige/rayé",
+            "Navy blue"
+        ],
+        "Rating": 4.5,
+        "Image": "https://image.hm.com/assets/hm/b8/89/b8897d255f36f6f1c24ee3487f60afe0cc2f93c9.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1256945001.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "POLO SLIM FIT",
+        "price_value": 9.99,
+        "Currency": "€",
+        "Description": "Polo en jersey de coton. Modèle à manches courtes avec col et patte de boutonnage. Base droite. Coupe slim qui épouse la silhouette et met le corps en valeur.",
+        "Genre": "Adultes",
+        "Sexe": "Homme",
+        "Type": "Autre",
+        "Categorie": "Accessoires",
+        "Style": "Autre",
+        "Sizes": [
+            "XS",
+            "S",
+            "M",
+            "L",
+            "XL",
+            "XXL"
+        ],
+        "Color": [
+            "Bleu clair",
+            "Noir",
+            "Bleu marine",
+            "Vert kaki"
+        ],
+        "Rating": 4,
+        "Image": "https://image.hm.com/assets/hm/4c/f6/4cf6d20dcd89c84a60c2362413364918cacfa564.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1330414007.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "T-SHIRT REGULAR FIT",
+        "price_value": 6.99,
+        "Currency": "€",
+        "Description": "T-shirt en jersey de coton léger. Modèle avec bord-côte autour de l’encolure ronde et base droite. Coupe regular pour une silhouette classique et un plus grand confort.",
+        "Genre": "Adultes",
+        "Sexe": "Homme",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "T-shirt",
+        "Sizes": [
+            "XS",
+            "S",
+            "M",
+            "L",
+            "XL",
+            "XXL"
+        ],
+        "Color": [
+            "Bleu clair",
+            "Blanc",
+            "Noir",
+            "Gris chiné",
+            "Gris foncé",
+            "Bleu marine",
+            "Prune",
+            "Vert forêt",
+            "Rose",
+            "Marron",
+            "Vert kaki",
+            "Bleu canard foncé"
+        ],
+        "Rating": 4.5,
+        "Image": "https://image.hm.com/assets/hm/2f/80/2f803ea407fba6ae43488166cc8013a86d104653.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.0685816314.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "ORIGINAL STRAIGHT JEANS",
+        "price_value": 39.99,
+        "Currency": "€",
+        "Description": "Jean 5 poches en denim de coton rigide. Coupe classique de la taille jusqu'à l'ourlet pour une sensation plus flottante et confortable le long des jambes droites. Modèle avec taille de hauteur classique et braguette boutonnée.",
+        "Genre": "Adultes",
+        "Sexe": "Homme",
+        "Type": "Vêtement",
+        "Categorie": "Bas",
+        "Style": "Jean",
+        "Sizes": [],
+        "Color": [
+            "Bleu denim foncé",
+            "Noir denim",
+            "Blanc",
+            "Bleu denim"
+        ],
+        "Rating": null,
+        "Image": "https://image.hm.com/assets/hm/5e/e6/5ee6b4ec2a1f14ab7d7f1054b9b8da13c8d34d61.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1322301001.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "PANTALON REGULAR FIT EN LIN MÉLANGÉ",
+        "price_value": 37.99,
+        "Currency": "€",
+        "Description": "Pantalon en tissu aérien de coton et lin mélangés. Modèle avec élastique habillé et cordon de serrage à la taille. Braguette zippée surmontée d'un bouton. Poches latérales et poche raglan dans le dos. Coupe regular pour une silhouette classique et un plus grand confort. Les mélanges de coton et de lin associent la douceur du coton et la robustesse du lin pour créer un beau tissu texturé et respirant au tombé parfait.",
+        "Genre": "Adultes",
+        "Sexe": "Homme",
+        "Type": "Vêtement",
+        "Categorie": "Bas",
+        "Style": "Pantalon",
+        "Sizes": [
+            "XS",
+            "S",
+            "M",
+            "L",
+            "XL",
+            "XXL"
+        ],
+        "Color": [
+            "Noir",
+            "Crème",
+            "Blanc",
+            "Beige foncé"
+        ],
+        "Rating": 4.5,
+        "Image": "https://image.hm.com/assets/hm/8a/1f/8a1fecd54b36aa02c4ccafb9b3df13f3cb76fd7e.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1253401002.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "PANTALON RELAXED FIT EN LIN MÉLANGÉ",
+        "price_value": 39.99,
+        "Currency": "€",
+        "Description": "Pantalon en tissu souple de viscose et lin mélangés. Modèle avec élastique habillé et cordon de serrage à la taille. Fausse braguette. Poches italiennes et poche raglan dans le dos. Coupe décontractée qui crée une silhouette casual sans être oversize.",
+        "Genre": "Adultes",
+        "Sexe": "Homme",
+        "Type": "Vêtement",
+        "Categorie": "Bas",
+        "Style": "Pantalon",
+        "Sizes": [
+            "XS",
+            "S",
+            "M",
+            "L",
+            "XL",
+            "XXL"
+        ],
+        "Color": [
+            "Beige clair",
+            "Blanc",
+            "Gris foncé",
+            "Bleu marine"
+        ],
+        "Rating": 5,
+        "Image": "https://image.hm.com/assets/hm/2b/81/2b814fcaeafa5aff21e228a55da50ba72908e9a2.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1261478001.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "CHEMISE OXFORD REGULAR FIT",
+        "price_value": 24.99,
+        "Currency": "€",
+        "Description": "Chemise en coton Oxford. Modèle avec col boutonné, poche de poitrine et boutonnage classique devant. Manches longues terminées par fente et poignet boutonnés. Empiècement dans le dos. Base légèrement arrondie. Coupe regular pour une silhouette classique et un plus grand confort.",
+        "Genre": "Adultes",
+        "Sexe": "Homme",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "Chemise",
+        "Sizes": [
+            "XS",
+            "S",
+            "M",
+            "L",
+            "XL",
+            "XXL"
+        ],
+        "Color": [
+            "Light blue/Striped",
+            "Blanc",
+            "Bleu clair",
+            "Beige clair",
+            "Noir",
+            "Bleu clair/rayé",
+            "Vert kaki foncé",
+            "Bordeaux",
+            "Vert foncé",
+            "Vert/rayé",
+            "Jaune clair"
+        ],
+        "Rating": 4.5,
+        "Image": "https://image.hm.com/assets/hm/68/5d/685d5b9668f648c82b1238ab569dcb9beba6c023.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1257417011.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "POLO LOOSE FIT EN COTON",
+        "price_value": 34.99,
+        "Currency": "€",
+        "Description": "Polo en jersey de coton doux. Modèle avec col rabattu en twill et patte de boutonnage dissimulée. Emmanchures descendues et manches longues terminées par bord-côte. Fentes latérales à la base. Coupe flottante qui offre de l'ampleur sans être oversize.",
+        "Genre": "Adultes",
+        "Sexe": "Homme",
+        "Type": "Autre",
+        "Categorie": "Accessoires",
+        "Style": "Autre",
+        "Sizes": [
+            "XS",
+            "S",
+            "M",
+            "L",
+            "XL",
+            "XXL"
+        ],
+        "Color": [
+            "Gris chiné/color block",
+            "Bleu marine/color block",
+            "Bleu clair/color block"
+        ],
+        "Rating": null,
+        "Image": "https://image.hm.com/assets/hm/fe/27/fe2764943b4b1b022bb238eaf0279ce189efd7b6.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1311897004.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "VESTE RELAXED FIT À FERMETURE CROISÉE",
+        "price_value": 89.99,
+        "Currency": "€",
+        "Description": "Veste en tissu souple. Modèle avec col à revers en pointe agrémenté d'une boutonnière décorative et fermeture croisée devant. Boutons décoratifs en bas de manche. Poche de poitrine et poches passepoilées à rabat devant. Deux fentes dans le dos. Trois poches intérieures. Coupe décontractée qui crée une silhouette casual sans être oversize. Doublée.",
+        "Genre": "Adultes",
+        "Sexe": "Homme",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "Veste/Manteau",
+        "Sizes": [
+            "44",
+            "46",
+            "48",
+            "50",
+            "56"
+        ],
+        "Color": [
+            "Marron",
+            "Beige",
+            "Beige foncé"
+        ],
+        "Rating": null,
+        "Image": "https://image.hm.com/assets/hm/de/8e/de8e333dd94198cc3f2aa9706704bd069bffc9b5.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1274628006.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "PANTALON CHIC LOOSE FIT",
+        "price_value": 49.99,
+        "Currency": "€",
+        "Description": "Pantalon en matière tissée. Modèle avec ceinture prolongée munie d'un bouton et d'une fermeture par agrafe et barrette dissimulés. Braguette zippée. Poches latérales et poches passepoilées munies d'un bouton dans le dos. Jambes avec plis marqués. Coupe flottante qui offre de l'ampleur sans être oversize. Un design façon tailleur qui offre une marge de couture supplémentaire au niveau de la ceinture afin de faciliter les retouches éventuelles.",
+        "Genre": "Adultes",
+        "Sexe": "Homme",
+        "Type": "Vêtement",
+        "Categorie": "Bas",
+        "Style": "Pantalon",
+        "Sizes": [
+            "44",
+            "46",
+            "48",
+            "50",
+            "56"
+        ],
+        "Color": [
+            "Marron",
+            "Vert kaki"
+        ],
+        "Rating": null,
+        "Image": "https://image.hm.com/assets/hm/2f/3d/2f3d184e21ad4beaf07e5fc772e7696de30321e2.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1281852003.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "PANTALON DE COSTUME SLIM FIT",
+        "price_value": 34.99,
+        "Currency": "€",
+        "Description": "Pantalon de costume en matière tissée. Modèle avec braguette zippée surmontée d'une fermeture par agrafe et barrette dissimulées. Poches latérales et poches passepoilées dans le dos. Jambes avec plis marqués. Coupe slim qui épouse la silhouette et met le corps en valeur. Un design façon tailleur qui offre une marge de couture supplémentaire au niveau de la ceinture afin de faciliter les retouches éventuelles.",
+        "Genre": "Adultes",
+        "Sexe": "Homme",
+        "Type": "Vêtement",
+        "Categorie": "Bas",
+        "Style": "Pantalon",
+        "Sizes": [
+            "44",
+            "46",
+            "48",
+            "50",
+            "56"
+        ],
+        "Color": [
+            "Beige",
+            "Noir",
+            "Gris foncé",
+            "Bleu foncé",
+            "Bleu marine",
+            "Beige foncé",
+            "Marron foncé"
+        ],
+        "Rating": 4.5,
+        "Image": "https://image.hm.com/assets/hm/5e/19/5e19a129f18768fe70a2cd5eb2e3dff2e73a79f3.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1252892005.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "PANTALON DE COSTUME SLIM FIT",
+        "price_value": 49.99,
+        "Currency": "€",
+        "Description": "Pantalon de costume en matière tissée. Modèle avec braguette zippée surmontée d'un bouton et d'une fermeture par agrafe et barrette dissimulés. Poches latérales et poches passepoilées dans le dos. Jambes avec plis marqués. Coupe slim qui épouse la silhouette et met le corps en valeur. Un design façon tailleur qui offre une marge de couture supplémentaire au niveau de la ceinture afin de faciliter les retouches éventuelles.",
+        "Genre": "Adultes",
+        "Sexe": "Homme",
+        "Type": "Vêtement",
+        "Categorie": "Bas",
+        "Style": "Pantalon",
+        "Sizes": [
+            "44",
+            "46",
+            "48",
+            "50",
+            "56"
+        ],
+        "Color": [
+            "Noir",
+            "Gris foncé"
+        ],
+        "Rating": 5,
+        "Image": "https://image.hm.com/assets/hm/ba/e8/bae801ff245373b5b0dc69c020ab9eb1abb78ac1.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1256060002.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "CASQUETTE EN TWILL DE COTON AVEC MOTIF",
+        "price_value": 19.99,
+        "Currency": "€",
+        "Description": "Casquette en twill de coton avec motif devant. Modèle avec œillets brodés et attache en plastique réglable sur l'arrière. Bande de propreté en coton.",
+        "Genre": "Adultes",
+        "Sexe": "Homme",
+        "Type": "Accessoires",
+        "Categorie": "Accessoires",
+        "Style": "Chapeau",
+        "Sizes": [],
+        "Color": [
+            "Rouge/Honda"
+        ],
+        "Rating": null,
+        "Image": "https://image.hm.com/assets/hm/5b/a4/5ba4ae7b703cc21b4bc3e9bc709d25b6d0a6afd4.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1324382004.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "SWEAT IMPRIMÉ OVERSIZED FIT",
+        "price_value": 29.99,
+        "Currency": "€",
+        "Description": "Sweat en molleton d'épaisseur moyenne à l'intérieur doux et brossé, réalisé à partir de coton mélangé, avec motifs imprimés. Modèle avec bord-côte autour de l'encolure ronde et finition bord-côte aux poignets et à la base. Coupe oversize pour une silhouette baggy très ample.",
+        "Genre": "Adultes",
+        "Sexe": "Homme",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "Sweat",
+        "Sizes": [
+            "S",
+            "M",
+            "L",
+            "XL",
+            "XXL"
+        ],
+        "Color": [
+            "Gris clair chiné/NBA",
+            "Noir/Cypress Hill",
+            "Violet foncé/Snoopy",
+            "Vert/Keith Haring",
+            "Bleu marine/NBA",
+            "Noir/NBA"
+        ],
+        "Rating": 5,
+        "Image": "https://image.hm.com/assets/hm/cf/6a/cf6ae03d97582d84297e9bc75f31d215fa20cfcf.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1296798013.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "T-SHIRT BOXY OVERSIZED FIT",
+        "price_value": 19.99,
+        "Currency": "€",
+        "Description": "T-shirt en jersey de coton léger. Modèle boxy avec bord-côte autour de l'encolure ronde, emmanchures descendues et base droite. Coupe oversize pour une silhouette baggy très ample.",
+        "Genre": "Adultes",
+        "Sexe": "Homme",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "T-shirt",
+        "Sizes": [
+            "XS",
+            "S",
+            "M",
+            "L",
+            "XL",
+            "XXL"
+        ],
+        "Color": [
+            "Blanc",
+            "Noir",
+            "Bleu clair"
+        ],
+        "Rating": null,
+        "Image": "https://image.hm.com/assets/hm/58/7a/587a1d19b1894dc8f7198b339e149fcb41b60be4.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1313927002.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "VESTE WORKWEAR",
+        "price_value": 69.99,
+        "Currency": "€",
+        "Description": "Veste workwear en matière tissée. Modèle avec col rabattu en velours de coton doux et côtelé, muni d'une sous-gorge, rabat coupe-vent pressionné et fermeture à glissière devant. Manches terminées par patte pressionnée ajustable au niveau du poignet. Poche raglan de chaque côté. Doublure en coton.",
+        "Genre": "Adultes",
+        "Sexe": "Homme",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "Veste/Manteau",
+        "Sizes": [
+            "XS",
+            "S",
+            "M",
+            "L",
+            "XL",
+            "XXL"
+        ],
+        "Color": [
+            "Vert kaki foncé"
+        ],
+        "Rating": null,
+        "Image": "https://image.hm.com/assets/hm/be/e4/bee441d20097d6b907e26ecb51e3b5be1dae5bcd.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1335068001.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "T-SHIRT IMPRIMÉ LOOSE FIT",
+        "price_value": 19.99,
+        "Currency": "€",
+        "Description": "T-shirt imprimé en jersey de coton doux et épais. Modèle avec petit biais autour de l'encolure ronde et emmanchures descendues. Coupe flottante qui offre de l'ampleur sans être oversize.",
+        "Genre": "Adultes",
+        "Sexe": "Homme",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "T-shirt",
+        "Sizes": [
+            "XS",
+            "S",
+            "M",
+            "L",
+            "XL",
+            "XXL"
+        ],
+        "Color": [
+            "Noir/HONDA",
+            "Noir/Honda"
+        ],
+        "Rating": null,
+        "Image": "https://image.hm.com/assets/hm/23/35/2335d689ecc6f94dd992825df93fe874493d9e71.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1331358001.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "CHEMISE OXFORD LOOSE FIT",
+        "price_value": 29.99,
+        "Currency": "€",
+        "Description": "Chemise en tissu Oxford de coton mélangé. Modèle avec col boutonné et boutonnage classique devant. Poche de poitrine et texte brodé sur la poitrine. Manches longues terminées par fente et poignet boutonnés. Empiècement avec bride de suspension dans le dos. Base droite. Coupe flottante qui offre de l'ampleur sans être oversize.",
+        "Genre": "Adultes",
+        "Sexe": "Homme",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "Chemise",
+        "Sizes": [
+            "XS",
+            "S",
+            "M",
+            "L",
+            "XL",
+            "XXL"
+        ],
+        "Color": [
+            "Blanc/rayé",
+            "Bleu clair/Harbor City",
+            "Blanc/Harbor City",
+            "Bleu marine/rayé",
+            "Vert foncé/rayé"
+        ],
+        "Rating": null,
+        "Image": "https://image.hm.com/assets/hm/b0/97/b0975367535d26552ba9b40d8c2c98cbc5b6ec02.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1302598005.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "JEAN SLIM",
+        "price_value": 39.99,
+        "Currency": "€",
+        "Description": "Jean 5 poches en denim de coton enrichi d'une légère touche de stretch pour plus de confort. Coupe près du corps de la taille jusqu'aux cuisses avec jambes droites jusqu'à l'ourlet. Modèle avec taille de hauteur classique et braguette zippée.",
+        "Genre": "Adultes",
+        "Sexe": "Homme",
+        "Type": "Vêtement",
+        "Categorie": "Bas",
+        "Style": "Jean",
+        "Sizes": [],
+        "Color": [
+            "Bleu denim clair",
+            "Noir",
+            "Bleu moyen",
+            "Gris",
+            "Bleu foncé"
+        ],
+        "Rating": 5,
+        "Image": "https://image.hm.com/assets/hm/80/bd/80bd741e622985539276f34564d7b9403a42fbed.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1311677005.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "T-SHIRT OVERSIZED FIT EN COTON",
+        "price_value": 15.99,
+        "Currency": "€",
+        "Description": "T-shirt en jersey de coton. Modèle boxy avec bord-côte autour de l'encolure ronde, emmanchures descendues et base droite. Coupe oversize pour une silhouette baggy très ample.",
+        "Genre": "Adultes",
+        "Sexe": "Homme",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "T-shirt",
+        "Sizes": [
+            "XS",
+            "S",
+            "M",
+            "L",
+            "XL",
+            "XXL"
+        ],
+        "Color": [
+            "Beige",
+            "Blanc",
+            "Noir",
+            "Gris clair",
+            "Bleu"
+        ],
+        "Rating": null,
+        "Image": "https://image.hm.com/assets/hm/f6/81/f68113d9b173725140ab9d80c9f06bd11c2808fc.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1331624005.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "VESTE À CAPUCHE ZIPPÉE LOOSE FIT",
+        "price_value": 24.99,
+        "Currency": "€",
+        "Description": "Veste en molleton d'épaisseur moyenne à l'intérieur doux et brossé. Modèle avec capuche resserrable par cordon et fermeture à glissière devant. Emmanchures descendues et manches longues. Poches devant. Finition bord-côte aux poignets et à la base. Coupe flottante qui offre de l'ampleur sans être oversize.",
+        "Genre": "Adultes",
+        "Sexe": "Homme",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "Veste/Manteau",
+        "Sizes": [
+            "XS",
+            "S",
+            "M",
+            "L",
+            "XL",
+            "XXL"
+        ],
+        "Color": [
+            "Beige",
+            "Gris foncé",
+            "Bleu foncé",
+            "Noir",
+            "Gris chiné",
+            "Vert kaki",
+            "Gris clair",
+            "Bleu clair"
+        ],
+        "Rating": 5,
+        "Image": "https://image.hm.com/assets/hm/7c/8e/7c8eaa27655f941252407028f34c00aabf1ed4e0.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1308010018.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "CHEMISE RELAXED FIT EN POPELINE",
+        "price_value": 29.99,
+        "Currency": "€",
+        "Description": "Chemise en popeline de coton. Modèle avec col rabattu et boutonnage classique devant. Poche de poitrine agrémentée d'un motif brodé. Manches longues terminées par fente boutonnée et poignet à boutonnage ajustable. Empiècement souligné d'un pli rond dans le dos. Base légèrement arrondie. Coupe décontractée qui crée une silhouette casual sans être oversize.",
+        "Genre": "Adultes",
+        "Sexe": "Homme",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "Chemise",
+        "Sizes": [
+            "XS",
+            "S",
+            "M",
+            "L",
+            "XL",
+            "XXL"
+        ],
+        "Color": [
+            "Bleu clair/rayé"
+        ],
+        "Rating": null,
+        "Image": "https://image.hm.com/assets/hm/7e/7f/7e7f171c36c0c26b886996ae8972b14e95e9186d.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1335632001.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "CHEMISE OVERSIZED FIT EN DENIM",
+        "price_value": 29.99,
+        "Currency": "€",
+        "Description": "Chemise en denim de coton rigide. Modèle avec col boutonné et boutonnage classique devant. Emmanchures descendues et manches longues terminées par poignet boutonné. Empiècement dans le dos. Base arrondie. Coupe oversize pour une silhouette baggy très ample.",
+        "Genre": "Adultes",
+        "Sexe": "Homme",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "Chemise",
+        "Sizes": [
+            "XS",
+            "S",
+            "M",
+            "L",
+            "XL",
+            "XXL"
+        ],
+        "Color": [
+            "Bleu denim",
+            "Noir denim"
+        ],
+        "Rating": null,
+        "Image": "https://image.hm.com/assets/hm/12/b9/12b92638d13d789e326653847f1e5596a90f24d0.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1322297001.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "GILET DE COSTUME SLIM FIT EN LIN",
+        "price_value": 39.99,
+        "Currency": "€",
+        "Description": "Gilet de costume en lin aérien avec dos en tissu brillant. Modèle avec boutonnage devant et patte ajustable dans le dos. Poches passepoilées devant. Coupe slim qui épouse la silhouette et met le corps en valeur. Doublé. Aussi beaux froissés que repassés, les tissus à base de lin sont respirants et s'assouplissent au fil du temps.",
+        "Genre": "Adultes",
+        "Sexe": "Homme",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "Pull",
+        "Sizes": [
+            "44",
+            "46",
+            "48",
+            "50",
+            "56"
+        ],
+        "Color": [
+            "Noir",
+            "Beige clair",
+            "Bleu marine"
+        ],
+        "Rating": 4.5,
+        "Image": "https://image.hm.com/assets/hm/79/4f/794f851db786107ce2650c0f3dad8851ca01d905.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1259207003.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "LOOSE STRAIGHT JEANS",
+        "price_value": 39.99,
+        "Currency": "€",
+        "Description": "Jean 5 poches en denim de coton rigide. Coupe flottante des hanches jusqu'à l'ourlet avec fond descendu et plus d'ampleur le long des jambes droites. Modèle avec taille de hauteur classique et braguette boutonnée. Le jean qu'il vous faut pour un look full denim.",
+        "Genre": "Adultes",
+        "Sexe": "Homme",
+        "Type": "Vêtement",
+        "Categorie": "Bas",
+        "Style": "Jean",
+        "Sizes": [],
+        "Color": [
+            "Bleu denim clair",
+            "Bleu denim",
+            "Noir",
+            "Gris foncé",
+            "Marron"
+        ],
+        "Rating": 4,
+        "Image": "https://image.hm.com/assets/hm/38/bd/38bd797400d45df21dba6ffd60b7482019a3a4c0.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1288186012.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "SNEAKERS AVEC MOTIFS",
+        "price_value": 24.99,
+        "Currency": "€",
+        "Description": "Sneakers basses avec patte auto-agrippante en haut, laçage élastique sur le dessus et boucle en gros-grain sur l'arrière. Doublure en piqué et semelle intérieure souple et moulée pour un confort optimal. Semelle extérieure en caoutchouc vulcanisé.",
+        "Genre": "Enfant",
+        "Sexe": "Fille",
+        "Type": "Chaussures",
+        "Categorie": "Chaussures",
+        "Style": "Baskets",
+        "Sizes": [
+            "24",
+            "25",
+            "26",
+            "27",
+            "28",
+            "29",
+            "30",
+            "31",
+            "32"
+        ],
+        "Color": [
+            "Blanc/Minnie",
+            "Rouge/Hello Kitty",
+            "Noir/Minnie",
+            "Bleu clair/Hello Kitty"
+        ],
+        "Rating": 5,
+        "Image": "https://image.hm.com/assets/hm/fe/b9/feb92b209780f648757e22d1be3bc57fd580aa92.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1312488001.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "SNEAKERS",
+        "price_value": 19.99,
+        "Currency": "€",
+        "Description": "Sneakers color block avec patte auto-agrippante en haut et lacets élastiques sur le dessus. Doublure en piqué et semelle intérieure en mousse technique Cellfit™ pour un plus grand confort. Semelle extérieure en caoutchouc vulcanisé.",
+        "Genre": "Enfant",
+        "Sexe": "Fille",
+        "Type": "Chaussures",
+        "Categorie": "Chaussures",
+        "Style": "Baskets",
+        "Sizes": [
+            "24",
+            "25",
+            "26",
+            "27",
+            "28",
+            "29",
+            "30",
+            "31",
+            "32",
+            "33",
+            "34"
+        ],
+        "Color": [
+            "Rose/blanc",
+            "Rose clair/blanc"
+        ],
+        "Rating": 5,
+        "Image": "https://image.hm.com/assets/hm/18/47/1847cf2fd13e6116f1ac64d9a080e54d1492480f.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1298793001.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "SNEAKERS",
+        "price_value": 24.99,
+        "Currency": "€",
+        "Description": "Sneakers basses avec patte auto-agrippante en haut, laçage élastique sur le dessus et boucle en gros-grain sur l'arrière. Doublure et semelle intérieure en piqué. Semelle extérieure crantée.",
+        "Genre": "Enfant",
+        "Sexe": "Garçon",
+        "Type": "Chaussures",
+        "Categorie": "Chaussures",
+        "Style": "Baskets",
+        "Sizes": [
+            "26",
+            "27",
+            "28",
+            "29",
+            "30",
+            "31",
+            "32",
+            "33",
+            "34"
+        ],
+        "Color": [
+            "Bleu clair/blanc",
+            "Marron clair/blanc",
+            "Crème/noir"
+        ],
+        "Rating": 4,
+        "Image": "https://image.hm.com/assets/hm/62/9f/629faac5f5c190ffc4839a268004b30cabfae2c0.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1312215001.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "SNEAKERS MONTANTES",
+        "price_value": 29.99,
+        "Currency": "€",
+        "Description": "Sneakers montantes avec bord et languette matelassés. Modèle avec patte auto-agrippante en haut, laçage sur le dessus et boucle en tissu ripstop sur l'arrière. Doublure en piqué et semelle intérieure en mousse technique pour un plus grand confort. Semelle extérieure crantée.",
+        "Genre": "Enfant",
+        "Sexe": "Fille",
+        "Type": "Chaussures",
+        "Categorie": "Chaussures",
+        "Style": "Baskets",
+        "Sizes": [
+            "26",
+            "27",
+            "28",
+            "29",
+            "30",
+            "31",
+            "32"
+        ],
+        "Color": [
+            "Bleu marine/blanc",
+            "Noir/gris foncé"
+        ],
+        "Rating": null,
+        "Image": "https://image.hm.com/assets/hm/6b/76/6b76866c7451c100eb0ec0937d4913126cef7e3e.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1312214001.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "SNEAKERS MONTANTES",
+        "price_value": 29.99,
+        "Currency": "€",
+        "Description": "Sneakers color block avec patte auto-agrippante en haut, laçage élastique sur le dessus et boucle sur l'arrière. Doublure et semelle intérieure en piqué. Semelle extérieure crantée.",
+        "Genre": "Enfant",
+        "Sexe": "Fille",
+        "Type": "Chaussures",
+        "Categorie": "Chaussures",
+        "Style": "Baskets",
+        "Sizes": [
+            "25",
+            "26",
+            "27",
+            "28",
+            "29",
+            "30",
+            "31"
+        ],
+        "Color": [
+            "Rose ancien"
+        ],
+        "Rating": null,
+        "Image": "https://image.hm.com/assets/hm/da/e4/dae4b1f6a15ec4290370cdb778767f98963bddfe.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1314626001.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "SNEAKERS MONTANTES",
+        "price_value": 29.99,
+        "Currency": "€",
+        "Description": "Sneakers montantes avec bord et languette matelassés. Modèle avec patte auto-agrippante en haut, laçage sur le dessus et boucle en tissu ripstop sur l'arrière. Doublure en piqué et semelle intérieure en mousse technique pour un plus grand confort. Semelle extérieure crantée.",
+        "Genre": "Enfant",
+        "Sexe": "Fille",
+        "Type": "Chaussures",
+        "Categorie": "Chaussures",
+        "Style": "Baskets",
+        "Sizes": [
+            "26",
+            "27",
+            "28",
+            "29",
+            "30",
+            "31",
+            "32",
+            "34"
+        ],
+        "Color": [
+            "Noir/gris foncé",
+            "Bleu marine/blanc"
+        ],
+        "Rating": null,
+        "Image": "https://image.hm.com/assets/hm/12/a8/12a850d58464d65bc7130b21740418a256db6f8f.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1312214002.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "SNEAKERS",
+        "price_value": 19.99,
+        "Currency": "€",
+        "Description": "Sneakers avec patte auto-agrippante en haut, laçage élastique sur le dessus et boucle en gros-grain sur l'arrière. Doublure en piqué et semelle intérieure en mousse technique pour un plus grand confort. Semelle extérieure en caoutchouc vulcanisé.",
+        "Genre": "Enfant",
+        "Sexe": "Garçon",
+        "Type": "Chaussures",
+        "Categorie": "Chaussures",
+        "Style": "Baskets",
+        "Sizes": [
+            "24",
+            "25",
+            "26",
+            "27",
+            "28",
+            "29",
+            "30",
+            "31",
+            "32",
+            "33",
+            "34"
+        ],
+        "Color": [
+            "Rouge/Spider-Man",
+            "Beige/Bluey"
+        ],
+        "Rating": 5,
+        "Image": "https://image.hm.com/assets/hm/13/37/133776e37f99dd397ed3995fd7b8202f3f2b1599.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1272571003.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "SNEAKERS",
+        "price_value": 24.99,
+        "Currency": "€",
+        "Description": "Sneakers basses avec patte auto-agrippante en haut, laçage élastique sur le dessus et boucle en gros-grain sur l'arrière. Doublure et semelle intérieure en piqué. Semelle extérieure crantée.",
+        "Genre": "Enfant",
+        "Sexe": "Garçon",
+        "Type": "Chaussures",
+        "Categorie": "Chaussures",
+        "Style": "Baskets",
+        "Sizes": [
+            "26",
+            "27",
+            "28",
+            "29",
+            "30",
+            "31",
+            "32",
+            "33",
+            "34"
+        ],
+        "Color": [
+            "Marron clair/blanc",
+            "Bleu clair/blanc",
+            "Crème/noir"
+        ],
+        "Rating": 4,
+        "Image": "https://image.hm.com/assets/hm/18/4d/184d868c7b1aa0edb90aa71eb827e1842b31a4f2.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1312215002.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "LEGGING ÉVASÉ EN JERSEY ROMANITE",
+        "price_value": 9.99,
+        "Currency": "€",
+        "Description": "Legging évasé en jersey romanite. Modèle avec élastique dissimulé à la taille et plis nervure devant.",
+        "Genre": "Enfant",
+        "Sexe": "Fille",
+        "Type": "Vêtement",
+        "Categorie": "Bas",
+        "Style": "Pantalon",
+        "Sizes": [
+            "92",
+            "98",
+            "104",
+            "110",
+            "116",
+            "122",
+            "128",
+            "134",
+            "140"
+        ],
+        "Color": [
+            "Noir",
+            "Noir/scintillant"
+        ],
+        "Rating": 4.5,
+        "Image": "https://image.hm.com/assets/hm/65/43/6543e6e924faf3c6eccccb9d68d977ca073cf651.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1245253001.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "PYJAMA IMPRIMÉ EN COTON",
+        "price_value": 9.99,
+        "Currency": "€",
+        "Description": "Pyjama en jersey de coton imprimé, composé d'un top et d'un pantalon. Top avec encolure ronde et manches longues. Pantalon avec élastique à la taille.",
+        "Genre": "Enfant",
+        "Sexe": "Fille",
+        "Type": "Vêtement",
+        "Categorie": "Bas",
+        "Style": "Pantalon",
+        "Sizes": [
+            "92",
+            "98/104",
+            "110/116",
+            "122/128",
+            "134/140"
+        ],
+        "Color": [
+            "Blanc/nœuds",
+            "Rose clair/licornes",
+            "Rose/cœurs",
+            "Violet/licorne"
+        ],
+        "Rating": 5,
+        "Image": "https://image.hm.com/assets/hm/c8/7f/c87f3bd7e26682c6b05b7f821eed2e6cd0bb079b.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1230485025.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "T-SHIRT IMPRIMÉ EN COTON",
+        "price_value": 4.99,
+        "Currency": "€",
+        "Description": "T-shirt imprimé en jersey de coton doux. Modèle avec bord-côte autour de l'encolure ronde et emmanchures légèrement descendues.",
+        "Genre": "Enfant",
+        "Sexe": "Garçon",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "T-shirt",
+        "Sizes": [
+            "92",
+            "98/104",
+            "110/116",
+            "122/128",
+            "134/140"
+        ],
+        "Color": [
+            "Blanc/rayé",
+            "Crème/dinosaure",
+            "Gris clair chiné/SOHO",
+            "Bleu marine/tigres",
+            "Beige clair/dinosaures",
+            "Crème/dinosaures",
+            "Rouge/Brooklyn"
+        ],
+        "Rating": 5,
+        "Image": "https://image.hm.com/assets/hm/0a/98/0a9817570d6c3ac0ea3c7e96d9cf19f1df24577f.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1323877001.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "GILET EN POINTELLE DE COTON",
+        "price_value": 12.99,
+        "Currency": "€",
+        "Description": "Gilet en maille pointelle de coton doux. Modèle avec bande côtelée autour de l'encolure ronde et boutonnage devant. Finition côtelée aux poignets et à la base.",
+        "Genre": "Enfant",
+        "Sexe": "Fille",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "Pull",
+        "Sizes": [
+            "92",
+            "98/104",
+            "110/116",
+            "122/128",
+            "134/140"
+        ],
+        "Color": [
+            "Rose clair",
+            "Bleu clair",
+            "Beige clair",
+            "Vert menthe",
+            "Rouge"
+        ],
+        "Rating": null,
+        "Image": "https://image.hm.com/assets/hm/5b/cd/5bcdfacd64b29ac8c501cbe4d46afd1b48fea096.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1321253001.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "SWEAT AVEC MOTIFS",
+        "price_value": 12.99,
+        "Currency": "€",
+        "Description": "Sweat en molleton à l'intérieur doux et brossé avec motifs décoratifs devant. Modèle avec bord-côte autour de l'encolure ronde et emmanchures descendues. Finition bord-côte aux poignets et à la base.",
+        "Genre": "Enfant",
+        "Sexe": "Fille",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "Sweat",
+        "Sizes": [
+            "92",
+            "98/104",
+            "110/116",
+            "122/128",
+            "134/140"
+        ],
+        "Color": [
+            "Rose clair/papillons",
+            "Bleu marine/cerises",
+            "Rose clair/nœuds"
+        ],
+        "Rating": 5,
+        "Image": "https://image.hm.com/assets/hm/41/7c/417c070c36e8a66c8ccac27db96a9679db2dc32b.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1323135013.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "SWEAT IMPRIMÉ AVEC INTÉRIEUR BROSSÉ",
+        "price_value": 9.99,
+        "Currency": "€",
+        "Description": "Sweat en molleton imprimé à l'intérieur doux et brossé. Modèle avec bord-côte autour de l'encolure ronde et emmanchures légèrement descendues. Finition bord-côte aux poignets et à la base.",
+        "Genre": "Enfant",
+        "Sexe": "Fille",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "Sweat",
+        "Sizes": [
+            "92",
+            "98/104",
+            "110/116",
+            "122/128",
+            "134/140"
+        ],
+        "Color": [
+            "Beige clair/imprimé léopard",
+            "Rose clair/licornes",
+            "Violet/cerises",
+            "Noir/Paris",
+            "Rouge/Mon Amour",
+            "Beige clair/fleuri"
+        ],
+        "Rating": 5,
+        "Image": "https://image.hm.com/assets/hm/1e/9c/1e9cc781dc12a2f41c1ff6b332390c21cff238b1.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1322995011.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "SWEAT AVEC MOTIFS IMPRIMÉS",
+        "price_value": 9.99,
+        "Currency": "€",
+        "Description": "Sweat en molleton à l'intérieur doux et brossé avec motifs imprimés. Modèle avec bord-côte autour de l'encolure ronde, emmanchures descendues et manches longues. Finition bord-côte aux poignets et à la base.",
+        "Genre": "Enfant",
+        "Sexe": "Garçon",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "Sweat",
+        "Sizes": [
+            "110/116",
+            "122/128",
+            "134/140"
+        ],
+        "Color": [
+            "Vert foncé/Minecraft",
+            "Jaune clair/Pokémon",
+            "Noir/Minecraft",
+            "Blanc/Sonic le Hérisson"
+        ],
+        "Rating": 5,
+        "Image": "https://image.hm.com/assets/hm/19/00/19003503e1547f555ddbb2933c0db0ab341368c6.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1311705015.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "SWEAT IMPRIMÉ",
+        "price_value": 12.99,
+        "Currency": "€",
+        "Description": "Sweat en molleton léger à l'intérieur doux et brossé. Modèle avec bord-côte autour de l'encolure ronde, emmanchures descendues et manches longues. Finition bord-côte aux poignets et à la base.",
+        "Genre": "Enfant",
+        "Sexe": "Garçon",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "Sweat",
+        "Sizes": [
+            "92",
+            "98/104",
+            "110/116",
+            "122/128",
+            "134/140"
+        ],
+        "Color": [
+            "Beige clair/sports",
+            "Vert foncé/dinosaure",
+            "Bleu marine/dinosaure",
+            "Crème/noir",
+            "Rayures vertes/dinosaure",
+            "Bleu marine/Club de Tennis",
+            "Blanc/tricératops",
+            "Beige clair/NASA"
+        ],
+        "Rating": 5,
+        "Image": "https://image.hm.com/assets/hm/5b/6f/5b6f9790c405966c40678dbd1be0fd092599c6bc.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1308148012.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "GILET EN POINTELLE DE COTON",
+        "price_value": 12.99,
+        "Currency": "€",
+        "Description": "Gilet en maille pointelle de coton doux. Modèle avec bande côtelée autour de l'encolure ronde et boutonnage devant. Finition côtelée aux poignets et à la base.",
+        "Genre": "Enfant",
+        "Sexe": "Fille",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "Pull",
+        "Sizes": [
+            "92",
+            "98/104",
+            "110/116",
+            "122/128",
+            "134/140"
+        ],
+        "Color": [
+            "Beige clair",
+            "Rose clair",
+            "Bleu clair",
+            "Vert menthe",
+            "Rouge"
+        ],
+        "Rating": null,
+        "Image": "https://image.hm.com/assets/hm/4c/6c/4c6c2a7d40e8043dcdb9568b605848d1e4b186f6.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1321253003.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "PYJAMA EN JERSEY À MOTIF",
+        "price_value": 9.99,
+        "Currency": "€",
+        "Description": "Pyjama imprimé en jersey de coton doux, composé d'un haut et d'un pantalon. Haut avec encolure ronde et manches longues. Pantalon avec élastique habillé à la taille.",
+        "Genre": "Enfant",
+        "Sexe": "Garçon",
+        "Type": "Vêtement",
+        "Categorie": "Bas",
+        "Style": "Pantalon",
+        "Sizes": [
+            "92",
+            "98/104",
+            "110/116",
+            "122/128",
+            "134/140"
+        ],
+        "Color": [
+            "Blanc/voitures",
+            "Blanc/dinosaures",
+            "Bleu/animaux",
+            "Bleu marine/Holly Jolly"
+        ],
+        "Rating": 4.5,
+        "Image": "https://image.hm.com/assets/hm/3f/fc/3ffcddb3df3b60a5b278990108f027cfa2c091d1.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1230478019.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "JEGGING EN DENIM",
+        "price_value": 9.99,
+        "Currency": "€",
+        "Description": "Jegging en denim extensible à l'aspect délavé. Modèle avec élastique habillé à la taille et fausse braguette. Fausses poches devant et vraies poches dans le dos.",
+        "Genre": "Enfant",
+        "Sexe": "Enfant",
+        "Type": "Autre",
+        "Categorie": "Accessoires",
+        "Style": "Autre",
+        "Sizes": [
+            "92",
+            "98",
+            "104",
+            "110",
+            "116",
+            "122",
+            "128",
+            "134",
+            "140"
+        ],
+        "Color": [
+            "Bleu denim",
+            "Bleu denim clair",
+            "Bleu denim foncé",
+            "Noir denim"
+        ],
+        "Rating": 5,
+        "Image": "https://image.hm.com/assets/hm/92/50/9250b75745a81f1724f004714bd1411751da7086.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1228532002.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "LOT DE 3 T-SHIRTS À MANCHES LONGUES",
+        "price_value": 12.99,
+        "Currency": "€",
+        "Description": "T-shirts à manches longues en jersey souple.",
+        "Genre": "Enfant",
+        "Sexe": "Garçon",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "T-shirt",
+        "Sizes": [
+            "92",
+            "98/104",
+            "110/116",
+            "122/128",
+            "134/140"
+        ],
+        "Color": [
+            "Black/White/Grey marl",
+            "Rouge foncé/blanc/bleu marine",
+            "Taupe/blanc",
+            "Blanc/bleu"
+        ],
+        "Rating": 5,
+        "Image": "https://image.hm.com/assets/hm/b8/4a/b84a56b78a21d5c5e1b016bfff348d4b80adf5ab.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.0503569057.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "PULL À COL TUNISIEN EN MAILLE GAUFRÉE",
+        "price_value": 14.99,
+        "Currency": "€",
+        "Description": "Pull en maille gaufrée de coton doux. Modèle avec col tunisien côtelé et emmanchures descendues. Finition côtelée aux poignets et à la base.",
+        "Genre": "Enfant",
+        "Sexe": "Garçon",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "Pull",
+        "Sizes": [
+            "92",
+            "98/104",
+            "110/116",
+            "122/128",
+            "134/140"
+        ],
+        "Color": [
+            "Beige clair chiné",
+            "Crème/rayures noires",
+            "Bleu foncé",
+            "Vert"
+        ],
+        "Rating": 4.5,
+        "Image": "https://image.hm.com/assets/hm/57/b0/57b0391051cb8b15b58e4517d362c7d6131d8f3d.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1238181010.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "PYJAMA EN COTON CÔTELÉ",
+        "price_value": 14.99,
+        "Currency": "€",
+        "Description": "Pyjama en jersey de coton côtelé avec bords surjetés. Haut avec encolure ronde et manches longues. Pantalon avec élastique à la taille.",
+        "Genre": "Enfant",
+        "Sexe": "Fille",
+        "Type": "Vêtement",
+        "Categorie": "Bas",
+        "Style": "Pantalon",
+        "Sizes": [
+            "92",
+            "98/104",
+            "110/116",
+            "122/128",
+            "134/140"
+        ],
+        "Color": [
+            "Rose clair/fleuri",
+            "Blanc/cerises",
+            "Violet bruyère/fleuri"
+        ],
+        "Rating": 5,
+        "Image": "https://image.hm.com/assets/hm/92/9b/929b0e9ebb291243a8a159c2ee1df39932fe6e87.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1241119012.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "SWEAT IMPRIMÉ",
+        "price_value": 9.99,
+        "Currency": "€",
+        "Description": "Sweat en molleton imprimé à l'intérieur doux et brossé. Modèle avec bord-côte autour de l'encolure ronde, emmanchures descendues et manches longues. Finition bord-côte aux poignets et à la base.",
+        "Genre": "Enfant",
+        "Sexe": "Garçon",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "Sweat",
+        "Sizes": [
+            "92",
+            "98/104",
+            "110/116",
+            "122/128",
+            "134/140"
+        ],
+        "Color": [
+            "Noir/NASA",
+            "Beige clair/dinosaures",
+            "Vert/Miami",
+            "Beige/tigres",
+            "Bleu marine/dinosaure",
+            "Pêche/Lombardy",
+            "Turquoise clair/Little Brother",
+            "Beige/camion-benne",
+            "Noir/London",
+            "Bleu/robot",
+            "Gris clair chiné/voitures"
+        ],
+        "Rating": 5,
+        "Image": "https://image.hm.com/assets/hm/f6/f7/f6f70b687db7926877b1673f38c0e4c9a57a4f59.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1316310013.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "LOT DE 3 T-SHIRTS IMPRIMÉS",
+        "price_value": 19.99,
+        "Currency": "€",
+        "Description": "T-shirts imprimés en jersey de coton doux. Coupe classique avec bord-côte à l'encolure.",
+        "Genre": "Enfant",
+        "Sexe": "Garçon",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "T-shirt",
+        "Sizes": [
+            "92",
+            "98/104",
+            "110/116",
+            "122/128",
+            "134/140"
+        ],
+        "Color": [
+            "Rouge/Marvel Comics",
+            "Navy blue/TMNT",
+            "Bleu clair/Hot Wheels",
+            "Bleu/Mickey",
+            "Gris foncé/Minecraft",
+            "Vert/Minecraft",
+            "Crème/La Pat' Patrouille",
+            "Blanc/Hot Wheels",
+            "Crème/Mickey"
+        ],
+        "Rating": 5,
+        "Image": "https://image.hm.com/assets/hm/05/ad/05ad0c973fba719e6c22bc9c1461540d491cdbcf.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1117463037.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "T-SHIRT OVERSIZE IMPRIMÉ",
+        "price_value": 6.99,
+        "Currency": "€",
+        "Description": "T-shirt imprimé en jersey de coton doux. Modèle oversize avec bord-côte à l'encolure et emmanchures descendues.",
+        "Genre": "Enfant",
+        "Sexe": "Garçon",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "T-shirt",
+        "Sizes": [
+            "110/116",
+            "122/128",
+            "134/140"
+        ],
+        "Color": [
+            "Blanc/Minecraft",
+            "Blanc/Marvel Comics",
+            "Bleu clair/Garfield",
+            "Gris foncé/Spider-Man"
+        ],
+        "Rating": null,
+        "Image": "https://image.hm.com/assets/hm/43/db/43db8d5d918be55df3c3434fe91d61b7ea9968b7.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1335301010.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "PYJAMA IMPRIMÉ EN COTON",
+        "price_value": 9.99,
+        "Currency": "€",
+        "Description": "Pyjama en jersey de coton imprimé, composé d'un top et d'un pantalon. Top avec encolure ronde et manches longues. Pantalon avec élastique à la taille.",
+        "Genre": "Enfant",
+        "Sexe": "Fille",
+        "Type": "Vêtement",
+        "Categorie": "Bas",
+        "Style": "Pantalon",
+        "Sizes": [
+            "92",
+            "98/104",
+            "110/116",
+            "122/128",
+            "134/140"
+        ],
+        "Color": [
+            "Rose/cœurs",
+            "Rose clair/licornes",
+            "Blanc/nœuds",
+            "Violet/licorne"
+        ],
+        "Rating": 5,
+        "Image": "https://image.hm.com/assets/hm/a0/78/a078d23eac7adfea65083e138311611d7fcf1daa.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1230485026.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "T-SHIRT IMPRIMÉ EN COTON",
+        "price_value": 4.99,
+        "Currency": "€",
+        "Description": "T-shirt imprimé en jersey de coton doux. Modèle avec bord-côte autour de l'encolure ronde et emmanchures légèrement descendues.",
+        "Genre": "Enfant",
+        "Sexe": "Garçon",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "T-shirt",
+        "Sizes": [
+            "92",
+            "98/104",
+            "110/116",
+            "122/128",
+            "134/140"
+        ],
+        "Color": [
+            "Gris clair chiné/SOHO",
+            "Blanc/rayé",
+            "Crème/dinosaure",
+            "Bleu marine/tigres",
+            "Beige clair/dinosaures",
+            "Crème/dinosaures",
+            "Rouge/Brooklyn"
+        ],
+        "Rating": 5,
+        "Image": "https://image.hm.com/assets/hm/5d/52/5d527d1af5537645a2a2480e9abebaacba7f1d4b.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1323877013.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "SWEAT À COL ZIPPÉ AVEC DÉTAIL BRODÉ",
+        "price_value": 12.99,
+        "Currency": "€",
+        "Description": "Sweat en molleton à l'intérieur doux et brossé avec texte brodé devant. Modèle avec col zippée, emmanchures descendues et manches longues. Finition bord-côte aux poignets et à la base.",
+        "Genre": "Enfant",
+        "Sexe": "Garçon",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "Sweat",
+        "Sizes": [
+            "92",
+            "98/104",
+            "110/116",
+            "122/128",
+            "134/140"
+        ],
+        "Color": [
+            "Vert/Everyday Club"
+        ],
+        "Rating": 5,
+        "Image": "https://image.hm.com/assets/hm/85/83/8583659c4c76c68543a4da9486ffe25644e3ee70.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1308841005.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "T-SHIRT IMPRIMÉ EN COTON",
+        "price_value": 4.99,
+        "Currency": "€",
+        "Description": "T-shirt imprimé en jersey de coton doux. Modèle avec bord-côte autour de l'encolure ronde et emmanchures légèrement descendues.",
+        "Genre": "Enfant",
+        "Sexe": "Garçon",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "T-shirt",
+        "Sizes": [
+            "92",
+            "98/104",
+            "110/116",
+            "122/128",
+            "134/140"
+        ],
+        "Color": [
+            "Bleu marine/tigres",
+            "Blanc/rayé",
+            "Crème/dinosaure",
+            "Gris clair chiné/SOHO",
+            "Beige clair/dinosaures",
+            "Crème/dinosaures",
+            "Rouge/Brooklyn"
+        ],
+        "Rating": 5,
+        "Image": "https://image.hm.com/assets/hm/a8/a4/a8a43220e62335a6590c28db507f76f8adf5d065.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1323877014.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "JEGGING ÉVASÉ FAÇON DENIM",
+        "price_value": 15.99,
+        "Currency": "€",
+        "Description": "Jegging en jersey épais à l'aspect denim avec motifs. Modèle avec élastique à la taille et fausse braguette. Poches décoratives devant et vraies poches dans le dos. Jambes évasées.",
+        "Genre": "Enfant",
+        "Sexe": "Fille",
+        "Type": "Autre",
+        "Categorie": "Accessoires",
+        "Style": "Autre",
+        "Sizes": [
+            "92",
+            "98",
+            "104",
+            "110",
+            "116",
+            "122",
+            "128",
+            "134",
+            "140"
+        ],
+        "Color": [
+            "Bleu denim foncé",
+            "Bleu denim pâle",
+            "Bleu denim clair/noeuds"
+        ],
+        "Rating": null,
+        "Image": "https://image.hm.com/assets/hm/7a/b0/7ab0aa9b8ebbcee63a1bd9ef37a4c074405106f0.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1324805006.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "LOT DE 3 T-SHIRTS",
+        "price_value": 12.99,
+        "Currency": "€",
+        "Description": "T-shirts en jersey de coton doux. Modèle avec encolure ronde et base droite.",
+        "Genre": "Enfant",
+        "Sexe": "Fille",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "T-shirt",
+        "Sizes": [
+            "92",
+            "98/104",
+            "110/116",
+            "122/128",
+            "134/140"
+        ],
+        "Color": [
+            "Beige clair/imprimé léopard",
+            "Rose clair/blanc",
+            "Rose/cœurs",
+            "Blanc/cœurs lilas",
+            "Violet clair/rose clair",
+            "Blanc/pois"
+        ],
+        "Rating": null,
+        "Image": "https://image.hm.com/assets/hm/3e/ef/3eef8223463c886f4b21974384f846e86bf0fcc6.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1318442003.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "LOT DE 3 PYJAMAS EN COTON",
+        "price_value": 34.99,
+        "Currency": "€",
+        "Description": "Pyjamas en jersey de coton doux aux designs variés. Haut avec encolure ronde et manches longues terminées par bord-côte. Pantalon avec élastique à la taille et bord-côte en bas de jambe.",
+        "Genre": "Enfant",
+        "Sexe": "Garçon",
+        "Type": "Vêtement",
+        "Categorie": "Bas",
+        "Style": "Pantalon",
+        "Sizes": [
+            "92",
+            "98/104",
+            "110/116",
+            "122/128",
+            "134/140"
+        ],
+        "Color": [
+            "Gris chiné/rayures bleu foncé",
+            "Bleu clair/voitures"
+        ],
+        "Rating": 4.5,
+        "Image": "https://image.hm.com/assets/hm/0c/f7/0cf7fe651e22768841c87fcd97fe8ab5b9cfef9b.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1298731001.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "SWEAT IMPRIMÉ",
+        "price_value": 12.99,
+        "Currency": "€",
+        "Description": "Sweat en molleton imprimé à l'intérieur doux et brossé. Modèle avec bord-côte autour de l'encolure ronde et longues manches volumineuses. Finition bord-côte aux poignets et à la base.",
+        "Genre": "Enfant",
+        "Sexe": "Fille",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "Sweat",
+        "Sizes": [
+            "98/104",
+            "110/116",
+            "122/128",
+            "134/140"
+        ],
+        "Color": [
+            "Gris clair/Lilo et Stitch",
+            "Blanc/Kuromi",
+            "Bleu clair/Cinnamoroll",
+            "Blanc/Minnie",
+            "Beige clair/Lilo et Stitch",
+            "Bleu clair/La Reine des neiges",
+            "Violet/Lilo et Stitch",
+            "Rose/Hello Kitty",
+            "Crème/Hello Kitty",
+            "Jaune/Hello Kitty",
+            "Rose/Peppa Pig",
+            "Blanc/Peppa Pig",
+            "Bleu clair/Hello Kitty",
+            "Rose/Minnie"
+        ],
+        "Rating": 5,
+        "Image": "https://image.hm.com/assets/hm/a6/35/a6351033efa53fd8250882c0be9ba87e109c6f4c.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1267711083.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "TEDDY AVEC MOTIFS",
+        "price_value": 24.99,
+        "Currency": "€",
+        "Description": "Veste en feutre avec motifs et manches en tissu enduit contrastant. Modèle avec col côtelé et fermeture par boutons-pression devant. Poches raglan devant. Large bord-côte aux poignets et à la base. Doublée.",
+        "Genre": "Enfant",
+        "Sexe": "Enfant",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "Veste/Manteau",
+        "Sizes": [
+            "92",
+            "98/104",
+            "110/116",
+            "122/128",
+            "134/140"
+        ],
+        "Color": [
+            "Noir/N.Y.C",
+            "Bleu marine/New York City",
+            "Vert/N.Y.C Club"
+        ],
+        "Rating": 5,
+        "Image": "https://image.hm.com/assets/hm/75/89/75895447ca57309eec74e5495f1c2c2d6001745b.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1282155006.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "T-SHIRT OVERSIZE IMPRIMÉ",
+        "price_value": 9.99,
+        "Currency": "€",
+        "Description": "T-shirt en jersey de coton doux avec motif imprimé devant. Modèle oversize avec bord-côte autour de l'encolure ronde et emmanchures descendues.",
+        "Genre": "Enfant",
+        "Sexe": "Garçon",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "T-shirt",
+        "Sizes": [
+            "92",
+            "98/104",
+            "110/116",
+            "122/128",
+            "134/140"
+        ],
+        "Color": [
+            "Bleu/Marvel Comics",
+            "Blanc/Marvel Comics",
+            "Gris foncé/Sonic le Hérisson",
+            "Grège foncé/Jurassic World",
+            "Bleu marine/Spider-Man"
+        ],
+        "Rating": 5,
+        "Image": "https://image.hm.com/assets/hm/83/8a/838ab99813ecdece4ba2cbb97c5023f393242d3c.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1269368008.html",
+        "Brand": "H&M"
+    },
+    {
+        "Name": "HOODIE IMPRIMÉ",
+        "price_value": 9.99,
+        "Currency": "€",
+        "Description": "Sweat en molleton imprimé à l’intérieur doux et brossé. Modèle avec capuche doublée à effet croisé et emmanchures descendues. Finition bord-côte aux poignets et à la base.",
+        "Genre": "Enfant",
+        "Sexe": "Garçon",
+        "Type": "Vêtement",
+        "Categorie": "Haut",
+        "Style": "Sweat",
+        "Sizes": [
+            "92",
+            "98/104",
+            "110/116",
+            "122/128",
+            "134/140"
+        ],
+        "Color": [
+            "Gris clair/Net Nation",
+            "Bleu/03"
+        ],
+        "Rating": 5,
+        "Image": "https://image.hm.com/assets/hm/bc/54/bc54630830516874f114163cae6ee2986bc8f7d8.jpg?imwidth=1260",
+        "Url": "https://www2.hm.com/fr_fr/productpage.1245286013.html",
+        "Brand": "H&M"
+    }
+]
