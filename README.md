@@ -65,49 +65,7 @@
 ## 3. Architecture technique
 
 ```
-┌────────────────────────────────────────────────────────────────┐
-│                         UTILISATEUR                            │
-│              (Ordinateur · Tablette · Téléphone)               │
-└───────────────────────────┬────────────────────────────────────┘
-                            │
-                ┌───────────▼──────────┐
-                │      FRONTEND        │
-                │  HTML / CSS / JS     │
-                │  Responsive 320px+   │
-                └───────────┬──────────┘
-              ┌─────────────┴──────────────┐
-              │                            │
-  ┌───────────▼──────────┐   ┌─────────────▼──────────────┐
-  │  Backend Principal   │   │     Backend IA / ML         │
-  │  Node.js (Express)   │   │   Python FastAPI (uvicorn)  │
-  │     Port 3000        │   │        Port 8000            │
-  │                      │   │                             │
-  │  • Auth bcrypt       │   │  • Modèle ONNX CNN          │
-  │  • Upload multer     │   │    (23 catégories)          │
-  │  • API météo proxy   │◄──►  • rembg (fond transparent) │
-  │  • Chatbot Groq      │   │  • Agents conseil.py        │
-  │  • Stats / KPIs      │   │                             │
-  └───────────┬──────────┘   └─────────────────────────────┘
-              │
-  ┌───────────▼──────────────────────────┐
-  │       Données / Stockage             │
-  │  db.json (données structurées)       │
-  │  Frontend/uploads/ (photos)          │
-  └──────────────────────────────────────┘
 
-  ┌───────────────────────────────────┐   ┌──────────────────────┐
-  │  Pipeline d'Entraînement (hors-   │   │  Services IA Ext.    │
-  │  ligne)                           │   │                      │
-  │  Scraping → PostgreSQL →          │   │  • API Groq          │
-  │  Dataset 2 220 images → CNN       │   │    LLaMA 4 Scout 17B │
-  └───────────────────────────────────┘   │    LLaMA 3.3 70B     │
-                                          │  • OpenWeather API   │
-  ┌───────────────────────────────────┐   └──────────────────────┘
-  │  Infrastructure / DevOps          │
-  │  • Serveur personnel              │
-  │  • Git / GitHub                   │
-  │  • Docker / docker-compose        │
-  └───────────────────────────────────┘
 ```
 
 ---
@@ -219,12 +177,8 @@ docker-compose up --build
 
 ### Pipeline d'entraînement
 
-```
-Photos de vêtements     Préparation           Apprentissage        Affinage           Modèle final
-  2 220 images      →   des données       →   Phase 1          →   Phase 2        →   ~87 % précision
-  23 catégories         rognage/rotation/     10 cycles             15 cycles
-                        colorisation          classifieur seul      fine-tuning
-```
+![Description](assets/images/cnn_pipeline.png)
+
 
 ### Dataset
 
@@ -234,9 +188,9 @@ Photos de vêtements     Préparation           Apprentissage        Affinage   
 - Split stratifié 80/20 : 1 773 images train / 444 images validation
 - Entraînement sur GPU Google Colab (~1h)
 
-### Classes finales
+### Distribution des classes finales
 
-`Baskets · Bijoux · Chapeau · Chemise · Chaussures · Combinaison · Ensemble · Gants · Jean · Jogging · Jupe · Lunettes · Pantalon · Polo · Pull · Robe · Sac · Sandales · Short · Sous-vêtement · Sweat · T-shirt · Top · Veste_Manteau`
+![Description](assets/images/distribution_des_classes.png)
 
 ### Déploiement
 
@@ -248,24 +202,7 @@ Le modèle est exporté au format **ONNX** (`model/fashion_classifier.onnx`) et 
 
 Trois agents indépendants, tous via l'API Groq (gratuite, sans quota fixe) :
 
-### `analyse_image.py` — Vision vêtement isolé
-- Modèle : **LLaMA 4 Scout 17B**
-- Entrée : URL ou fichier image
-- Extrait : couleur, saisons, marque
-- Utilise le type détecté par le CNN
-
-### `analyse_tenue.py` — Vision tenue complète
-- Modèle : **LLaMA 4 Scout 17B**
-- Détecte **tous** les vêtements présents
-- Analyse zone par zone (tête → pieds)
-- Retourne : couleur + saison + marque + style global (12 styles) + occasion (4 types)
-
-### `conseil.py` — Agent conseil mode
-- Modèle : **LLaMA 3.3 70B Versatile**
-- Lit la garde-robe complète depuis `db.json`
-- Connaît le profil de style de l'utilisateur
-- Compose des tenues haut + bas + chaussures avec explication des choix
-- Exemples : "soirée restaurant", "réunion professionnelle"
+![Description](assets/images/agents_groq_v2.png)
 
 ### Occasions reconnues
 
@@ -358,26 +295,7 @@ Méthode **Agile** avec sprints itératifs de 3 semaines. Backlog géré dans **
 
 ### Diagramme de Gantt (résumé)
 
-```
-                    MARS      AVRIL      MAI       JUIN
-M1 Scraping       ████████
-   PostgreSQL         ████████
-   Dataset CNN            ████████
-
-M2 Site web       ██████████████████████
-   API météo               ████████
-   Docker                           ████████
-   Tests / Deploy                          ████████
-
-M3 CNN ONNX              ████████████
-   Agents vision                   ████████
-   Auth + Upload             ████████
-   Chatbot Groq               ████████
-   Intégrations FastAPI               ██████████
-
-Livrables                                    ████████
-Soutenance                                      ██████
-```
+METTRE LE LIEN HTML DU GANTT
 
 ### Suivi
 
