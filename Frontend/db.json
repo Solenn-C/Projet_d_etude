@@ -1,46 +1,836 @@
 {
   "users": [
     {
-      "id": "2f761d68-25b9-441b-8e6d-f00ce5090b27",
+      "id": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
       "email": "solenn.coulon17@gmail.com",
-      "password": "$2b$10$S8xDcyBrVwmC1Puwha6PmuMvqEWkCJ3pdx1qGuCWD96PAaDSwrhV6",
+      "password": "$2b$10$EwKDmOpjwmhJeleNPP46huG.RaEfPPJAg2ICX/zkbeqymkVJbzB6S",
       "prenom": "Solenn",
       "nom": "Coulon",
-      "createdAt": "2026-04-07T09:39:38.676Z"
+      "createdAt": "2026-04-08T13:06:37.729Z",
+      "ville": "Rennes",
+      "pays": "France",
+      "telephone": "0783248240",
+      "dateNaissance": "2003-10-29",
+      "genre": "Femme",
+      "styles": [
+        "Casual chic",
+        "Minimaliste",
+        "Classique",
+        "Casual chic",
+        "Minimaliste",
+        "Classique"
+      ],
+      "contextes": [
+        "quotidien",
+        "bureau",
+        "soiree"
+      ],
+      "twoFA": null,
+      "tailleHaut": [
+        "M",
+        "L"
+      ],
+      "tailleBas": [
+        "40",
+        "42"
+      ],
+      "tailleChaussures": "41"
     }
   ],
   "sessions": {
-    "da0a87f449a70e0e0462203bfc40154615393f7c4c56037cbc5df4c157fe7f73": "2f761d68-25b9-441b-8e6d-f00ce5090b27",
-    "b41226abcd965a91ae2bc4d69a226be443b698cabd5d8e66cd20b19f8e4734e3": "2f761d68-25b9-441b-8e6d-f00ce5090b27",
-    "3a60ebc56b440620b4a662a8b0af94ec2c27836370d399fb98710482e91ebdea": "2f761d68-25b9-441b-8e6d-f00ce5090b27",
-    "41c431182e82bbb7488ab5192f6660e7e4c0903c884696b6c56ac0f5311f2b10": "2f761d68-25b9-441b-8e6d-f00ce5090b27",
-    "6eb98e8ec60dbce987329c570ef49ff38b1a7f49e6f0f553b508c6f2d53b8825": "2f761d68-25b9-441b-8e6d-f00ce5090b27",
-    "07af213e8278b2023abb9189183eb6904af339abd0610bb8b0f990c166a8f4b7": "2f761d68-25b9-441b-8e6d-f00ce5090b27",
-    "e82489abc8b43079bf1ed47ac32aafd9d1f67df6f9ab2f52a816b36ca28023e2": "2f761d68-25b9-441b-8e6d-f00ce5090b27",
-    "9faaa507e135f33f834d4e7fddba2e579bfc41c28a7f59568cf538a645738b5e": "2f761d68-25b9-441b-8e6d-f00ce5090b27",
-    "836841154e868417e4f22ab6b77798337241f6af227d1d99626fc5e65b3a16b6": "2f761d68-25b9-441b-8e6d-f00ce5090b27",
-    "10f92cf91f9d0cf8c14a8bb2818371583013bbf3bd6a2eb020eb6b0a50a7921b": "2f761d68-25b9-441b-8e6d-f00ce5090b27",
-    "b53dff75e569af8c0eccb5e8009340477c7bff2eb1b684480a96437e5a8e2d3e": "2f761d68-25b9-441b-8e6d-f00ce5090b27",
-    "ee358e4d32e19a8ebf680184d3c9c0b37040533d00576bf0f63af5691f232a3a": "2f761d68-25b9-441b-8e6d-f00ce5090b27",
-    "39c42db9c50633062726cf33cc53836e870cc94c20aa6491949a875026b9039b": "2f761d68-25b9-441b-8e6d-f00ce5090b27",
-    "301095b2242f0a076ae2f378f3d1fd702124071c5348ea43b1b8c2763aa1e38e": "2f761d68-25b9-441b-8e6d-f00ce5090b27",
-    "9c55ab9a149f9ac0d46eb8010cbe2b0de8b2f300358e691293b17ed51f8578c8": "2f761d68-25b9-441b-8e6d-f00ce5090b27",
-    "be77fbf5c5fb416676590355648d08d230d2846bd3bd6dc0e6ff9246ffe12fbd": "2f761d68-25b9-441b-8e6d-f00ce5090b27",
-    "63e187ee694636792f756d3ea164ca63a074e7a8d3fcff5c47f6d1dcb8bdd0be": "2f761d68-25b9-441b-8e6d-f00ce5090b27",
-    "36aab8a7adb4088a31278ecad5bd84f3c4bf8598f3a9dd1a5856663573f232ae": "2f761d68-25b9-441b-8e6d-f00ce5090b27",
-    "6ef4476d40942f181c57c999dda91f52974ac4e753eb7c7a1faa156491e0ca22": "2f761d68-25b9-441b-8e6d-f00ce5090b27",
-    "ca3d209dd65e07fd37482c49242b35dbeb5fb4ce97398bbd19a7210da98d0fea": "2f761d68-25b9-441b-8e6d-f00ce5090b27",
-    "a7f92a62c247f291d37aacc804036634908680a989e90262345a5a42bc79b5f1": "2f761d68-25b9-441b-8e6d-f00ce5090b27",
-    "013cf467fe841864f3827d14e4c6ec003f681dc0a73ceb26b6380fbdc06ba1ab": "2f761d68-25b9-441b-8e6d-f00ce5090b27",
-    "8c397d77c782cb0a56e33f5cb646f7a4af2cbc12e1675fceef1e70d7e6f50f56": "2f761d68-25b9-441b-8e6d-f00ce5090b27",
-    "f02348cab584d4ecd9006da41765e436d1f7e3bff388d5967fe90a5753944a7c": "2f761d68-25b9-441b-8e6d-f00ce5090b27",
-    "8ff319a96e44ea842d82537f616908c128d2a6a3c970ab6a0ba82e58c0a7a6ca": "2f761d68-25b9-441b-8e6d-f00ce5090b27",
-    "0e43a26fb7117192aa1a6a4e4150f6e0f5706e947fc0560c0b9bff4174a5ebfb": "2f761d68-25b9-441b-8e6d-f00ce5090b27",
-    "2d99e9ed464ee987a529cc4cde4e3d9c322edd81b88bca2679ecfef74c89fac3": "2f761d68-25b9-441b-8e6d-f00ce5090b27",
-    "bcb94c9bdffa515f8b72271cc1983d6162e7dbaa8738d788f62987f7a97bac5d": "2f761d68-25b9-441b-8e6d-f00ce5090b27",
-    "939929854cc8ab1062503ed472b5cc59e2804715f68029737104edd0b0d0a840": "2f761d68-25b9-441b-8e6d-f00ce5090b27",
-    "745147654870139c132da5629b01f6978c0055895eb92bd36e4c7eaf7ac66f04": "2f761d68-25b9-441b-8e6d-f00ce5090b27",
-    "f8016034d05a8b0d5b06b15da15fd00bedbc7a8d13298fdc67aafae8e02eb164": "2f761d68-25b9-441b-8e6d-f00ce5090b27",
-    "12aea7e48f9bf0e6c094cd72cf432faa84c4f59795cbffe94602eb48a885ca85": "2f761d68-25b9-441b-8e6d-f00ce5090b27"
+    "bc405324a2eec42b1d01010d4144ed6b64fdbec9183c60d69c971747aa887398": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "9bae2e6f4baa54ac5b3abcb59076015ca66e90afc819caafdbfbf737a5f40614": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "e52e00d2e239aa22324202318ffa9db590253a45bbbfd8cf5f543cd24406884f": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "726bbc8c8bfe215c627c6c7316a4d2b519bce0bdeaf8575fc48ba9662e6f94fc": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "cddadf9851d9b7e1504a72c2618a16f5af2a6a63d6e7bfcf4dbe47cacfbda7d5": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "89136ab033166321232babbfbe08d23208b3d61924d0f809557c9bf069b3eeab": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "bcc05fc8a7589c21f868ccfaa9eb7daa12891cc479d1ab490dd8cb15fe1e06dc": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "5394d53b21ed8900b6ea41b5ec797d8ca90c9b4e13e63440d0b8d727f6164380": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "30923902f3af0a1351fd618739c902dc1b53093fda17b14af4be0f31f0b556dc": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "24c8f5b416843be26329880eb9d0d628d41f254ee63c4bed762e7451cca8bc35": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "ea5eb26763882509f90e93bd9b9fe8b786cc11abe7659c6e11aed4346cb55965": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "ed45dce9e938fba237b3401d38215cb8ee6522b545bdd9a7c2b2c186356eb115": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "d6168af7b8f6e5ae940ee845d47497513e26a2e5c6c8bd3696f8532b628a6946": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "7eb5cc84375954488d266044e8a40ac66baace5760506f133c78d07762d186b6": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "22ed5d82b114ef3f109a18c7e6dd32d2efbf67d6488b053068760228b11007b7": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "7013e280ea2a091bd0e661becfe474040f4225771015c5071c6df7e44adce340": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "4f80656926ced686856244d971a5c1de3594d5183563098aef91ac6c2198202b": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "77694dcb71e5051845efc74a9fc6b9b15e15e323aacd538819c75d9175f6c2ec": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "8f681eb7b531919047464a5ff1e35260fe97a517a6eb93784f4c37111369b863": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "7a06eafd2541844dba895e55d5ccbcf4e7fbd1d49142c6a0559d4e6ee9e96bc5": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "9076a176250556905a6ef27e28d597221cd1b86cf3d818d1506d5776c9d99541": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "5bac86ff78e320cebc67f5a6dc575dee52741377390d5717a74817cf4ed72c12": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "1f8ea0e984ce966721b7975e82cd63261f7843a1ba460d92bbeda1c42162dba2": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "7df73c21ce258b3b58fc47ce05c5fdb625caaa3919f1ca479719be8ac0e1e155": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "8df54d21d1dd07aaedf6616ed2c3cd71aca965cc0d20a810a5f3d0a1b0e8d893": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "f945680af78b71db418ea39ec15db85859161b9cfcaa251681fd5ad2ab6a4237": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "0c754c9b870e6a638c9588b6865708d777a2e89834ac775796ad99e2b4a8f92e": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "b8d9ce8857eb1632c523e6de3fe65cce913588e2b6ee8ad132f0c0548da75122": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "c54042206506756364ea73d753db4b684e8e73981a4698139e75d3f6cdacf51c": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "86d7b3edcb03f0724482865a19bd7e779d952f0544a9d82f26bf93a047cce0d2": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "cedd8a93846b7d639724fd2e79906f111dc1f7be85add37351407311125b9e52": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "dad3188369ee9a46e3081072960104d17d7d0ef749f0f1de34cb66e41b19e197": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "9a92119b27d62e9b14a1a7f63a6caaf5703d6a65f72667819ea4a5013fbbd966": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "a223263984f0cd878c92325d40d45e46be6a13748189c342793c2f7c5cdb866d": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "7637147baaa58f695008bfd9190260fca808bda09240d2bf793d7d12155989b9": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "93bacc62d5ef469b555798f75d0bc87d6eafcc55107e57bb66658051121c2dd5": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "62eb76e147f5c2f373470b51da962bc2a162dde399cd4735c4dd5517b4a29f53": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "4569478e09e564170077e7d0532cef63b9590e84f20d4a07b1a44a589ae5e3e0": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "386531fa9a8d6307a6f8b583e2e6ea4d3c5f443bebce36dd058795207f8b4611": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "dadfca0f08b36058388f0ea0e983ccf142d5565c0691afa61525b2c6dface1fa": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "8eed9f42e048a6c00db2ce9937cb030d109cfb4c2c5fae9d9ceecd71cf553dd9": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "c39907497741da8051ea92a64873f15d5454557dd279d5235508091ef9c2697c": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "28dded043f46bdaa8aed0c125ceae71e951c24fa5dd76ea8d51616b5cb029cd1": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "afdb196164189aa40ba80f4a686de41a2256ed0456e11ff8a17983b0fdb23205": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "c545942bba562b3d96a855bf2fbb916dc4a3a8b9476d6524f8d72b80cccbc427": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "331f498d96d697eea212b0b7e4574bda63ab92e4edba35291e1c2d80fd7fb3dc": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "cce79726076cec47348a92dd748efd9b23cb952d1dbac0b74a68ed8da04f0380": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "2f94cd82ea749409284f6dbef17d3f9746ba09f21a578ec89740f66d5213d073": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "356e4d6a0d37456c827d59c1a5006cee6fce686a240a6e3478deaf3faed996bf": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "355da914a4222b0c0cd87ca1a8d04fc9d17aa5f543d94fb33a7880333d6099fa": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "58d02cb2bc01e528380859e01d952ca2a307eb7738d8489ccf41795cef25446f": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "764bbc87fa58b64b80896a5332b2f2710403de15e455d867df0914c3f0f255ce": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "e37bc6499e0ba59a94532d5dfd9c2f97d1d4d9b5c1bfdbf74b36b866f2697166": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "e9aa8c0aa7721ad0a176e955980659a713550a49e3e20c3bb35739e38a6c5e9f": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "3da6b612eca5c5c34f66040ca8c159433a1a4a4a7e1e91285daada94e9fe2883": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "414bfb5cebcddcf936cfac7387cbac67dda174e64bbaf93dfb8f8bb7feffc894": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "1ec7934cb716f8f1fa44b827bf4da8ef2e58bb61580ffb8750ec9b527b6ea98e": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "f6bff7ec9751d62569a1bd4045888ddb17d77ce11f025a4171238ec0cdf21895": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "69ca78a6dbdb17e2d88c659f597ee87215093fb8fea7c51cf338ae967aa2979b": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "37269a5fbbec5f68b67b2ca351044e886fd68842f00c3d888c27b285c05bc261": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+    "060de3ba1bc4fb7319183e4da4605438a0f6f5451cd9a5ede3eef4e2898eb527": "ac3f62ba-a252-44b9-be0a-01bd14f29a73"
+  },
+  "wardrobe": {
+    "ac3f62ba-a252-44b9-be0a-01bd14f29a73": {
+      "ensemble": [
+        {
+          "nom": "Robe a pois",
+          "marque": "Zara",
+          "couleur": "Blanc",
+          "taille": "M",
+          "porte": 0,
+          "portes": 0,
+          "foisPorte": 0,
+          "dernierPort": null,
+          "historiquePort": [],
+          "portesAnnuel": 0,
+          "dateAjout": "2026-05-06T09:51:26.755Z",
+          "desc": "",
+          "photo": "/uploads/1778061086751_4fc55260.png",
+          "bg": "#F0EDF8",
+          "saisons": [
+            "Été",
+            "Automne",
+            "Printemps"
+          ],
+          "id": "1778061086758",
+          "createdAt": "2026-05-06T09:51:26.758Z"
+        },
+        {
+          "nom": "Robe dentelles",
+          "marque": "Zara",
+          "couleur": "Bordeaux",
+          "taille": "M",
+          "porte": 1,
+          "portes": 1,
+          "foisPorte": 1,
+          "dernierPort": "2026-05-06T09:51:50.087Z",
+          "historiquePort": [
+            {
+              "date": "2026-05-06T09:51:50.087Z",
+              "source": "manuel"
+            }
+          ],
+          "portesAnnuel": 1,
+          "dateAjout": "2026-05-06T09:51:50.087Z",
+          "desc": "",
+          "photo": "/uploads/1778061110082_14bcbbe1.png",
+          "bg": "#F0EDF8",
+          "saisons": [
+            "Été",
+            "Automne",
+            "Printemps"
+          ],
+          "id": "1778061110088",
+          "createdAt": "2026-05-06T09:51:50.088Z"
+        }
+      ],
+      "haut": [
+        {
+          "nom": "T shirt fleuri",
+          "marque": "H&M",
+          "couleur": "Blanc",
+          "taille": "40",
+          "porte": 0,
+          "desc": "",
+          "photo": "/uploads/1777892036969_86877f31.png",
+          "bg": "#F0EDF8",
+          "saisons": [
+            "Été",
+            "Printemps"
+          ],
+          "id": "1777892037028",
+          "createdAt": "2026-05-04T10:53:57.028Z",
+          "portes": 1,
+          "foisPorte": 1,
+          "dernierPort": "2026-06-11T14:35:11.491Z",
+          "portesAnnuel": 1,
+          "historiquePort": [
+            {
+              "date": "2026-06-11T14:35:11.491Z",
+              "source": "tenue"
+            }
+          ]
+        },
+        {
+          "nom": "Blouse unie",
+          "marque": "Zara",
+          "couleur": "Blanc",
+          "taille": "M",
+          "porte": 2,
+          "portes": 2,
+          "foisPorte": 2,
+          "dernierPort": "2026-06-10T08:06:47.446Z",
+          "historiquePort": [
+            {
+              "date": "2026-05-06T09:50:12.986Z",
+              "source": "manuel"
+            },
+            {
+              "date": "2026-06-10T08:06:47.446Z",
+              "source": "tenue"
+            }
+          ],
+          "portesAnnuel": 2,
+          "dateAjout": "2026-05-06T09:50:12.986Z",
+          "desc": "",
+          "photo": "/uploads/1778061012981_bd14ea45.png",
+          "bg": "#F0EDF8",
+          "saisons": [
+            "Été",
+            "Automne",
+            "Printemps"
+          ],
+          "id": "1778061012988",
+          "createdAt": "2026-05-06T09:50:12.988Z"
+        },
+        {
+          "nom": "Chemise",
+          "marque": "H&M",
+          "couleur": "Bordeaux",
+          "taille": "M",
+          "porte": 1,
+          "portes": 1,
+          "foisPorte": 1,
+          "dernierPort": "2026-06-11T14:13:52.527Z",
+          "historiquePort": [
+            {
+              "date": "2026-06-11T14:13:52.527Z",
+              "source": "manuel"
+            }
+          ],
+          "portesAnnuel": 1,
+          "dateAjout": "2026-06-11T14:13:52.527Z",
+          "desc": "",
+          "photo": "/uploads/1781187232519_3f2b29d4.png",
+          "bg": "#F0EDF8",
+          "saisons": [
+            "Automne",
+            "Hiver",
+            "Printemps"
+          ],
+          "id": "1781187232529",
+          "createdAt": "2026-06-11T14:13:52.529Z"
+        },
+        {
+          "nom": "Top",
+          "marque": "H&M",
+          "couleur": "Bordeaux",
+          "taille": "M",
+          "porte": 0,
+          "portes": 0,
+          "foisPorte": 0,
+          "dernierPort": null,
+          "historiquePort": [],
+          "portesAnnuel": 0,
+          "dateAjout": "2026-06-11T14:14:38.487Z",
+          "desc": "",
+          "photo": "/uploads/1781187278483_1f2e7e84.png",
+          "bg": "#F0EDF8",
+          "saisons": [
+            "Été",
+            "Printemps"
+          ],
+          "id": "1781187278493",
+          "createdAt": "2026-06-11T14:14:38.493Z"
+        }
+      ],
+      "manteau": [
+        {
+          "nom": "Veste en jean",
+          "marque": "Zara",
+          "couleur": "Vert",
+          "taille": "M",
+          "porte": 1,
+          "portes": 1,
+          "foisPorte": 1,
+          "dernierPort": "2026-05-06T09:49:31.082Z",
+          "historiquePort": [
+            {
+              "date": "2026-05-06T09:49:31.082Z",
+              "source": "manuel"
+            }
+          ],
+          "portesAnnuel": 1,
+          "dateAjout": "2026-05-06T09:49:31.082Z",
+          "desc": "",
+          "photo": "/uploads/1778060971066_92deba7b.png",
+          "bg": "#F0EDF8",
+          "saisons": [
+            "Été",
+            "Automne",
+            "Printemps"
+          ],
+          "id": "1778060971084",
+          "createdAt": "2026-05-06T09:49:31.084Z"
+        },
+        {
+          "nom": "Manteau Long",
+          "marque": "H&M",
+          "couleur": "Gris",
+          "taille": "M",
+          "porte": 1,
+          "portes": 1,
+          "foisPorte": 1,
+          "dernierPort": "2026-06-11T14:31:44.563Z",
+          "historiquePort": [
+            {
+              "date": "2026-06-11T14:31:44.563Z",
+              "source": "manuel"
+            }
+          ],
+          "portesAnnuel": 1,
+          "dateAjout": "2026-06-11T14:31:44.563Z",
+          "desc": "",
+          "photo": "/uploads/1781188304558_3a313348.png",
+          "bg": "#F0EDF8",
+          "saisons": [
+            "Automne",
+            "Hiver"
+          ],
+          "id": "1781188304565",
+          "createdAt": "2026-06-11T14:31:44.565Z"
+        }
+      ],
+      "bas": [
+        {
+          "nom": "Jean noir",
+          "marque": "Zara",
+          "couleur": "Noir",
+          "taille": "40",
+          "porte": 1,
+          "portes": 2,
+          "foisPorte": 2,
+          "dernierPort": "2026-06-10T08:06:47.447Z",
+          "historiquePort": [
+            {
+              "date": "2026-05-06T09:50:36.958Z",
+              "source": "manuel"
+            },
+            {
+              "date": "2026-06-10T08:06:47.447Z",
+              "source": "tenue"
+            }
+          ],
+          "portesAnnuel": 2,
+          "dateAjout": "2026-05-06T09:50:36.958Z",
+          "desc": "",
+          "photo": "/uploads/1778061036954_f83469bd.png",
+          "bg": "#F0EDF8",
+          "saisons": [
+            "Été",
+            "Automne",
+            "Hiver",
+            "Printemps"
+          ],
+          "id": "1778061036960",
+          "createdAt": "2026-05-06T09:50:36.960Z"
+        },
+        {
+          "nom": "Short",
+          "marque": "H&M",
+          "couleur": "Marron",
+          "taille": "40",
+          "porte": 2,
+          "portes": 2,
+          "foisPorte": 2,
+          "dernierPort": "2026-06-11T14:18:22.855Z",
+          "historiquePort": [
+            {
+              "date": "2026-06-11T14:18:22.855Z",
+              "source": "manuel"
+            }
+          ],
+          "portesAnnuel": 2,
+          "dateAjout": "2026-06-11T14:18:22.855Z",
+          "desc": "",
+          "photo": "/uploads/1781187502850_91d8e20e.png",
+          "bg": "#F0EDF8",
+          "saisons": [
+            "Été",
+            "Printemps"
+          ],
+          "id": "1781187502857",
+          "createdAt": "2026-06-11T14:18:22.857Z"
+        },
+        {
+          "nom": "Jupe jean",
+          "marque": "H&M",
+          "couleur": "Bleu",
+          "taille": "40",
+          "porte": 1,
+          "portes": 1,
+          "foisPorte": 1,
+          "dernierPort": "2026-06-11T14:19:00.988Z",
+          "historiquePort": [
+            {
+              "date": "2026-06-11T14:19:00.988Z",
+              "source": "manuel"
+            }
+          ],
+          "portesAnnuel": 1,
+          "dateAjout": "2026-06-11T14:19:00.988Z",
+          "desc": "",
+          "photo": "/uploads/1781187540983_e73f7773.png",
+          "bg": "#F0EDF8",
+          "saisons": [
+            "Été",
+            "Automne",
+            "Hiver",
+            "Printemps"
+          ],
+          "id": "1781187540990",
+          "createdAt": "2026-06-11T14:19:00.990Z"
+        },
+        {
+          "nom": "Pantalon Fluide",
+          "marque": "Mango",
+          "couleur": "Bleu",
+          "taille": "40",
+          "porte": 0,
+          "portes": 0,
+          "foisPorte": 0,
+          "dernierPort": null,
+          "historiquePort": [],
+          "portesAnnuel": 0,
+          "dateAjout": "2026-06-11T14:21:26.174Z",
+          "desc": "",
+          "photo": "/uploads/1781187686170_fc0bee43.png",
+          "bg": "#F0EDF8",
+          "saisons": [
+            "Été",
+            "Automne",
+            "Hiver",
+            "Printemps"
+          ],
+          "id": "1781187686176",
+          "createdAt": "2026-06-11T14:21:26.176Z"
+        }
+      ],
+      "accessoires": [
+        {
+          "nom": "Lunette de soleil Ovale",
+          "marque": "H&M",
+          "couleur": "Marron",
+          "taille": "—",
+          "porte": 2,
+          "portes": 2,
+          "foisPorte": 2,
+          "dernierPort": "2026-05-28T12:14:46.201Z",
+          "historiquePort": [
+            {
+              "date": "2026-05-28T12:14:46.201Z",
+              "source": "manuel"
+            }
+          ],
+          "portesAnnuel": 2,
+          "dateAjout": "2026-05-28T12:14:46.201Z",
+          "desc": "",
+          "photo": "/uploads/1779970486197_6a2330ab.png",
+          "bg": "#F0EDF8",
+          "saisons": [
+            "Été",
+            "Automne",
+            "Hiver",
+            "Printemps"
+          ],
+          "id": "1779970486203",
+          "createdAt": "2026-05-28T12:14:46.203Z"
+        },
+        {
+          "nom": "Ceinture",
+          "marque": "H&M",
+          "couleur": "Marron",
+          "taille": "—",
+          "porte": 1,
+          "portes": 1,
+          "foisPorte": 1,
+          "dernierPort": "2026-06-11T14:28:57.221Z",
+          "historiquePort": [
+            {
+              "date": "2026-06-11T14:28:57.221Z",
+              "source": "manuel"
+            }
+          ],
+          "portesAnnuel": 1,
+          "dateAjout": "2026-06-11T14:28:57.221Z",
+          "desc": "",
+          "photo": "/uploads/1781188137218_9e492390.png",
+          "bg": "#F0EDF8",
+          "saisons": [
+            "Été",
+            "Automne",
+            "Hiver",
+            "Printemps"
+          ],
+          "id": "1781188137224",
+          "createdAt": "2026-06-11T14:28:57.224Z"
+        },
+        {
+          "nom": "Sac à main",
+          "marque": "Mango",
+          "couleur": "Noir",
+          "taille": "—",
+          "porte": 0,
+          "portes": 0,
+          "foisPorte": 0,
+          "dernierPort": null,
+          "historiquePort": [],
+          "portesAnnuel": 0,
+          "dateAjout": "2026-06-11T14:30:22.045Z",
+          "desc": "",
+          "photo": "/uploads/1781188222042_cc946d0f.png",
+          "bg": "#F0EDF8",
+          "saisons": [
+            "Été",
+            "Automne",
+            "Hiver",
+            "Printemps"
+          ],
+          "id": "1781188222051",
+          "createdAt": "2026-06-11T14:30:22.051Z"
+        }
+      ],
+      "chaussures": [
+        {
+          "nom": "Escarpin",
+          "marque": "H&M",
+          "couleur": "Noir",
+          "taille": "41",
+          "porte": 3,
+          "portes": 3,
+          "foisPorte": 3,
+          "dernierPort": "2026-06-10T08:06:47.447Z",
+          "historiquePort": [
+            {
+              "date": "2026-05-28T12:16:43.393Z",
+              "source": "manuel"
+            },
+            {
+              "date": "2026-06-10T08:06:47.447Z",
+              "source": "tenue"
+            }
+          ],
+          "portesAnnuel": 3,
+          "dateAjout": "2026-05-28T12:16:43.393Z",
+          "desc": "",
+          "photo": "/uploads/1779970603388_88fe44a6.png",
+          "bg": "#F0EDF8",
+          "saisons": [
+            "Été",
+            "Automne",
+            "Printemps"
+          ],
+          "id": "1779970603395",
+          "createdAt": "2026-05-28T12:16:43.395Z"
+        },
+        {
+          "nom": "Basket",
+          "marque": "Nike",
+          "couleur": "Crème",
+          "taille": "41",
+          "porte": 2,
+          "portes": 3,
+          "foisPorte": 3,
+          "dernierPort": "2026-06-11T14:35:11.492Z",
+          "historiquePort": [
+            {
+              "date": "2026-05-28T12:17:21.645Z",
+              "source": "manuel"
+            },
+            {
+              "date": "2026-06-11T14:35:11.492Z",
+              "source": "tenue"
+            }
+          ],
+          "portesAnnuel": 3,
+          "dateAjout": "2026-05-28T12:17:21.645Z",
+          "desc": "",
+          "photo": "/uploads/1779970641638_4a52eb5e.png",
+          "bg": "#F0EDF8",
+          "saisons": [
+            "Été",
+            "Automne",
+            "Hiver",
+            "Printemps"
+          ],
+          "id": "1779970641647",
+          "createdAt": "2026-05-28T12:17:21.647Z"
+        },
+        {
+          "nom": "Chaussure à talon",
+          "marque": "Mango",
+          "couleur": "Bordeaux",
+          "taille": "41",
+          "porte": 0,
+          "portes": 0,
+          "foisPorte": 0,
+          "dernierPort": null,
+          "historiquePort": [],
+          "portesAnnuel": 0,
+          "dateAjout": "2026-06-11T14:26:16.095Z",
+          "desc": "",
+          "photo": "/uploads/1781187976090_4b6c9693.png",
+          "bg": "#F0EDF8",
+          "saisons": [
+            "Été",
+            "Automne",
+            "Hiver",
+            "Printemps"
+          ],
+          "id": "1781187976097",
+          "createdAt": "2026-06-11T14:26:16.097Z"
+        },
+        {
+          "nom": "Sandales",
+          "marque": "H&M",
+          "couleur": "Marron",
+          "taille": "41",
+          "porte": 2,
+          "portes": 2,
+          "foisPorte": 2,
+          "dernierPort": "2026-06-11T14:27:29.953Z",
+          "historiquePort": [
+            {
+              "date": "2026-06-11T14:27:29.953Z",
+              "source": "manuel"
+            }
+          ],
+          "portesAnnuel": 2,
+          "dateAjout": "2026-06-11T14:27:29.953Z",
+          "desc": "",
+          "photo": "/uploads/1781188049948_dc66010c.png",
+          "bg": "#F0EDF8",
+          "saisons": [
+            "Été",
+            "Printemps"
+          ],
+          "id": "1781188049954",
+          "createdAt": "2026-06-11T14:27:29.954Z"
+        }
+      ]
+    }
+  },
+  "profiles": [
+    {
+      "id": "1777973987106",
+      "userId": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+      "prenom": "Solenn",
+      "type": "Mon profil",
+      "genre": "Femme",
+      "initiales": "SC",
+      "bgColor": "var(--marine)",
+      "txtColor": "var(--ivoire)",
+      "contextes": [
+        "quotidien",
+        "bureau",
+        "soiree"
+      ],
+      "styles": [
+        "Casual chic",
+        "Minimaliste",
+        "Classique"
+      ],
+      "tailles": {
+        "haut": [
+          "M",
+          "L"
+        ],
+        "bas": [
+          "40",
+          "42"
+        ],
+        "chaussures": "41",
+        "poitrine": "",
+        "tailleCm": "",
+        "pointure": ""
+      }
+    },
+    {
+      "id": "1777974992982",
+      "userId": "ac3f62ba-a252-44b9-be0a-01bd14f29a73",
+      "prenom": "Solenn",
+      "type": "Mon profil",
+      "genre": "Femme",
+      "initiales": "SC",
+      "bgColor": "var(--marine)",
+      "txtColor": "var(--ivoire)",
+      "contextes": [
+        "quotidien",
+        "bureau",
+        "soiree"
+      ],
+      "styles": [
+        "Casual chic",
+        "Minimaliste",
+        "Classique",
+        "Casual chic",
+        "Minimaliste",
+        "Classique"
+      ],
+      "tailles": {
+        "haut": [
+          "M",
+          "L"
+        ],
+        "bas": [
+          "40",
+          "42"
+        ],
+        "chaussures": "41",
+        "poitrine": "",
+        "tailleCm": "",
+        "pointure": ""
+      }
+    }
+  ],
+  "propositionsDuJour": {
+    "ac3f62ba-a252-44b9-be0a-01bd14f29a73": {
+      "date": "2026-06-12",
+      "hauts": [
+        "Top",
+        "Blouse unie",
+        "T shirt fleuri",
+        "Chemise"
+      ]
+    }
+  },
+  "propositionDuJour": {
+    "ac3f62ba-a252-44b9-be0a-01bd14f29a73": {
+      "date": "2026-06-12",
+      "tenue": {
+        "tenue": {
+          "ensemble": null,
+          "haut": {
+            "nom": "Chemise",
+            "marque": "H&M",
+            "couleur": "Bordeaux",
+            "taille": "M",
+            "porte": 1,
+            "portes": 1,
+            "foisPorte": 1,
+            "dernierPort": "2026-06-11T14:13:52.527Z",
+            "historiquePort": [
+              {
+                "date": "2026-06-11T14:13:52.527Z",
+                "source": "manuel"
+              }
+            ],
+            "portesAnnuel": 1,
+            "dateAjout": "2026-06-11T14:13:52.527Z",
+            "desc": "",
+            "photo": "/uploads/1781187232519_3f2b29d4.png",
+            "bg": "#F0EDF8",
+            "saisons": [
+              "Automne",
+              "Hiver",
+              "Printemps"
+            ],
+            "id": "1781187232529",
+            "createdAt": "2026-06-11T14:13:52.529Z"
+          },
+          "bas": {
+            "nom": "Jean noir",
+            "marque": "Zara",
+            "couleur": "Noir",
+            "taille": "40",
+            "porte": 1,
+            "portes": 2,
+            "foisPorte": 2,
+            "dernierPort": "2026-06-10T08:06:47.447Z",
+            "historiquePort": [
+              {
+                "date": "2026-05-06T09:50:36.958Z",
+                "source": "manuel"
+              },
+              {
+                "date": "2026-06-10T08:06:47.447Z",
+                "source": "tenue"
+              }
+            ],
+            "portesAnnuel": 2,
+            "dateAjout": "2026-05-06T09:50:36.958Z",
+            "desc": "",
+            "photo": "/uploads/1778061036954_f83469bd.png",
+            "bg": "#F0EDF8",
+            "saisons": [
+              "Été",
+              "Automne",
+              "Hiver",
+              "Printemps"
+            ],
+            "id": "1778061036960",
+            "createdAt": "2026-05-06T09:50:36.960Z"
+          },
+          "manteau": null,
+          "chaussures": {
+            "nom": "Basket",
+            "marque": "Nike",
+            "couleur": "Crème",
+            "taille": "41",
+            "porte": 2,
+            "portes": 3,
+            "foisPorte": 3,
+            "dernierPort": "2026-06-11T14:35:11.492Z",
+            "historiquePort": [
+              {
+                "date": "2026-05-28T12:17:21.645Z",
+                "source": "manuel"
+              },
+              {
+                "date": "2026-06-11T14:35:11.492Z",
+                "source": "tenue"
+              }
+            ],
+            "portesAnnuel": 3,
+            "dateAjout": "2026-05-28T12:17:21.645Z",
+            "desc": "",
+            "photo": "/uploads/1779970641638_4a52eb5e.png",
+            "bg": "#F0EDF8",
+            "saisons": [
+              "Été",
+              "Automne",
+              "Hiver",
+              "Printemps"
+            ],
+            "id": "1779970641647",
+            "createdAt": "2026-05-28T12:17:21.647Z"
+          }
+        },
+        "style_tenue": "Casual chic",
+        "conseil": "La chemise bordeaux a été choisie pour apporter une touche élégante à la tenue, tandis que le jean noir offre une base décontractée. Les baskets crème ajoutent une note de fraîcheur et de confort pour une journée d'été. Cette tenue est idéale pour une journée au bureau ou une sortie décontractée.",
+        "occasion": "Journée d'été, occasion décontractée"
+      }
+    }
   }
 }

@@ -1,0 +1,148 @@
+{
+  "user": {
+    "prenom": "Solenn",
+    "nom": "Coulon",
+    "email": "solenn.coulon17@gmail.com",
+    "abonnement": "gratuit",
+    "onboardingDone": true,
+    "dateNaissance": "2003-10-29",
+    "genre": "Femme",
+    "ville": "Rennes",
+    "pays": "France",
+    "tailleHaut": "M",
+    "tailleBas": "42",
+    "tailleChaussures": "41",
+    "styles": [
+      "Bohème",
+      "Romantique",
+      "Vintage"
+    ],
+    "contextes": [
+      "quotidien",
+      "bureau",
+      "soiree"
+    ],
+    "telephone": "+33783248240"
+  },
+  "profiles": [],
+  "wardrobe": {
+    "haut": [
+      {
+        "id": 1775653711472,
+        "nom": "Top bretelles",
+        "marque": "H&M",
+        "couleur": "gris",
+        "taille": "M",
+        "porte": 3,
+        "desc": "",
+        "photo": null,
+        "bg": "#F0EDF8",
+        "saisons": [
+          "Été",
+          "Printemps"
+        ],
+        "createdAt": "2026-04-08T13:08:31.477Z"
+      }
+    ],
+    "bas": [
+      {
+        "id": 1775653736249,
+        "nom": "Pantalon fluide",
+        "marque": "Milano",
+        "couleur": "Bleu Marine",
+        "taille": "40",
+        "porte": 5,
+        "desc": "",
+        "photo": null,
+        "bg": "#F0EDF8",
+        "saisons": [
+          "Été",
+          "Printemps"
+        ],
+        "createdAt": "2026-04-08T13:08:56.254Z"
+      }
+    ],
+    "manteau": [
+      {
+        "id": 1775653682687,
+        "nom": "Veste en jean",
+        "marque": "Zara",
+        "couleur": "Bleu",
+        "taille": "L",
+        "porte": 2,
+        "desc": "",
+        "photo": null,
+        "bg": "#F0EDF8",
+        "saisons": [
+          "Été",
+          "Printemps"
+        ],
+        "createdAt": "2026-04-08T13:08:02.692Z",
+        "portes": 2
+      }
+    ],
+    "ensemble": [
+      {
+        "id": 1775653767280,
+        "nom": "Robe dos nu",
+        "marque": "Holister",
+        "couleur": "blanc",
+        "taille": "L",
+        "porte": 2,
+        "desc": "",
+        "photo": null,
+        "bg": "#F0EDF8",
+        "saisons": [
+          "Été",
+          "Printemps"
+        ],
+        "createdAt": "2026-04-08T13:09:27.283Z",
+        "portes": 2
+      }
+    ],
+    "chaussures": [
+      {
+        "id": 1775653794583,
+        "nom": "Converse rouge",
+        "marque": "Converse",
+        "couleur": "Rouge bordeau",
+        "taille": "41",
+        "porte": 2,
+        "desc": "",
+        "photo": null,
+        "bg": "#F0EDF8",
+        "saisons": [
+          "Été",
+          "Printemps"
+        ],
+        "createdAt": "2026-04-08T13:09:54.586Z",
+        "portes": 2
+      }
+    ],
+    "accessoires": [
+      {
+        "id": 1775744830547,
+        "nom": "sac bandoulière",
+        "marque": "zara",
+        "couleur": "marron",
+        "taille": "—",
+        "porte": 1,
+        "desc": "",
+        "photo": null,
+        "bg": "#F0EDF8",
+        "saisons": [
+          "Été",
+          "Automne",
+          "Hiver",
+          "Printemps"
+        ],
+        "createdAt": "2026-04-09T14:27:10.602Z"
+      }
+    ]
+  },
+  "preferences": {},
+  "paiement": {
+    "cartes": [],
+    "factures": []
+  }
+}

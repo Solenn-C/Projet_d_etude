@@ -1,3 +1,55 @@
+<!--
+============================================================
+Frontend/page_apres_connection.html
+============================================================
+RÔLE : Page « Accueil » post-connexion — tableau de bord
+       principal de l'application.
+
+DESCRIPTION :
+  Page applicative protégée par SW.requireAuth(). Affiche la
+  date du jour, la météo en temps réel (Open-Meteo, sans clé
+  API) pour la ville du profil, la tenue du jour générée par
+  l'agent IA (genererTenueDuJour / afficherTenue, avec
+  navigation entre propositions selon le plan d'abonnement et
+  feedback like/dislike), des statistiques de garde-robe
+  (total, tenues validées, peu portés, top portés via
+  chargerPlusPortes), les pièces manquantes suggérées par le
+  backend FastAPI, et des accès rapides vers les autres pages.
+
+ATTENTION (signalé, non corrigé) :
+  - chargerPiecesManquantes() appelle directement
+    fetch('http://127.0.0.1:8000/recommander/pieces-manquantes', ...)
+    au lieu de passer par le proxy Node (server.js). Incohérent
+    avec le reste du frontend qui utilise des routes relatives
+    /api/... ; échoue silencieusement si le backend FastAPI
+    n'est pas démarré sur la même machine que le navigateur.
+
+SECTIONS PRINCIPALES :
+  - <nav class="app-nav"> / <aside class="sidebar"> : navigation applicative
+  - #tenue-card / #tenue-container : tenue du jour proposée par l'IA
+  - .weather-* / #forecast-hours   : carte météo (Open-Meteo)
+  - .stat-num (#stat-total, #stat-tenues, #stat-peuportes) : statistiques
+  - #synth-top3 / #synth-star / #synth-dormant-chip / #synth-vendre-notif :
+    synthèse des vêtements les plus/peu portés
+  - #pieces-manquantes-list : recommandations du backend FastAPI
+  - Bloc "Accès rapide" : liens vers garde-robe, chatbot, tendances
+
+DÉPENDANCES JS/CSS :
+  - css/styles.css (design system partagé)
+  - sw-data.js (SW.requireAuth, SW.getWardrobe, SW.updateCloth, SW.saveUser, SW.getToken)
+  - js/ui-nav.js (comportements sidebar/nav)
+
+APPELS API :
+  - SW.getWardrobe() / SW.updateCloth() / SW.saveUser() -> /api/wardrobe, /api/user
+  - fetch('/api/agent/conseil', POST) -> proposition de tenue par l'agent IA
+  - fetch('/api/agent/tenue-du-jour', GET) -> état de la tenue du jour (vide/proposée/validée)
+  - fetch('/api/agent/valider-tenue', POST) -> fige la tenue du jour validée
+  - fetch('http://127.0.0.1:8000/recommander/pieces-manquantes', GET) -> appel
+    direct au backend FastAPI (voir ATTENTION ci-dessus)
+  - Open-Meteo (geocoding-api.open-meteo.com, api.open-meteo.com) -> météo,
+    service externe public, sans clé API
+============================================================
+-->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -5,24 +57,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Smart Wear — Accueil</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
- 
-  :root {
-    --ivoire: #FAFAF8;
-    --lin: #E8E4DE;
-    --marine: #1B3A6B;
-    --bleu-givré: #C2D4EC;
-    --poudre: #E8D5E0;
-    --ardoise: #7A9CC0;
-    --bleu-profond: #2C5F8A;
-    --ciel: #D6E8F0;
-    --vert-sage: #DDF0E4;
-    --terracotta: #F5E4D8;
-  }
- 
-  html { scroll-behavior: smooth; }
- 
   body {
     background: var(--lin);
     color: var(--marine);
@@ -32,21 +68,8 @@
     overflow-x: hidden;
   }
  
-  /* ─── NAV ─── */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 22px 60px;
-    background: rgba(250,250,248,0.95);
-    backdrop-filter: blur(16px);
-    border-bottom: 0.5px solid rgba(27,58,107,0.1);
-  }
- 
-  .nav-inner { display: flex; flex-direction: column; gap: 2px; }
+  /* ─── NAV overrides ─── */
+  .app-nav { padding: 22px 60px; }
  
   .logo {
     font-family:'DM Serif Display',serif;font-style:italic;
@@ -58,8 +81,6 @@
     line-height: 1;
     text-decoration: none;
   }
- 
-  .logo span { color: var(--ardoise); }
  
   .logo-tagline {
     font-size: 10px;
@@ -104,28 +125,6 @@
     color: var(--ivoire);
     cursor: pointer;
     text-decoration: none;
-  }
- 
-  /* ─── LAYOUT ─── */
-  .page {
-    display: flex;
-    min-height: 100vh;
-    padding-top: 82px;
-  }
- 
-  /* ─── SIDEBAR ─── */
-  .sidebar {
-    position: fixed;
-    top: 82px; left: 0;
-    width: 250px;
-    height: calc(100vh - 82px);
-    background: var(--ivoire);
-    border-right: 0.5px solid rgba(27,58,107,0.08);
-    display: flex;
-    flex-direction: column;
-    padding: 28px 0 20px;
-    overflow-y: auto;
-    z-index: 10;
   }
  
   /* Sélecteur de profil */
@@ -189,49 +188,9 @@
     flex-shrink: 0;
   }
  
-  /* nav items */
-  .sidebar-section { padding: 0 12px; margin-bottom: 4px; }
- 
-  .sidebar-label {
-    font-size: 9px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--marine);
-    opacity: 0.3;
-    padding: 8px 12px 6px;
-    display: block;
-  }
- 
-  .sidebar-item {
-    display: flex; align-items: center; gap: 12px;
-    padding: 11px 12px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.2s;
-    text-decoration: none;
-    color: var(--marine);
-    opacity: 0.55;
-    font-size: 13px; font-weight: 400;
-    margin-bottom: 2px;
-  }
- 
-  .sidebar-item:hover { background: var(--lin); opacity: 0.9; }
-  .sidebar-item.active { background: var(--ciel); opacity: 1; font-weight: 500; color: var(--bleu-profond); }
-  .sidebar-item svg { width: 16px; height: 16px; flex-shrink: 0; stroke: currentColor; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
-  .sidebar-item.active svg { stroke: var(--bleu-profond); }
-  .sidebar-item.danger { color: #A32D2D; opacity: 0.6; }
-  .sidebar-item.danger:hover { background: #FCEBEB; opacity: 1; }
- 
-  .sidebar-bottom { margin-top: auto; padding: 16px 12px 0; border-top: 0.5px solid rgba(27,58,107,0.08); }
- 
-  /* ─── MAIN ─── */
-  .main {
-    margin-left: 250px;
-    padding: 36px 48px;
-    width: 100%;
-    min-height: calc(100vh - 82px);
-  }
- 
+  /* ─── MAIN overrides ─── */
+  .main { padding: 36px 48px; }
+
   /* ─── PAGE HEADER ─── */
   .page-header {
     display: flex;
@@ -277,7 +236,41 @@
     padding: 24px 28px;
     margin-bottom: 20px;
   }
- 
+  #tenue-card { display:flex; flex-direction:column; }
+  #tenue-card #tenue-container { flex:1; display:flex; flex-direction:column; }
+
+  /* ─── GRILLE UNIFORME TENUE DU JOUR ─── */
+  .tenue-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 14px;
+  }
+  .tenue-card {
+    height: 220px;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  .tenue-card-img-wrap { width: 100%; height: 170px; overflow: hidden; }
+  .tenue-card-img { width: 100%; height: 170px; object-fit: cover; object-position: center; display: block; }
+  .tenue-card-label {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    padding: 4px 8px; font-size: 10px; color: var(--marine); opacity: 0.72;
+    letter-spacing: 0.03em; text-align: center; white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis;
+    border-top: 0.5px solid rgba(27,58,107,0.07);
+  }
+  .tenue-card-icon-wrap {
+    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 6px; padding: 10px; box-sizing: border-box;
+  }
+  @media (max-width: 600px) {
+    .tenue-cards-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
   .card-header {
     display: flex; align-items: center; justify-content: space-between;
     margin-bottom: 20px;
@@ -305,7 +298,31 @@
   }
  
   .card-link:hover { opacity: 1; }
- 
+
+  .btn-voir-autres {
+    font-size: 11px;
+    font-family: inherit;
+    letter-spacing: 0.05em;
+    color: var(--ardoise);
+    background: none;
+    border: none;
+    cursor: pointer;
+    opacity: 0.8;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 4px;
+    transition: opacity 0.2s;
+  }
+
+  .btn-voir-autres:hover:not(:disabled) { opacity: 1; }
+  .btn-voir-autres:disabled { opacity: 0.35; cursor: not-allowed; }
+  .btn-voir-autres:focus-visible { outline: 2px solid var(--ardoise); outline-offset: 2px; border-radius: 2px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .btn-voir-autres { transition: none; }
+  }
+
   /* ─── GRILLE PRINCIPALE ─── */
   .grid-top {
     display: grid;
@@ -447,7 +464,38 @@
   .outfit-action-row {
     display: flex; gap: 10px;
   }
- 
+
+  /* ─── ÉVALUATION TENUE ─── */
+  .rating-row { display: flex; gap: 8px; margin-top: 10px; }
+  .rating-btn {
+    flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
+    height: 36px; border-radius: 8px; border: 0.5px solid rgba(27,58,107,0.15);
+    background: var(--lin); cursor: pointer; font-family: 'Jost', sans-serif;
+    font-size: 11px; letter-spacing: 0.05em; color: var(--marine); opacity: 0.75;
+    transition: all 0.18s;
+  }
+  .rating-btn:hover { opacity: 1; border-color: rgba(27,58,107,0.3); }
+  .reasons-wrap { margin-top: 8px; }
+  .reason-intro { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--marine); opacity: 0.38; margin-bottom: 7px; }
+  .reasons-row { display: flex; gap: 6px; flex-wrap: wrap; }
+  .reason-btn {
+    padding: 5px 12px; border-radius: 20px; border: 0.5px solid rgba(27,58,107,0.15);
+    background: var(--ivoire); cursor: pointer; font-family: 'Jost', sans-serif;
+    font-size: 11px; color: var(--marine); opacity: 0.7; transition: all 0.15s;
+  }
+  .reason-btn:hover { background: var(--terracotta); opacity: 1; border-color: rgba(163,45,45,0.3); color: #A32D2D; }
+  .rating-confirmed { display: flex; align-items: center; gap: 7px; padding: 8px 12px; border-radius: 8px; font-size: 11px; margin-top: 10px; }
+  .rating-confirmed.like    { background: var(--vert-sage); color: #1D6B4E; }
+  .rating-confirmed.dislike { background: var(--terracotta); color: #A32D2D; }
+  .rating-confirmed svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+
+  /* ─── Animation +1 porté ─── */
+  @keyframes wearPlusOne {
+    0%   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    60%  { opacity: 1; transform: translate(-50%, -68%) scale(1.06); }
+    100% { opacity: 0; transform: translate(-50%, -90%) scale(0.92); }
+  }
+
   .btn-wear {
     flex: 1;
     height: 42px;
@@ -651,51 +699,119 @@
   .forecast-temp { font-family:'DM Serif Display',serif;font-style:italic; font-size: 17px; font-weight: 300; color: var(--marine); }
   .forecast-rain { font-size: 9px; color: var(--ardoise); opacity: 0.7; }
  
-  /* ─── ANIMATIONS ─── */
-  .fade-up {
-    opacity: 0;
-    transform: translateY(16px);
-    animation: fadeUp 0.5s ease forwards;
+
+  /* ─── Synthèse stats accueil ─── */
+  .synth-top3-row { display: flex; gap: 6px; margin-bottom: 14px; }
+  .synth-thumb {
+    flex: 1; border-radius: 10px; overflow: hidden; position: relative;
+    aspect-ratio: 1/1; max-height: 84px; background: var(--lin); cursor: default;
   }
- 
-  @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
-  @keyframes spin { to { transform: rotate(360deg); } }
- 
-  .d1 { animation-delay: 0.05s; }
-  .d2 { animation-delay: 0.12s; }
-  .d3 { animation-delay: 0.2s; }
-  .d4 { animation-delay: 0.28s; }
-  .d5 { animation-delay: 0.36s; }
+  .synth-thumb img { width: 100%; height: 100%; object-fit: contain; object-position: center; display: block; background: var(--lin); padding: 6px; }
+  .synth-thumb-placeholder { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
+  .synth-thumb-placeholder svg { width: 24px; height: 24px; stroke: var(--marine); fill: none; stroke-width: 1.2; opacity: 0.25; }
+  .synth-thumb-badge {
+    position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%);
+    background: rgba(27,58,107,0.8); color: var(--ivoire);
+    font-size: 9px; padding: 1px 5px; border-radius: 6px;
+    white-space: nowrap; letter-spacing: 0.04em; backdrop-filter: blur(4px);
+  }
+  .synth-thumb-rank {
+    position: absolute; top: 4px; left: 4px;
+    font-family: 'DM Serif Display', serif; font-style: italic;
+    font-size: 11px; color: var(--ivoire);
+    background: rgba(27,58,107,0.7); border-radius: 5px; padding: 0 4px;
+    backdrop-filter: blur(4px);
+  }
+  .synth-star-block {
+    display: flex; gap: 12px; align-items: center;
+    background: linear-gradient(135deg, var(--ciel) 0%, var(--bleu-givré) 100%);
+    border-radius: 12px; padding: 12px; margin-bottom: 14px;
+  }
+  .synth-star-photo {
+    width: 52px; height: 66px; border-radius: 8px; overflow: hidden;
+    background: var(--ivoire); flex-shrink: 0;
+  }
+  .synth-star-photo img { width: 100%; height: 100%; object-fit: contain; object-position: center; display: block; padding: 4px; }
+  .synth-star-photo-ph { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+  .synth-star-photo-ph svg { width: 24px; height: 24px; stroke: var(--marine); fill: none; stroke-width: 1.2; opacity: 0.3; }
+  .synth-star-info { flex: 1; min-width: 0; }
+  .synth-star-eyebrow { font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--bleu-profond); opacity: 0.6; margin-bottom: 3px; }
+  .synth-star-name { font-size: 13px; font-weight: 500; color: var(--marine); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; }
+  .synth-star-meta { font-size: 11px; color: var(--marine); opacity: 0.45; }
+  .synth-dormant-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .synth-dormant-chip {
+    display: flex; align-items: center; gap: 7px;
+    padding: 6px 12px; border-radius: 20px;
+    background: var(--terracotta); color: var(--marine);
+    font-size: 11px; letter-spacing: 0.03em;
+  }
+  .synth-dormant-chip svg { width: 12px; height: 12px; stroke: var(--marine); fill: none; stroke-width: 1.8; stroke-linecap: round; opacity: 0.6; }
+  .btn-stats-cta {
+    display: block; width: 100%; height: 42px; line-height: 42px;
+    text-align: center; text-decoration: none;
+    background: var(--marine); color: var(--ivoire);
+    border-radius: 10px; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .btn-stats-cta:hover { background: var(--bleu-profond); transform: translateY(-1px); }
+
+  /* ─── Responsive ─── */
+  @media (max-width: 1024px) {
+    .grid-top { grid-template-columns: 1fr; }
+    .grid-bottom { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 768px) {
+    .app-nav { padding: 14px 20px; }
+    .main { padding: 24px 20px; }
+    .page-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .page-date { text-align: left; }
+  }
+
+  @media (max-width: 480px) {
+    .app-nav { padding: 12px 16px; }
+    .main { padding: 16px 12px; }
+    .weather-hero { flex-wrap: wrap; gap: 12px; }
+    .weather-icon-big { font-size: 40px; }
+    .page-title { font-size: 28px; }
+  }
+
 </style>
 <script src="sw-data.js"></script>
 </head>
 <body>
  
 <!-- ─── NAV ─── -->
-<nav>
+<nav class="app-nav" aria-label="Navigation principale">
   <div class="nav-inner">
     <a href="page_accueil_site.html" class="logo">Smart<span>Wear</span></a>
     <div class="logo-tagline">Votre dressing intelligent</div>
   </div>
   <div class="nav-right">
     <!-- Notif -->
-    <div class="nav-icon-btn" title="Notifications">
-      <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+    <div class="nav-icon-btn" role="button" aria-label="Notifications" title="Notifications">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
       <div class="nav-notif-dot"></div>
     </div>
     <!-- Recherche -->
-    <div class="nav-icon-btn" title="Rechercher">
-      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <div class="nav-icon-btn" role="button" aria-label="Rechercher" title="Rechercher">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     </div>
     <!-- Avatar → compte -->
-    <a href="page_gestion_compte.html" class="nav-avatar" id="nav-avatar" title="Mon compte">SM</a>
+    <a href="page_gestion_compte.html" class="nav-avatar" id="nav-avatar" title="Mon compte" aria-label="Mon compte">SM</a>
+    <!-- Burger (mobile) -->
+    <button class="nav-burger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="sidebar">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
   </div>
 </nav>
  
+<div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
 <div class="page">
- 
+
   <!-- ─── SIDEBAR ─── -->
-  <aside class="sidebar">
+  <aside class="sidebar" id="sidebar" aria-label="Navigation de l'application">
  
     <!-- Sélecteur de profil -->
     <div class="profile-switcher">
@@ -729,6 +845,10 @@
         <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         Assistant IA
       </a>
+      <a class="sidebar-item" href="page_statistiques.html">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Statistiques
+      </a>
       <a class="sidebar-item" href="page_tendances.html">
         <svg viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
         Tendances
@@ -752,7 +872,7 @@
   </aside>
  
   <!-- ─── MAIN ─── -->
-  <main class="main">
+  <main class="main" id="main-content">
  
     <!-- Header -->
     <div class="page-header fade-up d1">
@@ -767,13 +887,13 @@
     <div class="grid-top">
  
       <!-- TENUE DU JOUR -->
-      <div class="card fade-up d2">
+      <div class="card fade-up d2" id="tenue-card">
         <div class="card-header">
           <div class="card-title">
             <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
             Tenue du jour
           </div>
-          <a href="#" class="card-link">Voir d'autres →</a>
+          <button type="button" id="btn-voir-autres" class="btn-voir-autres" aria-label="Voir d'autres tenues proposées" onclick="voirAutresTenue()" style="display:none;">Voir d'autres →</button>
         </div>
  
         <div id="tenue-container">
@@ -852,20 +972,20 @@
         </div>
       </div>
     </div>
- 
+
     <!-- Grille bas -->
     <div class="grid-bottom">
  
-      <!-- STATISTIQUES -->
+      <!-- STATISTIQUES (bloc synthèse) -->
       <div class="card fade-up d4">
         <div class="card-header">
           <div class="card-title">
             <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
             Statistiques de style
           </div>
-          <a href="#" class="card-link">Voir tout →</a>
+          <a href="page_statistiques.html" class="card-link">Voir tout →</a>
         </div>
- 
+
         <!-- Chiffres clés -->
         <div class="stats-row">
           <div class="stat-card">
@@ -881,10 +1001,25 @@
             <div class="stat-label">Peu portés</div>
           </div>
         </div>
- 
-        <!-- Vêtements les plus portés -->
-        <div style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--marine);opacity:0.35;margin-bottom:14px;">Vêtements les plus portés</div>
-        <div class="worn-list" id="worn-list"></div>
+
+        <!-- Top 3 les plus portés -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <div style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--marine);opacity:0.35;">Top portés</div>
+          <div id="stats-reset-label" style="font-size:9px;color:var(--marine);opacity:0.3;font-style:italic;"></div>
+        </div>
+        <div class="synth-top3-row" id="synth-top3"></div>
+
+        <!-- Vêtement star du moment -->
+        <div id="synth-star" style="display:none;"></div>
+
+        <!-- Dormants + CTA -->
+        <div class="synth-dormant-row">
+          <div id="synth-dormant-chip"></div>
+          <span></span>
+        </div>
+        <!-- Notif "à vendre" -->
+        <div id="synth-vendre-notif" style="display:none;margin-bottom:10px;"></div>
+        <a href="page_statistiques.html" class="btn-stats-cta">Voir mes statistiques complètes →</a>
       </div>
  
       <!-- RÉSUMÉ RAPIDE -->
@@ -932,66 +1067,157 @@
  
   </main>
 </div>
- 
+
+<script src="js/ui-nav.js"></script>
 <script>
+  // Ancien rendu des "plus portés" (conservé pour compatibilité, désormais vide)
   function renderWorn(idx) {
     // Vide — chargé dynamiquement via chargerPlusPortes()
   }
 
-  function chargerPlusPortes(wardrobe) {
-    const list = document.getElementById('worn-list');
-    if (!list) return;
+  // ── Réinitialisation annuelle des compteurs ──
+  async function checkAnnualReset(wardrobe, user) {
+    const resetDate = user.statsResetDate ? new Date(user.statsResetDate) : null;
+    const now = new Date();
+    const oneYear = 365 * 24 * 60 * 60 * 1000;
+    if (!resetDate || (now - resetDate) >= oneYear) {
+      const updates = [];
+      for (const [cat, items] of Object.entries(wardrobe)) {
+        if (!Array.isArray(items)) continue;
+        for (const item of items) {
+          if ((item.portesAnnuel || 0) > 0) {
+            item.portesAnnuel = 0;
+            updates.push(SW.updateCloth(cat, item.id, { portesAnnuel: 0 }));
+          }
+        }
+      }
+      if (updates.length) await Promise.all(updates);
+      const newReset = now.toISOString();
+      await SW.saveUser({ statsResetDate: newReset });
+      user.statsResetDate = newReset;
+    }
+    const label = document.getElementById('stats-reset-label');
+    if (label && user.statsResetDate) {
+      const start = new Date(user.statsResetDate);
+      const end   = new Date(start.getTime() + oneYear);
+      const months = ['jan','fév','mar','avr','mai','jun','jul','aoû','sep','oct','nov','déc'];
+      label.textContent = 'Réinit. le ' + end.getDate() + ' ' + months[end.getMonth()] + ' ' + end.getFullYear();
+    }
+  }
 
-    const catLabels = { manteau:'Manteau', haut:'Haut', bas:'Bas', ensemble:'Ensemble', chaussures:'Chaussures', accessoires:'Accessoire' };
-    const catBg     = { manteau:'#EEF2FA', haut:'#F5F0EC', bas:'#F0EDF8', ensemble:'#F5E4D8', chaussures:'#FDF4EE', accessoires:'#DDF0E4' };
-    const catPaths  = {
-      manteau:    'M8 6 L4 12 L8 14 L8 26 L24 26 L24 14 L28 12 L24 6 Q20 9 16 9 Q12 9 8 6Z',
-      haut:       'M10 6 L5 13 L9 15 L9 26 L23 26 L23 15 L27 13 L22 6 Q19 8 16 8 Q13 8 10 6Z',
-      bas:        'M10 6 L8 10 L10 10 L10 26 L14 26 L16 18 L18 26 L22 26 L22 10 L24 10 L22 6Z',
-      ensemble:   'M9 6 Q16 10 23 6 L25 14 L23 14 L23 26 L9 26 L9 14 L7 14Z',
-      chaussures: 'M8 22 Q8 18 12 17 L20 17 Q24 18 24 22 L24 26 L8 26Z',
+  // ── Synthèse "Plus portés" (top 3, vêtement star, dormants, à vendre) ──
+  function chargerPlusPortes(wardrobe) {
+    const catBg = { manteau:'#EEF2FA', haut:'#F5F0EC', bas:'#F0EDF8', ensemble:'#F5E4D8', chaussures:'#FDF4EE', accessoires:'#DDF0E4' };
+    const catPaths = {
+      manteau:'M8 6 L4 12 L8 14 L8 26 L24 26 L24 14 L28 12 L24 6 Q20 9 16 9 Q12 9 8 6Z',
+      haut:'M10 6 L5 13 L9 15 L9 26 L23 26 L23 15 L27 13 L22 6 Q19 8 16 8 Q13 8 10 6Z',
+      bas:'M10 6 L8 10 L10 10 L10 26 L14 26 L16 18 L18 26 L22 26 L22 10 L24 10 L22 6Z',
+      ensemble:'M9 6 Q16 10 23 6 L25 14 L23 14 L23 26 L9 26 L9 14 L7 14Z',
+      chaussures:'M8 22 Q8 18 12 17 L20 17 Q24 18 24 22 L24 26 L8 26Z',
       accessoires:'M9 12 L9 26 L23 26 L23 12 Q20 7 16 7 Q12 7 9 12Z',
     };
 
-    // Rassembler tous les articles avec leur compteur portes
     const all = [];
-    Object.keys(catLabels).forEach(cat => {
-      (wardrobe[cat] || []).forEach(item => {
-        const portes = item.portes || 0;
-        if (portes > 0) {
-          all.push({ name: item.nom || item.name || 'Article', cat, count: portes });
-        }
-      });
-    });
-
-    if (all.length === 0) {
-      list.innerHTML = '<div style="font-size:11px;color:var(--marine);opacity:0.35;text-align:center;padding:12px 0;">Validez une tenue pour voir vos statistiques.</div>';
-      return;
+    for (const [cat, items] of Object.entries(wardrobe)) {
+      if (!Array.isArray(items)) continue;
+      for (const item of items) {
+        all.push({
+          item,
+          name: item.nom || item.name || 'Article',
+          cat,
+          count: item.portesAnnuel || 0,
+          total: item.foisPorte ?? item.portes ?? item.porte ?? 0,
+          photo: item.photo || null,
+        });
+      }
     }
 
-    // Top 5 par nombre de ports
-    all.sort((a, b) => b.count - a.count);
-    const top5 = all.slice(0, 5);
-    const max  = top5[0].count;
+    // ── Top 3 thumbnails ──
+    const top3El = document.getElementById('synth-top3');
+    if (top3El) {
+      const sorted = [...all].sort((a, b) => b.count - a.count);
+      const top3 = sorted.slice(0, 3);
+      if (top3.length === 0) {
+        top3El.innerHTML = '<div style="font-size:11px;color:var(--marine);opacity:0.35;padding:12px 0;">Validez une tenue pour voir vos statistiques.</div>';
+      } else {
+        top3El.innerHTML = top3.map((a, i) => {
+          const bg = catBg[a.cat] || '#F5F0EC';
+          const path = catPaths[a.cat] || catPaths.haut;
+          const photoHtml = a.photo
+            ? '<img src="' + a.photo + '" alt="' + a.name + '" style="width:100%;height:100%;object-fit:contain;object-position:center;display:block;background:var(--lin);padding:6px;">'
+            : '<div class="synth-thumb-placeholder" style="background:' + bg + ';"><svg viewBox="0 0 32 32"><path d="' + path + '"/></svg></div>';
+          return '<div class="synth-thumb" data-item-id="' + (a.item.id || '') + '" style="' + (a.photo ? '' : 'background:' + bg + ';') + '">'
+            + '<div class="synth-thumb-rank">' + (i+1) + '</div>'
+            + photoHtml
+            + '<div class="synth-thumb-badge">' + a.count + 'x</div>'
+            + '</div>';
+        }).join('');
+      }
+    }
 
-    list.innerHTML = top5.map((item, i) => {
-      const bg   = catBg[item.cat]    || '#F5F0EC';
-      const path = catPaths[item.cat] || catPaths.haut;
-      const pct  = Math.round((item.count / max) * 100);
-      return '<div class="worn-item">'
-        + '<div class="worn-rank">' + (i+1) + '</div>'
-        + '<div class="worn-img" style="background:' + bg + ';">'
-        + '<svg viewBox="0 0 32 32" fill="none" stroke="#1B3A6B" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" style="width:28px;height:28px;"><path d="' + path + '"/></svg></div>'
-        + '<div class="worn-info">'
-        + '<div class="worn-name">' + item.name + '</div>'
-        + '<div class="worn-meta">' + catLabels[item.cat] + ' · ' + item.count + ' fois porté' + (item.count > 1 ? 's' : '') + '</div>'
-        + '</div>'
-        + '<div class="worn-bar-wrap">'
-        + '<div class="worn-count">' + item.count + 'x</div>'
-        + '<div class="worn-bar-bg"><div class="worn-bar" style="width:' + pct + '%;"></div></div>'
-        + '</div>'
-        + '</div>';
-    }).join('');
+    // ── Star du moment (top 1 total) ──
+    const starEl = document.getElementById('synth-star');
+    if (starEl) {
+      const byStar = [...all].sort((a, b) => b.total - a.total);
+      const star = byStar[0];
+      if (star && star.total > 0) {
+        const bg = catBg[star.cat] || '#F5F0EC';
+        const path = catPaths[star.cat] || catPaths.haut;
+        starEl.style.display = '';
+        starEl.className = 'synth-star-block';
+        starEl.innerHTML = '<div class="synth-star-photo">'
+          + (star.photo
+            ? '<img src="' + star.photo + '" alt="' + star.name + '">'
+            : '<div class="synth-star-photo-ph" style="background:' + bg + ';"><svg viewBox="0 0 32 32" fill="none" stroke="#1B3A6B" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="' + path + '"/></svg></div>')
+          + '</div>'
+          + '<div class="synth-star-info">'
+          + '<div class="synth-star-eyebrow">★ Vêtement star</div>'
+          + '<div class="synth-star-name">' + star.name + '</div>'
+          + '<div class="synth-star-meta">' + star.total + ' port' + (star.total > 1 ? 's' : '') + ' au total</div>'
+          + '</div>';
+      } else {
+        starEl.style.display = 'none';
+      }
+    }
+
+    // ── Dormants ──
+    const dormantEl = document.getElementById('synth-dormant-chip');
+    if (dormantEl) {
+      const dormants = all.filter(a => !a.total);
+      if (dormants.length > 0) {
+        dormantEl.innerHTML = '<div class="synth-dormant-chip">'
+          + '<svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>'
+          + dormants.length + ' vêtement' + (dormants.length > 1 ? 's' : '') + ' jamais portés'
+          + '</div>';
+      } else {
+        dormantEl.innerHTML = '';
+      }
+    }
+
+    // ── Notif "à vendre" ──
+    const vendreNotif = document.getElementById('synth-vendre-notif');
+    if (vendreNotif) {
+      const userId = window._tenueUserId || 'guest';
+      const snoozed = (() => { try { return JSON.parse(localStorage.getItem('sw_vendre_snoozed_' + userId) || '{}'); } catch { return {}; } })();
+      const threeMonthsAgo = Date.now() - 90 * 86400000;
+      const vendables = all.filter(a => {
+        const id = String(a.item.id);
+        if (snoozed[id] && Date.now() < snoozed[id] + 90 * 86400000) return false;
+        if (a.total < 3) return true;
+        if (!a.dernierPort || new Date(a.dernierPort) < threeMonthsAgo) return true;
+        return false;
+      });
+      if (vendables.length > 0) {
+        vendreNotif.style.display = '';
+        vendreNotif.innerHTML = '<a href="page_statistiques.html#a-vendre" style="display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:10px;background:var(--terracotta);text-decoration:none;font-size:11px;color:var(--marine);letter-spacing:0.03em;">'
+          + '<span>🛍️</span>'
+          + '<span>' + vendables.length + ' vêtement' + (vendables.length > 1 ? 's dorment' : ' dort') + ' depuis 3 mois</span>'
+          + '<span style="margin-left:auto;opacity:0.5;font-size:10px;">Voir →</span>'
+          + '</a>';
+      } else {
+        vendreNotif.style.display = 'none';
+      }
+    }
   }
  
   // ── Date ──
@@ -1004,53 +1230,197 @@
       + '<br><span style="font-size:11px;opacity:0.35;">Paris · 12°C · 🌤</span>';
   }
  
-  // ── Météo heure par heure ──
-  const hourlyData = [
-    { h: '0h',  icon: '🌙', temp: 7,  rain: 0  },
-    { h: '1h',  icon: '🌙', temp: 6,  rain: 0  },
-    { h: '2h',  icon: '🌙', temp: 6,  rain: 0  },
-    { h: '3h',  icon: '🌙', temp: 5,  rain: 5  },
-    { h: '4h',  icon: '🌙', temp: 5,  rain: 5  },
-    { h: '5h',  icon: '🌙', temp: 5,  rain: 0  },
-    { h: '6h',  icon: '🌅', temp: 6,  rain: 0  },
-    { h: '7h',  icon: '🌤', temp: 7,  rain: 0  },
-    { h: '8h',  icon: '🌤', temp: 9,  rain: 0  },
-    { h: '9h',  icon: '⛅', temp: 10, rain: 0  },
-    { h: '10h', icon: '⛅', temp: 11, rain: 10 },
-    { h: '11h', icon: '⛅', temp: 12, rain: 10 },
-    { h: '12h', icon: '🌤', temp: 13, rain: 5  },
-    { h: '13h', icon: '🌤', temp: 14, rain: 5  },
-    { h: '14h', icon: '⛅', temp: 15, rain: 15 },
-    { h: '15h', icon: '☁️', temp: 13, rain: 20 },
-    { h: '16h', icon: '☁️', temp: 12, rain: 30 },
-    { h: '17h', icon: '🌧', temp: 11, rain: 60 },
-    { h: '18h', icon: '🌧', temp: 10, rain: 70 },
-    { h: '19h', icon: '🌧', temp: 10, rain: 65 },
-    { h: '20h', icon: '🌦', temp: 9,  rain: 40 },
-    { h: '21h', icon: '☁️', temp: 8,  rain: 20 },
-    { h: '22h', icon: '🌙', temp: 8,  rain: 5  },
-    { h: '23h', icon: '🌙', temp: 7,  rain: 0  },
-  ];
- 
-  function renderForecast() {
-    const now = new Date().getHours();
-    const el  = document.getElementById('forecast-hours');
-    if (!el) return;
-    const next6 = [];
-    for (let i = 0; i < 6; i++) next6.push({ ...hourlyData[(now + i) % 24], isNow: i === 0 });
-    el.innerHTML = next6.map(function(h) {
-      const rain = h.rain > 0 ? '<div class="forecast-rain">' + h.rain + '%</div>' : '<div class="forecast-rain"></div>';
-      return '<div class="forecast-item' + (h.isNow ? ' now' : '') + '">'
-        + '<div class="forecast-time">' + (h.isNow ? 'Maint.' : h.h) + '</div>'
-        + '<div class="forecast-icon">' + h.icon + '</div>'
-        + '<div class="forecast-temp">' + h.temp + '°</div>'
-        + rain + '</div>';
-    }).join('');
+  // ── Météo temps réel (Open-Meteo, gratuit, sans clé API) ──
+
+  function _wcodeIcon(code, isDay) {
+    if (code === 0)        return isDay ? '☀️' : '🌙';
+    if (code <= 2)         return isDay ? '🌤' : '🌤';
+    if (code === 3)        return '☁️';
+    if (code <= 49)        return '🌫';
+    if (code <= 57)        return '🌦';
+    if (code <= 67)        return '🌧';
+    if (code <= 77)        return '❄️';
+    if (code <= 82)        return '🌧';
+    if (code <= 84)        return '🌨';
+    if (code <= 99)        return '⛈️';
+    return '🌡️';
   }
+  function _wcodeLabel(code) {
+    if (code === 0)  return 'Ciel dégagé';
+    if (code <= 2)   return 'Partiellement nuageux';
+    if (code === 3)  return 'Couvert';
+    if (code <= 49)  return 'Brouillard';
+    if (code <= 57)  return 'Bruine';
+    if (code <= 67)  return 'Pluie';
+    if (code <= 77)  return 'Neige';
+    if (code <= 82)  return 'Averses';
+    if (code <= 84)  return 'Grésil';
+    if (code <= 99)  return 'Orage';
+    return 'Inconnu';
+  }
+
+  async function chargerMeteo(ville) {
+    try {
+      // 1. Geocoding — convertir nom de ville en lat/lon
+      const geoRes  = await fetch('https://geocoding-api.open-meteo.com/v1/search?name=' + encodeURIComponent(ville) + '&count=1&language=fr&format=json');
+      const geoData = await geoRes.json();
+      const loc = geoData.results && geoData.results[0];
+      if (!loc) return;
+
+      const lat = loc.latitude, lon = loc.longitude;
+      const elCityLabel = document.getElementById('weather-city-label');
+      if (elCityLabel) elCityLabel.textContent = loc.name + (loc.country ? ', ' + loc.country : '');
+
+      // 2. Météo actuelle + prévisions horaires
+      const wRes = await fetch(
+        'https://api.open-meteo.com/v1/forecast'
+        + '?latitude=' + lat + '&longitude=' + lon
+        + '&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,weather_code,is_day,precipitation_probability'
+        + '&hourly=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,precipitation_probability,weather_code,is_day'
+        + '&daily=temperature_2m_max,temperature_2m_min'
+        + '&timezone=auto&forecast_days=2'
+      );
+      const w   = await wRes.json();
+      const cur = w.current;
+
+      const temp     = Math.round(cur.temperature_2m);
+      const ressenti = Math.round(cur.apparent_temperature);
+      const humid    = cur.relative_humidity_2m;
+      const vent     = Math.round(cur.wind_speed_10m);
+      const code     = cur.weather_code;
+      const isDay    = cur.is_day;
+      const pluiePct = cur.precipitation_probability || 0;
+      const tMin     = Math.round(w.daily.temperature_2m_min[0]);
+      const tMax     = Math.round(w.daily.temperature_2m_max[0]);
+      const label    = _wcodeLabel(code);
+      const icon     = _wcodeIcon(code, isDay);
+
+      // Hero
+      const heroTemp = document.querySelector('.weather-temp');
+      if (heroTemp) heroTemp.textContent = temp + '°';
+      const heroCity = document.querySelector('.weather-city');
+      if (heroCity) heroCity.textContent = label;
+      const heroDesc = document.querySelector('.weather-desc');
+      if (heroDesc) heroDesc.textContent = 'Ressenti ' + ressenti + '°C · Min ' + tMin + '° / Max ' + tMax + '°';
+      const heroBig  = document.querySelector('.weather-icon-big');
+      if (heroBig)  heroBig.textContent = icon;
+
+      // Pills humidité / vent / condition
+      const pills = document.querySelectorAll('.weather-pill');
+      if (pills[0]) pills[0].innerHTML = pills[0].querySelector('svg').outerHTML + ' ' + humid + '%';
+      if (pills[1]) pills[1].innerHTML = pills[1].querySelector('svg').outerHTML + ' ' + vent + ' km/h';
+      if (pills[2]) pills[2].innerHTML = pills[2].querySelector('svg').outerHTML + ' ' + label;
+
+      // Détails bas
+      const vals = document.querySelectorAll('.weather-detail-val');
+      if (vals[0]) vals[0].innerHTML = humid    + '<span style="font-size:13px;">%</span>';
+      if (vals[1]) vals[1].innerHTML = vent     + '<span style="font-size:13px;"> km/h</span>';
+      if (vals[2]) vals[2].innerHTML = ressenti + '<span style="font-size:13px;">°</span>';
+      if (vals[3]) vals[3].innerHTML = pluiePct + '<span style="font-size:13px;">%</span>';
+
+      // Prévisions heure par heure (6h)
+      const now      = new Date().getHours();
+      const times    = w.hourly.time;
+      const hTemps   = w.hourly.temperature_2m;
+      const hRains   = w.hourly.precipitation_probability;
+      const hCodes   = w.hourly.weather_code;
+      const hIsDay   = w.hourly.is_day;
+      const todayStr = new Date().toISOString().slice(0, 10);
+      let startIdx   = times.findIndex(t => t === todayStr + 'T' + String(now).padStart(2, '0') + ':00');
+      if (startIdx === -1) startIdx = now;
+
+      const elF = document.getElementById('forecast-hours');
+      if (elF) {
+        elF.innerHTML = Array.from({ length: 6 }, (_, i) => {
+          const idx  = startIdx + i;
+          const h    = idx < times.length ? times[idx].slice(11, 13) + 'h' : '--';
+          const t    = idx < hTemps.length ? Math.round(hTemps[idx]) : '--';
+          const r    = idx < hRains.length ? hRains[idx] : 0;
+          const ic   = idx < hCodes.length ? _wcodeIcon(hCodes[idx], hIsDay[idx]) : '🌡️';
+          const rain = r > 0 ? '<div class="forecast-rain">' + r + '%</div>' : '<div class="forecast-rain"></div>';
+          return '<div class="forecast-item' + (i === 0 ? ' now' : '') + '">'
+            + '<div class="forecast-time">' + (i === 0 ? 'Maint.' : h) + '</div>'
+            + '<div class="forecast-icon">' + ic + '</div>'
+            + '<div class="forecast-temp">' + t + '°</div>'
+            + rain + '</div>';
+        }).join('');
+      }
+    } catch(e) {
+      console.warn('Météo indisponible :', e);
+    }
+  }
+
+  // Stub conservé pour compatibilité — remplacé par chargerMeteo()
+  function renderForecast() { /* remplacé par chargerMeteo() */ }
  
 
+  // ── Pièces manquantes (backend FastAPI) ──
+  async function chargerPiecesManquantes() {
+    const el = document.getElementById('pieces-manquantes-list');
+    if (!el) return;
+
+    el.innerHTML = '<div style="text-align:center;padding:14px 0;font-size:12px;color:var(--marine);opacity:0.4;">'
+      + '<div style="display:inline-block;width:16px;height:16px;border:2px solid var(--lin);border-top-color:var(--ardoise);border-radius:50%;animation:spin 0.8s linear infinite;"></div>'
+      + '</div>';
+
+    try {
+      const res = await fetch('http://127.0.0.1:8000/recommander/pieces-manquantes', {
+        headers: { 'Authorization': 'Bearer ' + SW.getToken() }
+      });
+
+      if (!res.ok) throw new Error('Backend indisponible');
+      const data = await res.json();
+
+      // Score de complétude
+      const score = data.score_completude || 0;
+      const couleurScore = score >= 80 ? '#1D9E75' : score >= 50 ? '#E8A838' : '#A32D2D';
+
+      const prioriteColor = { haute: '#A32D2D', moyenne: '#E8A838', faible: 'var(--ardoise)' };
+      const prioriteLabel = { haute: 'Priorité haute', moyenne: 'Priorité moyenne', faible: 'Conseil' };
+
+      if (!data.pieces_manquantes || data.pieces_manquantes.length === 0) {
+        el.innerHTML = '<div style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:#DDF0E4;border-radius:10px;">'
+          + '<span style="font-size:18px;">✓</span>'
+          + '<div><div style="font-size:12px;font-weight:600;color:#1D9E75;">Garde-robe complète !</div>'
+          + '<div style="font-size:11px;color:var(--marine);opacity:0.6;margin-top:2px;">' + data.message + '</div></div>'
+          + '</div>';
+        return;
+      }
+
+      let html = '<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">'
+        + '<div style="font-size:11px;color:var(--marine);opacity:0.5;">Complétude :</div>'
+        + '<div style="flex:1;height:4px;background:var(--lin);border-radius:2px;overflow:hidden;">'
+        + '<div style="width:' + score + '%;height:100%;background:' + couleurScore + ';border-radius:2px;transition:width 0.6s;"></div>'
+        + '</div>'
+        + '<div style="font-size:11px;font-weight:600;color:' + couleurScore + ';">' + score + '%</div>'
+        + '</div>';
+
+      data.pieces_manquantes.forEach(p => {
+        const col = prioriteColor[p.priorite] || 'var(--ardoise)';
+        const lbl = prioriteLabel[p.priorite] || p.priorite;
+        const suggestions = (p.suggestions || []).slice(0, 3).join(', ');
+        html += '<div style="border:0.5px solid rgba(27,58,107,0.1);border-radius:10px;padding:12px 14px;margin-bottom:8px;">'
+          + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">'
+          + '<div style="font-size:12px;font-weight:600;color:var(--marine);">' + p.categorie + '</div>'
+          + '<div style="font-size:10px;letter-spacing:0.06em;text-transform:uppercase;color:' + col + ';opacity:0.8;">' + lbl + '</div>'
+          + '</div>'
+          + '<div style="font-size:11px;color:var(--marine);opacity:0.65;line-height:1.5;margin-bottom:6px;">' + p.raison + '</div>'
+          + (suggestions ? '<div style="font-size:10px;color:var(--ardoise);opacity:0.7;">Ex : ' + suggestions + '</div>' : '')
+          + '</div>';
+      });
+
+      el.innerHTML = html;
+
+    } catch(e) {
+      // Backend pas démarré → message discret, pas d'erreur visible
+      el.innerHTML = '<div style="text-align:center;padding:12px 0;font-size:11px;color:var(--marine);opacity:0.35;">'
+        + 'Démarrez le backend (port 8000) pour les recommandations.'
+        + '</div>';
+    }
+  }
+
+  // ── Initialisation de la page ──
   document.addEventListener('DOMContentLoaded', async () => {
-    renderForecast();
     setDate();
     renderWorn(0);
 
@@ -1059,6 +1429,10 @@
 
     const initiales = (user.prenom[0] + (user.nom ? user.nom[0] : '')).toUpperCase();
     const prenom = user.prenom || '';
+
+    // Météo avec la ville du profil (ou Paris par défaut)
+    const ville = user.ville || 'Paris';
+    chargerMeteo(ville);
 
     // Nav avatar
     const avatar = document.getElementById('nav-avatar');
@@ -1081,8 +1455,9 @@
       const statTotal = document.getElementById('stat-total');
       if (statTotal) statTotal.textContent = total;
 
-      // Stat tenues (stocké en localStorage)
-      const tenues = parseInt(localStorage.getItem('sw_tenues') || '0');
+      // Stat tenues (stocké en localStorage, clé par utilisateur)
+      window._tenueUserId = user.id;
+      const tenues = parseInt(localStorage.getItem(_tenuesCountKey()) || '0');
       const statTenues = document.getElementById('stat-tenues');
       if (statTenues) statTenues.textContent = tenues;
 
@@ -1094,67 +1469,288 @@
       // Top 5 vêtements les plus portés
       chargerPlusPortes(wardrobe);
 
-      const hauts = wardrobe.haut || [];
-      const bas   = wardrobe.bas  || [];
+      // Pièces manquantes (backend FastAPI)
+      chargerPiecesManquantes();
 
-      if (hauts.length >= 1 && bas.length >= 1) {
-        await genererTenueDuJour(wardrobe, prenom);
+      const hauts     = wardrobe.haut      || [];
+      const bas       = wardrobe.bas       || [];
+      const ensembles = wardrobe.ensemble  || [];
+
+      if ((hauts.length >= 1 && bas.length >= 1) || ensembles.length >= 1) {
+        const plan = user.abonnement || 'gratuit';
+        await genererTenueDuJour(wardrobe, prenom, plan, user);
       }
-    } catch {}
+    } catch (e) { console.error('Erreur chargement tenue du jour :', e); }
   });
 
-  async function genererTenueDuJour(wardrobe, prenom) {
-    const container = document.getElementById('tenue-container');
-    if (!container) return;
+  // ── État global des propositions ──
+  window._tenues       = [];
+  window._tenueIndex   = 0;
+  window._tenuePlan    = 'gratuit';
+  window._tenueWard    = null;
+  window._tenuePrenom  = '';
+  window._tenueUserId  = '';
+  window._tenueStyles  = [];
 
-    // Afficher un loader
+  // Clés localStorage (par utilisateur) pour la date de validation et le compteur de tenues
+  function _tenueDateKey()  { return 'sw_tenue_date_'  + (window._tenueUserId || 'guest'); }
+  function _tenuesCountKey() { return 'sw_tenues_'     + (window._tenueUserId || 'guest'); }
+
+  // Normalise l'objet brut de conseiller() ({tenue:{slot:item|null}, style_tenue, occasion, conseil, ...})
+  // → format attendu par afficherTenue (tenue:[{id, role, item}], pieces, description)
+  function normaliserTenue(data) {
+    const SLOT_TO_ROLE = { ensemble:'Ensemble', haut:'Haut', bas:'Bas', manteau:'Manteau', chaussures:'Chaussures' };
+
+    // Normaliser tenue {slot: item|null} → [{id, role, item}] attendu par afficherTenue
+    const tenueArray = Object.entries(data.tenue || {})
+      .filter(([, item]) => item !== null)
+      .map(([slot, item]) => ({ id: item && item.id, role: SLOT_TO_ROLE[slot] || slot, item: item || null }));
+
+    data.tenue = tenueArray;
+    data.pieces = tenueArray.map(t => ({
+      nom:       t.item ? (t.item.nom || t.item.name || t.role) : t.role,
+      categorie: t.role,
+      id:        t.item && t.item.id,
+    }));
+
+    // Assemblage description : style · occasion — conseil
+    const parts = [];
+    if (data.style_tenue) parts.push(data.style_tenue);
+    if (data.occasion)    parts.push(data.occasion);
+    data.description = (parts.length ? parts.join(' · ') + ' — ' : '') + (data.conseil || '');
+
+    return data;
+  }
+
+  // Appelle l'agent IA (/api/agent/conseil) pour générer une tenue et normalise la réponse
+  async function _fetchUneTenue(userId, demande) {
+    const response = await fetch('/api/agent/conseil', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + SW.getToken()
+      },
+      body: JSON.stringify({ userId, demande }),
+    });
+    if (!response.ok) throw new Error('HTTP ' + response.status);
+    const data = await response.json();
+    if (data.error) throw new Error(data.error);
+    if (data.detail) throw new Error(data.detail);
+
+    return normaliserTenue(data);
+  }
+
+  // Affiche un indicateur de chargement dans le conteneur de tenue
+  function _loader(container, msg) {
     container.innerHTML = '<div style="text-align:center;padding:28px 0;font-size:12px;color:var(--marine);opacity:0.45;">'
       + '<div style="display:inline-block;width:20px;height:20px;border:2px solid var(--lin);border-top-color:var(--ardoise);border-radius:50%;animation:spin 0.8s linear infinite;"></div>'
-      + '<div style="margin-top:10px;">L\'IA compose votre tenue…</div></div>';
+      + '<div style="margin-top:10px;">' + (msg || 'L\'IA compose votre tenue…') + '</div></div>';
+  }
 
-    // Construire la liste des vêtements disponibles
-    const cats = { haut:'Haut', bas:'Bas', manteau:'Manteau', chaussures:'Chaussures', ensemble:'Ensemble', accessoires:'Accessoire' };
-    const items = [];
-    Object.entries(cats).forEach(([cat, label]) => {
-      (wardrobe[cat] || []).forEach(item => {
-        items.push('- ' + (item.nom || item.name || 'Article') + ' (' + label + (item.couleur ? ', ' + item.couleur : '') + ')');
-      });
-    });
+  // ── Feedback tenues ──────────────────────────────────────────
+  // Clé localStorage, lecture/écriture des feedbacks like/dislike, et saison courante (contexte)
 
-    const prompt = 'Voici la garde-robe de ' + prenom + ' :\n' + items.join('\n')
-      + '\n\nCompose une tenue complète pour aujourd\'hui en choisissant UN haut et UN bas parmi les articles disponibles. '
-      + 'Si des chaussures sont disponibles, propose-en une paire. '
-      + 'Réponds en JSON uniquement, format : {"pieces":[{"nom":"...","categorie":"..."}],"conseil":"une phrase de style"}. '
-      + 'N\'utilise que des articles de la liste.';
+  function _feedbackKey() {
+    return 'sw_outfit_feedback_' + (window._tenueUserId || 'guest');
+  }
 
-    try {
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SW.getToken() },
-        body: JSON.stringify({
-          max_tokens: 400,
-          system: 'Tu es un assistant mode. Réponds UNIQUEMENT en JSON valide, sans texte avant ou après.',
-          messages: [{ role: 'user', content: prompt }]
-        })
-      });
+  function _getFeedbacks() {
+    try { return JSON.parse(localStorage.getItem(_feedbackKey()) || '[]'); }
+    catch { return []; }
+  }
 
-      const data = await response.json();
-      if (!response.ok || data.error) throw new Error();
+  function _currentSaison() {
+    const m = new Date().getMonth();
+    if (m >= 2 && m <= 4) return 'Printemps';
+    if (m >= 5 && m <= 7) return 'Été';
+    if (m >= 8 && m <= 10) return 'Automne';
+    return 'Hiver';
+  }
 
-      const text = data.content[0].text.trim();
-      const json = JSON.parse(text.replace(/```json|```/g, '').trim());
+  // Enregistre (ou met à jour) le feedback like/dislike d'une tenue dans localStorage
+  function _saveFeedback(outfitId, pieces, rating, reason) {
+    const feedbacks = _getFeedbacks();
+    const idx = feedbacks.findIndex(f => f.outfitId === outfitId);
+    const entry = {
+      outfitId,
+      items: (pieces || []).map(p => p.nom),
+      rating,
+      reason: reason || null,
+      date: new Date().toISOString(),
+      context: { saison: _currentSaison() },
+    };
+    if (idx >= 0) feedbacks[idx] = entry; else feedbacks.push(entry);
+    // Conserver les 50 derniers feedbacks
+    if (feedbacks.length > 50) feedbacks.splice(0, feedbacks.length - 50);
+    localStorage.setItem(_feedbackKey(), JSON.stringify(feedbacks));
+  }
 
-      afficherTenue(json, container);
-    } catch {
-      container.innerHTML = '<div style="text-align:center;padding:20px 0;font-size:12px;color:var(--marine);opacity:0.45;">'
-        + 'Impossible de générer une tenue pour l\'instant.'
-        + '</div>';
+  // Gère le clic like/dislike : enregistre le like, ou affiche les raisons du dislike
+  function evaluerTenue(outfitId, rating) {
+    const row = document.getElementById('rating-row-' + outfitId);
+    if (!row) return;
+    const tenue  = (window._tenues || []).find(t => t._id === outfitId);
+    const pieces = tenue ? tenue.pieces : [];
+
+    if (rating === 'like') {
+      _saveFeedback(outfitId, pieces, 'like', null);
+      row.className = 'rating-confirmed like';
+      row.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>'
+        + 'Tenue enregistrée dans vos favoris ✓';
+    } else {
+      // Afficher les raisons du dislike
+      row.className = '';
+      row.style.cssText = 'margin-top:10px;';
+      row.innerHTML = '<div class="reasons-wrap">'
+        + '<div class="reason-intro">Pourquoi cette tenue ne te convient pas ?</div>'
+        + '<div class="reasons-row">'
+        + ['Pas mon style', 'Mauvaise saison', 'Couleurs qui ne vont pas', 'Autre'].map(r =>
+            '<button class="reason-btn" onclick="confirmerDislike(\'' + outfitId + '\',\'' + r + '\')">' + r + '</button>'
+          ).join('')
+        + '</div></div>';
     }
   }
 
+  // Enregistre la raison du dislike sélectionnée et affiche la confirmation
+  function confirmerDislike(outfitId, reason) {
+    const row    = document.getElementById('rating-row-' + outfitId);
+    const tenue  = (window._tenues || []).find(t => t._id === outfitId);
+    const pieces = tenue ? tenue.pieces : [];
+    _saveFeedback(outfitId, pieces, 'dislike', reason);
+    if (row) {
+      row.style.cssText = '';
+      row.className = 'rating-confirmed dislike';
+      row.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>'
+        + 'Retour pris en compte · Merci !';
+    }
+  }
+
+  // ─────────────────────────────────────────────────────────────
+
+  // Récupère l'état de la tenue du jour côté serveur (vide / proposée / validée)
+  async function _fetchTenueDuJour() {
+    try {
+      const response = await fetch('/api/agent/tenue-du-jour', {
+        headers: { 'Authorization': 'Bearer ' + SW.getToken() },
+      });
+      if (!response.ok) return { etat: 'vide', figee: false };
+      return await response.json();
+    } catch (e) {
+      console.error('Erreur lecture tenue du jour :', e);
+      return { etat: 'vide', figee: false };
+    }
+  }
+
+  // Initialise l'état global des tenues et affiche la tenue du jour (cache serveur ou génération IA)
+  async function genererTenueDuJour(wardrobe, prenom, plan, user) {
+    window._tenuePlan   = plan || 'gratuit';
+    window._tenuePrenom = prenom;
+    window._tenueUserId = (user && user.id) || '';
+    window._tenueStyles = (user && user.styles) ? [...new Set(user.styles)] : [];
+    window._tenues      = [];
+    window._tenueIndex  = 0;
+    window._tenueFigee  = false;
+
+    const container = document.getElementById('tenue-container');
+    if (!container) return;
+
+    const etat = await _fetchTenueDuJour();
+
+    if (etat.etat === 'validee' && etat.tenue) {
+      window._tenueFigee = true;
+      // Garde défensive : une ancienne entrée de cache pourrait ne pas être normalisée
+      const tenueValidee = Array.isArray(etat.tenue.tenue) ? etat.tenue : normaliserTenue(etat.tenue);
+      window._tenues = [tenueValidee];
+      window._tenueIndex = 0;
+      afficherTenue(tenueValidee, container);
+      return;
+    }
+
+    if (etat.etat === 'proposee' && etat.tenue) {
+      const tenueProposee = normaliserTenue(etat.tenue);
+      window._tenues = [tenueProposee];
+      window._tenueIndex = 0;
+      afficherTenue(tenueProposee, container);
+      return;
+    }
+
+    // etat === 'vide' : aucune proposition en cache, on appelle l'IA une seule fois
+    _loader(container, 'L\'IA compose votre tenue…');
+    try {
+      const saison = _currentSaison();
+      const demande = 'Propose-moi une tenue pour aujourd\'hui (' + saison + ')';
+      const json = await _fetchUneTenue(window._tenueUserId, demande);
+      json._id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+      window._tenues = [json];
+      window._tenueIndex = 0;
+      afficherTenue(json, container);
+    } catch {
+      const btnVoirAutres = document.getElementById('btn-voir-autres');
+      if (btnVoirAutres) btnVoirAutres.style.display = 'none';
+      container.innerHTML = '<div style="text-align:center;padding:20px 0;font-size:12px;color:var(--marine);opacity:0.45;">Impossible de générer une tenue pour l\'instant.</div>';
+    }
+  }
+
+  // Demande une nouvelle tenue à l'IA en remplacement de la proposition affichée
+  async function voirAutresTenue() {
+    if (window._tenueFigee) return;
+    const container = document.getElementById('tenue-container');
+    const btn = document.getElementById('btn-voir-autres');
+    if (!container) return;
+
+    if (btn) btn.disabled = true;
+    _loader(container, 'L\'IA compose une nouvelle tenue…');
+
+    try {
+      const saison = _currentSaison();
+      const demande = 'Propose-moi une autre tenue pour aujourd\'hui (' + saison + '), différente de la précédente';
+      const json = await _fetchUneTenue(window._tenueUserId, demande);
+      json._id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+      window._tenues = [json];
+      window._tenueIndex = 0;
+      afficherTenue(json, container);
+    } catch (e) {
+      console.error('Erreur "Voir d\'autres" :', e);
+      afficherTenue(window._tenues[window._tenueIndex], container);
+    } finally {
+      if (btn) btn.disabled = false;
+    }
+  }
+
+  // Affiche la tenue à l'index donné (navigation entre propositions, plan premium)
+  function afficherTenueIndex(index) {
+    window._tenueIndex = index;
+    window._tenueActuelle = (window._tenues[index] || {}).pieces || [];
+    const container = document.getElementById('tenue-container');
+    if (container) afficherTenue(window._tenues[index], container);
+  }
+
+  // Génère une tenue supplémentaire et l'ajoute à la liste de propositions (plan famille)
+  async function nouvelleTenue() {
+    const container = document.getElementById('tenue-container');
+    if (!container) return;
+    _loader(container, 'Nouvelle proposition en cours…');
+    try {
+      const saison = _currentSaison();
+      const demande = 'Propose-moi une autre tenue pour aujourd\'hui (' + saison + '), différente des précédentes';
+      const json = await _fetchUneTenue(window._tenueUserId, demande);
+      json._id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+      window._tenues.push(json);
+      afficherTenueIndex(window._tenues.length - 1);
+    } catch {
+      afficherTenueIndex(window._tenueIndex);
+    }
+  }
+
+  // Construit et affiche le HTML d'une proposition de tenue (cartes, description, évaluation, navigation)
   function afficherTenue(data, container) {
-    const pieces = data.pieces || [];
-    const conseil = data.conseil || '';
+    const tenue       = data.tenue || [];
+    const description = data.description || data.conseil || '';
+    // pieces conservé pour validerTenue + evaluerTenue
+    const pieces = data.pieces || tenue.map(t => ({
+      nom: t.item ? (t.item.nom || t.item.name || t.role) : t.role,
+      categorie: t.role, id: t.id,
+    }));
 
     const icones = {
       'Haut':       '<svg viewBox="0 0 32 32" fill="none" stroke="#1B3A6B" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" style="width:32px;height:32px;"><path d="M10 6 L5 13 L9 15 L9 26 L23 26 L23 15 L27 13 L22 6 Q19 8 16 8 Q13 8 10 6Z"/></svg>',
@@ -1164,79 +1760,247 @@
       'Accessoire': '<svg viewBox="0 0 32 32" fill="none" stroke="#1B3A6B" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" style="width:32px;height:32px;"><rect x="9" y="12" width="14" height="14" rx="2"/><path d="M12 12 Q12 7 16 7 Q20 7 20 12"/></svg>',
       'Ensemble':   '<svg viewBox="0 0 32 32" fill="none" stroke="#1B3A6B" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" style="width:32px;height:32px;"><path d="M9 6 Q16 10 23 6 L25 14 L23 14 L23 26 L9 26 L9 14 L7 14Z"/></svg>',
     };
-
     const bgs = { 'Haut':'#F5F0EC', 'Bas':'#F0EDF8', 'Manteau':'#EEF2FA', 'Chaussures':'#FDF4EE', 'Accessoire':'#DDF0E4', 'Ensemble':'#F5E4D8' };
 
-    let html = '<div style="display:grid;grid-template-columns:repeat(' + Math.min(pieces.length, 4) + ',1fr);gap:8px;margin-bottom:14px;">';
-    pieces.forEach(p => {
-      const cat = p.categorie || 'Haut';
-      const bg  = bgs[cat] || '#F5F0EC';
-      const ico = icones[cat] || icones['Haut'];
-      html += '<div style="background:' + bg + ';border-radius:10px;padding:14px 10px;display:flex;flex-direction:column;align-items:center;gap:8px;">'
-        + ico
-        + '<div style="font-size:11px;text-align:center;color:var(--marine);opacity:0.75;line-height:1.3;">' + p.nom + '</div>'
-        + '</div>';
-    });
-    html += '</div>';
+    // Rendu d'une carte pièce (photo ou placeholder icône)
+    function renderCard(piece) {
+      if (!piece) return '';
+      const item  = piece.item;
+      const role  = piece.role;
+      const bg    = bgs[role] || '#F5F0EC';
+      const ico   = icones[role] || icones['Haut'];
+      const label = item ? (item.nom || item.name || role) : role;
+      if (item && item.photo) {
+        return '<div class="tenue-card" style="background:' + bg + ';">'
+          + '<div class="tenue-card-img-wrap"><img class="tenue-card-img" src="' + item.photo + '" alt=""></div>'
+          + '<div class="tenue-card-label">' + label + '</div>'
+          + '</div>';
+      }
+      // Fallback icône SVG (pas de photo)
+      return '<div class="tenue-card" style="background:' + bg + ';">'
+        + '<div class="tenue-card-icon-wrap">' + ico
+        + '<div style="font-size:10px;text-align:center;color:var(--marine);opacity:0.7;line-height:1.3;word-break:break-word;">' + label + '</div>'
+        + '</div></div>';
+    }
 
-    if (conseil) {
+    let html;
+
+    if (tenue.length > 0) {
+      // ── Grille uniforme : une carte par pièce non-null ──
+      html = '<div class="tenue-cards-grid">' + tenue.map(t => renderCard(t)).join('') + '</div>';
+    } else {
+      // ── Aucune pièce non-null renvoyée ──
+      html = '<div style="text-align:center;padding:20px 0;font-size:12px;color:var(--marine);opacity:0.45;">Tenue indisponible.</div>';
+    }
+
+    if (description) {
       html += '<div style="display:flex;gap:10px;align-items:flex-start;background:var(--ciel);border-radius:10px;padding:12px 14px;">'
         + '<svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:var(--ardoise);fill:none;stroke-width:1.5;flex-shrink:0;margin-top:1px;"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>'
-        + '<div style="font-size:12px;color:var(--marine);opacity:0.7;line-height:1.6;">' + conseil + '</div>'
+        + '<div style="font-size:12px;color:var(--marine);opacity:0.7;line-height:1.6;">' + description + '</div>'
         + '</div>';
     }
 
-    // Stocker les pièces dans une variable globale pour éviter les problèmes de guillemets dans onclick
+    // Bloc évaluation
+    const outfitId = data._id || 'unk';
+    const existingFb = _getFeedbacks().find(f => f.outfitId === outfitId);
+    if (existingFb) {
+      const isLike = existingFb.rating === 'like';
+      html += '<div class="rating-confirmed ' + (isLike ? 'like' : 'dislike') + '" id="rating-row-' + outfitId + '">'
+        + '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>'
+        + (isLike ? 'Tenue enregistrée dans vos favoris ✓' : 'Retour pris en compte · Merci !')
+        + '</div>';
+    } else {
+      html += '<div class="rating-row" id="rating-row-' + outfitId + '">'
+        + '<button class="rating-btn" onclick="evaluerTenue(\'' + outfitId + '\', \'like\')">👍 J\'aime cette tenue</button>'
+        + '<button class="rating-btn" onclick="evaluerTenue(\'' + outfitId + '\', \'dislike\')">👎 Pas pour moi</button>'
+        + '</div>';
+    }
+
     window._tenueActuelle = pieces;
 
-    html += '<div style="display:flex;gap:8px;margin-top:14px;">'
-      + '<button id="btn-valider-tenue" onclick="validerTenue(window._tenueActuelle, this)" style="flex:1;padding:10px;background:var(--marine);color:var(--ivoire);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;border-radius:8px;border:none;cursor:pointer;">✓ Porter cette tenue</button>'
-      + '<a href="page_chatbot.html" style="padding:10px 14px;background:var(--lin);color:var(--marine);font-size:11px;letter-spacing:0.06em;text-transform:uppercase;border-radius:8px;text-decoration:none;white-space:nowrap;">Autres idées →</a>'
-      + '</div>';
+    const btnVoirAutres = document.getElementById('btn-voir-autres');
+    if (btnVoirAutres) btnVoirAutres.style.display = window._tenueFigee ? 'none' : '';
+
+    const dejaValide = window._tenueFigee || localStorage.getItem(_tenueDateKey()) === new Date().toDateString();
+    const btnStyle = dejaValide
+      ? 'flex:1;padding:10px;background:var(--lin);color:var(--marine);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;border-radius:8px;border:none;cursor:not-allowed;opacity:0.6;'
+      : 'flex:1;padding:10px;background:var(--marine);color:var(--ivoire);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;border-radius:8px;border:none;cursor:pointer;';
+    const btnLabel = dejaValide ? '✓ Tenue déjà portée aujourd\'hui' : '✓ Porter cette tenue';
+
+    // Navigation selon le plan
+    const plan  = window._tenuePlan || 'gratuit';
+    const idx   = window._tenueIndex || 0;
+    const total = (window._tenues || []).length;
+
+    if (plan === 'premium' && total > 1 && !window._tenueFigee) {
+      const prevDis = idx === 0 ? 'disabled ' : '';
+      const nextDis = idx === total - 1 ? 'disabled ' : '';
+      const navBtn  = 'padding:10px 14px;background:var(--lin);color:var(--marine);font-size:13px;border-radius:8px;border:none;cursor:pointer;';
+      const navBtnD = 'padding:10px 14px;background:var(--lin);color:var(--marine);font-size:13px;border-radius:8px;border:none;cursor:not-allowed;opacity:0.35;';
+      html += '<div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:10px;margin-bottom:6px;">'
+        + '<button ' + prevDis + 'onclick="afficherTenueIndex(' + (idx-1) + ')" style="' + (idx===0 ? navBtnD : navBtn) + '">←</button>'
+        + '<span style="font-size:11px;color:var(--marine);opacity:0.5;letter-spacing:0.1em;">' + (idx+1) + ' / ' + total + '</span>'
+        + '<button ' + nextDis + 'onclick="afficherTenueIndex(' + (idx+1) + ')" style="' + (idx===total-1 ? navBtnD : navBtn) + '">→</button>'
+        + '</div>';
+    }
+
+    html += '<div style="display:flex;gap:8px;margin-top:10px;">'
+      + '<button id="btn-valider-tenue" onclick="validerTenue(window._tenueActuelle, this)" ' + (dejaValide ? 'disabled ' : '') + 'style="' + btnStyle + '">' + btnLabel + '</button>';
+
+    if (plan === 'famille' && !window._tenueFigee) {
+      html += '<button onclick="nouvelleTenue()" style="padding:10px 14px;background:var(--lin);color:var(--marine);font-size:11px;letter-spacing:0.06em;text-transform:uppercase;border-radius:8px;border:none;cursor:pointer;white-space:nowrap;">Nouvelle →</button>';
+    } else {
+      html += '<a href="page_chatbot.html" style="padding:10px 14px;background:var(--lin);color:var(--marine);font-size:11px;letter-spacing:0.06em;text-transform:uppercase;border-radius:8px;text-decoration:none;white-space:nowrap;">Autres idées →</a>';
+    }
+
+    html += '</div>';
 
     container.innerHTML = html;
   }
 
+  // ─── Utilitaire : incrémenter le compteur de port d'un vêtement ───────────
+  // Seule fonction à appeler lors d'une validation de tenue.
+  // Gère foisPorte, dernierPort, historiquePort, portesAnnuel et la synchro BDD.
+  // piece : { id?, nom?, categorie? } — id résolu ou fallback sur le nom
+  // wardrobe : objet garde-robe courant (pour résolution et mise à jour locale)
+  // ────────────────────────────────────────────────────────────────────────────
+  async function incrementWearCount(piece, wardrobe) {
+    const catMap = { 'Haut':'haut','Bas':'bas','Manteau':'manteau','Chaussures':'chaussures','Ensemble':'ensemble','Accessoire':'accessoires' };
+    let found = null;
+
+    // Résolution par ID (prioritaire)
+    if (piece.id) {
+      const catKey = piece.categorie ? catMap[piece.categorie] : null;
+      if (catKey) {
+        found = (wardrobe[catKey] || []).find(i => String(i.id) === String(piece.id));
+      }
+      if (!found) {
+        for (const items of Object.values(wardrobe)) {
+          if (!Array.isArray(items)) continue;
+          found = items.find(i => String(i.id) === String(piece.id));
+          if (found) break;
+        }
+      }
+    }
+
+    // Fallback résolution par nom si pas d'ID
+    if (!found && piece.nom) {
+      const catKey = piece.categorie ? catMap[piece.categorie] : null;
+      const searchIn = catKey ? (wardrobe[catKey] || []) : Object.values(wardrobe).flat().filter(Array.isArray(wardrobe) ? () => true : v => true);
+      const nom = (piece.nom || '').toLowerCase();
+      (catKey ? (wardrobe[catKey] || []) : Object.values(wardrobe).reduce((a, v) => Array.isArray(v) ? a.concat(v) : a, [])).forEach(it => {
+        if (!found) {
+          const itNom = (it.nom || it.name || '').toLowerCase();
+          if (itNom.includes(nom) || nom.includes(itNom)) found = it;
+        }
+      });
+    }
+
+    if (!found) return;
+
+    const now = new Date().toISOString();
+    const foisPorte = (found.foisPorte ?? found.portes ?? found.porte ?? 0) + 1;
+    const portesAnnuel = (found.portesAnnuel || 0) + 1;
+    const historiquePort = Array.isArray(found.historiquePort) ? found.historiquePort : [];
+    historiquePort.push({ date: now, source: 'tenue' });
+    if (historiquePort.length > 100) historiquePort.splice(0, historiquePort.length - 100);
+
+    // Mise à jour locale immédiate
+    found.foisPorte = foisPorte;
+    found.portes = foisPorte;
+    found.dernierPort = now;
+    found.portesAnnuel = portesAnnuel;
+    found.historiquePort = historiquePort;
+
+    // Synchro BDD
+    const catKey = piece.categorie ? catMap[piece.categorie] : null;
+    let resolvedCat = catKey;
+    if (!resolvedCat) {
+      for (const [k, items] of Object.entries(wardrobe)) {
+        if (Array.isArray(items) && items.find(i => String(i.id) === String(found.id))) { resolvedCat = k; break; }
+      }
+    }
+    if (resolvedCat) {
+      await SW.updateCloth(resolvedCat, found.id, { foisPorte, portes: foisPorte, dernierPort: now, portesAnnuel, historiquePort });
+    }
+
+    // Animation +1 sur la carte du vêtement si visible
+    _showWearAnimation(found.id);
+  }
+
+  // Affiche une animation "+1" sur la carte du vêtement porté
+  function _showWearAnimation(itemId) {
+    const target = document.querySelector('[data-item-id="' + itemId + '"]');
+    if (!target) return;
+    const el = document.createElement('span');
+    el.textContent = '+1';
+    el.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:18px;font-weight:700;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,0.35);pointer-events:none;animation:wearPlusOne 1.1s ease-out forwards;z-index:10;';
+    target.style.position = 'relative';
+    target.appendChild(el);
+    setTimeout(() => el.remove(), 1200);
+  }
+
+  // Valide la tenue du jour : incrémente les compteurs de port et fige la tenue côté serveur
   async function validerTenue(pieces, btn) {
+    if (window._tenueFigee || localStorage.getItem(_tenueDateKey()) === new Date().toDateString()) {
+      btn.textContent = '✓ Tenue déjà portée aujourd\'hui';
+      btn.disabled = true;
+      return;
+    }
+
     btn.disabled = true;
     btn.textContent = '…';
-
-    const catMap = { 'Haut':'haut','Bas':'bas','Manteau':'manteau','Chaussures':'chaussures','Ensemble':'ensemble','Accessoire':'accessoires' };
 
     try {
       const wardrobe = await SW.getWardrobe();
 
-      for (const piece of pieces) {
-        const cat = catMap[piece.categorie];
-        if (!cat) continue;
-        const items = wardrobe[cat] || [];
-        const nom   = (piece.nom || '').toLowerCase();
-        const found = items.find(it => (it.nom || it.name || '').toLowerCase().includes(nom) || nom.includes((it.nom || it.name || '').toLowerCase()));
-        if (found) {
-          const portes = (found.portes || 0) + 1;
-          await SW.updateCloth(cat, found.id, { portes });
-        }
-      }
+      await Promise.all(pieces.map(p => incrementWearCount(p, wardrobe)));
 
-      // Mettre à jour stat tenues
-      const total = parseInt(localStorage.getItem('sw_tenues') || '0') + 1;
-      localStorage.setItem('sw_tenues', total);
+      localStorage.setItem(_tenueDateKey(), new Date().toDateString());
+
+      const total = parseInt(localStorage.getItem(_tenuesCountKey()) || '0') + 1;
+      localStorage.setItem(_tenuesCountKey(), total);
       const statTenues = document.getElementById('stat-tenues');
       if (statTenues) statTenues.textContent = total;
 
-      // Rafraîchir le top 5
       const wardrobeUpdated = await SW.getWardrobe();
       chargerPlusPortes(wardrobeUpdated);
 
-      // Mettre à jour stat peuportés
-      const all = Object.values(wardrobeUpdated).flat().filter(Array.isArray ? true : v => Array.isArray(v));
-      const peuPortes = Object.values(wardrobeUpdated).reduce((s, cat) => s + (Array.isArray(cat) ? cat.filter(i => !i.portes || i.portes === 0).length : 0), 0);
+      const peuPortes = Object.values(wardrobeUpdated).reduce((s, cat) => s + (Array.isArray(cat) ? cat.filter(i => (i.foisPorte ?? i.portes ?? i.porte ?? 0) === 0).length : 0), 0);
       const statPeu = document.getElementById('stat-peuportes');
       if (statPeu) statPeu.textContent = peuPortes;
 
+      // Figer la tenue du jour côté serveur
+      try {
+        const tenueAffichee = window._tenues[window._tenueIndex] || {};
+        const response = await fetch('/api/agent/valider-tenue', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + SW.getToken(),
+          },
+          body: JSON.stringify({ tenue: tenueAffichee }),
+        });
+        if (response.ok) window._tenueFigee = true;
+      } catch (e) {
+        console.error('Erreur figement tenue du jour :', e);
+      }
+
       btn.textContent = '✓ Tenue validée !';
       btn.style.background = '#1D9E75';
-      setTimeout(() => { btn.disabled = false; btn.textContent = '✓ Porter cette tenue'; btn.style.background = ''; }, 3000);
+      setTimeout(() => {
+        const container = document.getElementById('tenue-container');
+        const data = window._tenues[window._tenueIndex];
+        if (window._tenueFigee && container && data) {
+          afficherTenue(data, container);
+        } else {
+          btn.textContent = '✓ Tenue déjà portée aujourd\'hui';
+          btn.style.background = 'var(--lin)';
+          btn.style.color = 'var(--marine)';
+          btn.style.opacity = '0.6';
+          btn.style.cursor = 'not-allowed';
+        }
+      }, 2000);
 
     } catch(e) {
       btn.disabled = false;

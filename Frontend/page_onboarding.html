@@ -1,3 +1,38 @@
+<!--
+============================================================
+Frontend/page_onboarding.html
+============================================================
+RÔLE : Page d'onboarding — collecte le profil initial de
+       l'utilisateur (identité, localisation, tailles, styles
+       favoris, contextes de port) après son inscription.
+
+DESCRIPTION :
+  Page protégée par SW.requireAuth(). Affiche le prénom de
+  l'utilisateur dans le titre de bienvenue, puis une série de
+  cartes de formulaire (date de naissance, genre, ville/pays,
+  tailles haut/bas/chaussures, jusqu'à 3 styles favoris, contextes
+  de port). À la soumission, enregistre le profil via SW.saveUser()
+  et redirige vers page_apres_connection.html. Le bouton "Passer
+  cette étape" redirige directement sans enregistrer.
+
+SECTIONS PRINCIPALES :
+  - .onb-header        : titre de bienvenue personnalisé
+  - Carte "Identité"    : date de naissance + genre
+  - Carte "Localisation" : ville + pays
+  - Carte "Mes tailles"  : tailles haut/bas/chaussures
+  - Carte "Styles favoris" : sélection de jusqu'à 3 styles
+  - Carte "Contextes de port" : quotidien/bureau/sport/soirée
+  - Boutons "Créer mon dressing" / "Passer cette étape"
+
+DÉPENDANCES JS/CSS :
+  - css/styles.css (design system partagé)
+  - sw-data.js (SW.requireAuth, SW.getToken, SW.saveUser, SW.showToast)
+  - js/ui-nav.js (comportements nav, non utilisé sur cette page sans nav)
+
+APPELS API :
+  - SW.saveUser(userData) -> PUT /api/user (enregistre le profil onboarding)
+============================================================
+-->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -5,16 +40,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Smart Wear — Bienvenue</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
 <script src="sw-data.js"></script>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --ivoire: #FAFAF8; --lin: #E8E4DE; --marine: #1B3A6B;
-    --bleu-givré: #C2D4EC; --poudre: #E8D5E0; --ardoise: #7A9CC0;
-    --bleu-profond: #2C5F8A; --ciel: #D6E8F0; --vert-sage: #DDF0E4; --terracotta: #F5E4D8;
-  }
-
+  /* ─── Corps & structure ─── */
   body {
     background: var(--lin);
     color: var(--marine);
@@ -27,10 +56,7 @@
     padding: 40px 20px;
   }
 
-  .container {
-    width: 100%;
-    max-width: 640px;
-  }
+  .container { width: 100%; max-width: 640px; }
 
   /* ─── HEADER ─── */
   .onb-header {
@@ -38,19 +64,12 @@
     margin-bottom: 40px;
   }
 
+  /* logo override : lettre-spacing et positionnement spécifiques à la page */
   .logo {
-    font-family: 'DM Serif Display', serif;
-    font-style: italic;
-    font-size: 28px;
     letter-spacing: 0.14em;
-    color: var(--marine);
-    text-transform: uppercase;
-    text-decoration: none;
     display: block;
     margin-bottom: 24px;
   }
-
-  .logo span { color: var(--ardoise); }
 
   .onb-title {
     font-family: 'DM Serif Display', serif;
@@ -70,16 +89,16 @@
     line-height: 1.7;
   }
 
-  /* ─── CARTE ─── */
+  /* ─── CARTE (override : rayon et padding différents des cartes app) ─── */
   .card {
-    background: var(--ivoire);
     border-radius: 20px;
     padding: 32px 36px;
     margin-bottom: 16px;
-    border: 0.5px solid rgba(27,58,107,0.08);
   }
 
   .card-title {
+    font-family: 'Jost', sans-serif;
+    font-style: normal;
     font-size: 11px;
     letter-spacing: 0.16em;
     text-transform: uppercase;
@@ -98,44 +117,15 @@
     background: var(--ardoise);
   }
 
-  /* ─── CHAMPS ─── */
-  .fields-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  .field { display: flex; flex-direction: column; gap: 7px; }
-  .field.full { grid-column: 1 / -1; }
-
-  .field label {
-    font-size: 10px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--marine);
-    opacity: 0.5;
-  }
-
-  .field input, .field select {
-    height: 46px;
-    padding: 0 14px;
-    background: var(--ivoire);
-    border: 0.5px solid rgba(27,58,107,0.2);
-    border-radius: 8px;
-    font-family: 'Jost', sans-serif;
-    font-size: 14px;
-    font-weight: 300;
-    color: var(--marine);
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-  }
-
-  .field input:focus, .field select:focus {
-    border-color: var(--ardoise);
-    box-shadow: 0 0 0 3px rgba(122,156,192,0.1);
-  }
+  /* ─── CHAMPS (override gap seul) ─── */
+  .fields-grid { gap: 14px; }
 
   /* ─── GENRE ─── */
   .genre-row { display: flex; gap: 10px; }
 
   .genre-btn {
     flex: 1;
-    height: 46px;
+    min-height: 44px;
     border-radius: 8px;
     border: 0.5px solid rgba(27,58,107,0.2);
     background: var(--ivoire);
@@ -148,16 +138,19 @@
   }
 
   .genre-btn:hover { background: var(--lin); opacity: 0.9; }
-  .genre-btn.selected { background: var(--ciel); border-color: var(--ardoise); opacity: 1; font-weight: 500; }
+  .genre-btn.selected,
+  .genre-btn[aria-pressed="true"] { background: var(--ciel); border-color: var(--ardoise); opacity: 1; font-weight: 500; }
 
   /* ─── TAILLES ─── */
   .size-section { margin-bottom: 4px; }
   .size-label { font-size: 12px; color: var(--marine); opacity: 0.5; margin-bottom: 8px; }
-
   .size-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
 
   .size-opt {
     padding: 6px 14px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
     border-radius: 20px;
     border: 0.5px solid rgba(27,58,107,0.15);
     background: var(--ivoire);
@@ -177,6 +170,9 @@
 
   .style-tag {
     padding: 8px 16px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
     border-radius: 20px;
     border: 0.5px solid rgba(27,58,107,0.15);
     background: var(--ivoire);
@@ -205,6 +201,7 @@
 
   .context-card {
     padding: 14px 16px;
+    min-height: 44px;
     border-radius: 12px;
     border: 0.5px solid rgba(27,58,107,0.12);
     background: var(--ivoire);
@@ -230,7 +227,7 @@
   .context-name { font-size: 13px; font-weight: 400; color: var(--marine); }
   .context-desc { font-size: 11px; color: var(--marine); opacity: 0.45; margin-top: 1px; }
 
-  /* ─── BOUTON ─── */
+  /* ─── BOUTONS ─── */
   .btn-submit {
     width: 100%;
     height: 52px;
@@ -267,16 +264,17 @@
 
   .btn-skip:hover { opacity: 0.7; }
 
-  /* ─── ANIMATIONS ─── */
-  .fade-up { opacity: 0; transform: translateY(16px); animation: fadeUp 0.5s ease forwards; }
-  @keyframes fadeUp { to { opacity: 1; transform: none; } }
-  .d1{animation-delay:0.05s} .d2{animation-delay:0.12s} .d3{animation-delay:0.2s}
-  .d4{animation-delay:0.28s} .d5{animation-delay:0.36s} .d6{animation-delay:0.44s}
-  .d7{animation-delay:0.52s}
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 480px) {
+    body { padding: 20px 12px; }
+    .card { padding: 24px 20px; }
+    .context-grid { grid-template-columns: 1fr; }
+  }
 </style>
 </head>
 <body>
 
+<main id="main-content">
 <div class="container">
 
   <!-- Header -->
@@ -291,15 +289,15 @@
     <div class="card-title">Identité</div>
     <div class="fields-grid">
       <div class="field">
-        <label>Date de naissance</label>
-        <input type="date" id="ob-dob">
+        <label for="ob-dob">Date de naissance</label>
+        <input type="date" id="ob-dob" autocomplete="bday">
       </div>
       <div class="field">
-        <label>Genre</label>
-        <div class="genre-row">
-          <button class="genre-btn" onclick="selectGenre('Femme', this)">Femme</button>
-          <button class="genre-btn" onclick="selectGenre('Homme', this)">Homme</button>
-          <button class="genre-btn" onclick="selectGenre('Autre', this)">Autre</button>
+        <span id="genre-label" class="field-genre-label" style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--marine);opacity:0.5;">Genre</span>
+        <div class="genre-row" role="group" aria-labelledby="genre-label">
+          <button class="genre-btn" aria-pressed="false" onclick="selectGenre('Femme', this)">Femme</button>
+          <button class="genre-btn" aria-pressed="false" onclick="selectGenre('Homme', this)">Homme</button>
+          <button class="genre-btn" aria-pressed="false" onclick="selectGenre('Autre', this)">Autre</button>
         </div>
       </div>
     </div>
@@ -310,12 +308,12 @@
     <div class="card-title">Localisation</div>
     <div class="fields-grid">
       <div class="field">
-        <label>Ville</label>
-        <input type="text" id="ob-ville" placeholder="Ex : Paris">
+        <label for="ob-ville">Ville</label>
+        <input type="text" id="ob-ville" placeholder="Ex : Paris" autocomplete="address-level2">
       </div>
       <div class="field">
-        <label>Pays</label>
-        <select id="ob-pays">
+        <label for="ob-pays">Pays</label>
+        <select id="ob-pays" autocomplete="country-name">
           <option value="France">France</option>
           <option value="Belgique">Belgique</option>
           <option value="Suisse">Suisse</option>
@@ -332,7 +330,7 @@
     <div class="card-title">Mes tailles</div>
 
     <div class="size-section">
-      <div class="size-label">Haut (vêtements)</div>
+      <div class="size-label">Haut (vêtements) <span style="font-size:10px;opacity:0.45;">· 2 tailles max</span></div>
       <div class="size-row" id="sizes-haut">
         <div class="size-opt" onclick="selectSize('haut', this)">XS</div>
         <div class="size-opt" onclick="selectSize('haut', this)">S</div>
@@ -344,7 +342,7 @@
     </div>
 
     <div class="size-section">
-      <div class="size-label">Bas (pantalons, jupes)</div>
+      <div class="size-label">Bas (pantalons, jupes) <span style="font-size:10px;opacity:0.45;">· 2 tailles max</span></div>
       <div class="size-row" id="sizes-bas">
         <div class="size-opt" onclick="selectSize('bas', this)">34</div>
         <div class="size-opt" onclick="selectSize('bas', this)">36</div>
@@ -453,11 +451,13 @@
   </div>
 
 </div>
+</main>
 
+<script src="js/ui-nav.js" defer></script>
 <script>
   // ── État ──
   let selectedGenre   = '';
-  let selectedSizes   = { haut:'', bas:'', chaussures:'' };
+  let selectedSizes   = { haut: [], bas: [], chaussures: '' };
   let selectedStyles  = [];
   let selectedContextes = ['quotidien'];
   const MAX_STYLES = 3;
@@ -472,6 +472,7 @@
   });
 
   // ── Genre ──
+  // Mémorise le genre sélectionné et met à jour le style du bouton actif.
   function selectGenre(genre, btn) {
     selectedGenre = genre;
     document.querySelectorAll('.genre-btn').forEach(b => b.classList.remove('selected'));
@@ -479,14 +480,30 @@
   }
 
   // ── Tailles ──
+  // Bascule la sélection d'une taille pour une catégorie (unique pour chaussures, max 2 pour haut/bas).
   function selectSize(cat, el) {
     const row = document.getElementById('sizes-' + cat);
-    row.querySelectorAll('.size-opt').forEach(o => o.classList.remove('selected'));
-    el.classList.add('selected');
-    selectedSizes[cat] = el.textContent;
+    if (cat === 'chaussures') {
+      row.querySelectorAll('.size-opt').forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedSizes[cat] = el.textContent.trim();
+    } else {
+      if (el.classList.contains('selected')) {
+        el.classList.remove('selected');
+        selectedSizes[cat] = selectedSizes[cat].filter(s => s !== el.textContent.trim());
+      } else {
+        if (row.querySelectorAll('.size-opt.selected').length >= 2) {
+          SW.showToast('Maximum 2 tailles pour cette catégorie', true);
+          return;
+        }
+        el.classList.add('selected');
+        selectedSizes[cat].push(el.textContent.trim());
+      }
+    }
   }
 
   // ── Styles ──
+  // Bascule la sélection d'un style favori, jusqu'à MAX_STYLES, et met à jour le compteur affiché.
   function toggleStyle(el) {
     if (el.classList.contains('selected')) {
       el.classList.remove('selected');
@@ -502,6 +519,7 @@
   }
 
   // ── Contextes ──
+  // Bascule la sélection d'un contexte de port dans selectedContextes.
   function toggleContext(el, ctx) {
     el.classList.toggle('selected');
     if (el.classList.contains('selected')) {
@@ -512,6 +530,7 @@
   }
 
   // ── Sauvegarder ──
+  // Collecte les champs du formulaire, les envoie via SW.saveUser() puis redirige vers la page d'accueil connectée.
   async function saveOnboarding() {
     const btn = document.getElementById('btn-save');
     btn.textContent = 'Enregistrement...';
@@ -551,6 +570,7 @@
     }
   }
 
+  // Affiche (ou met à jour) un encart d'erreur sous les boutons de soumission.
   function showErreur(msg) {
     let el = document.getElementById('erreur-box');
     if (!el) {
@@ -562,6 +582,7 @@
     el.textContent = msg;
   }
 
+  // Passe l'étape d'onboarding sans enregistrer, redirige vers la page d'accueil connectée.
   function skip() {
     window.location.href = 'page_apres_connection.html';
   }

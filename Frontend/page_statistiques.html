@@ -1,0 +1,1131 @@
+<!--
+============================================================
+Frontend/page_statistiques.html
+============================================================
+RÔLE : Page « Statistiques » — tableau de bord d'analyse de la
+       garde-robe (chiffres clés, classements, couleurs, saisons,
+       historique des ports, suggestions de vente Vinted).
+
+DESCRIPTION :
+  Page applicative protégée par SW.requireAuth(). Récupère la
+  garde-robe via SW.getWardrobe() puis calcule, entièrement côté
+  client, les statistiques affichées : chiffres clés (KPIs),
+  vêtement « star » de la semaine/du mois, top 5 / bottom 5 des
+  vêtements les plus/moins portés, couleurs dominantes,
+  répartition par saison, vêtements jamais portés (« dormants »)
+  et historique chronologique des ports. La section « À vendre »
+  suggère les vêtements peu/jamais portés (hors ajouts récents et
+  hors vêtements « gardés ») et permet de générer une annonce
+  Vinted (titre/description/mots-clés) ainsi que des mots-clés de
+  style personnalisés via /api/chat (proxy Groq).
+
+SECTIONS PRINCIPALES :
+  - <nav class="app-nav"> / <aside class="sidebar"> : navigation applicative
+  - .kpi-grid          : chiffres clés (vêtements, tenues, ports max, dormants)
+  - #stars-grid        : vêtement star de la semaine / du mois
+  - .top-grid          : top 5 / bottom 5 des vêtements les plus/moins portés
+  - .couleurs-list     : couleurs dominantes de la garde-robe
+  - .saisons-grid      : répartition des vêtements par saison
+  - .dormant-grid      : vêtements jamais portés
+  - .timeline          : historique chronologique des ports
+  - #a-vendre / .vendre-grid : suggestions de vente + bloc de style Vinted
+  - #modal-vinted      : modale de génération d'annonce Vinted
+
+DÉPENDANCES JS/CSS :
+  - css/styles.css (design system partagé)
+  - sw-data.js (SW.requireAuth, SW.getWardrobe, SW.getToken, SW.logout)
+  - js/ui-nav.js (comportements sidebar/nav)
+
+APPELS API :
+  - SW.getWardrobe() -> GET /api/wardrobe
+  - fetch('/api/chat', ...) -> POST /api/chat (proxy Groq), utilisé par
+    genererAnnonceVinted() et _genererMotsClesStyle()
+============================================================
+-->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Wear — Statistiques</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+<style>
+  /* ─── Overrides ─── */
+  body { background: var(--lin); font-weight: 300; }
+  .app-nav { padding: 22px 60px; }
+  .logo { font-size: 24px; font-weight: 400; letter-spacing: 0.14em; }
+  .nav-avatar { width: 34px; height: 34px; font-size: 13px; }
+  .nav-breadcrumb { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--marine); opacity: 0.45; }
+
+  /* ─── MAIN override ─── */
+  .main { padding: 40px 48px 60px; }
+
+  /* ─── HEADER override ─── */
+  .reset-badge { font-size: 10px; letter-spacing: 0.08em; color: var(--marine); opacity: 0.35; font-style: italic; }
+
+  /* ─── SECTION TITLES ─── */
+  .section-title {
+    font-family: 'DM Serif Display', serif; font-style: italic;
+    font-size: clamp(1.35rem, 2.5vw, 1.8rem);
+    color: var(--marine); margin-bottom: 20px;
+    display: flex; align-items: center; gap: 14px;
+    line-height: 1.2;
+  }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: rgba(27,58,107,0.12); }
+
+  /* ─── CHIFFRES CLÉS ─── */
+  .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 36px; }
+  .kpi-card {
+    background: var(--ivoire); border-radius: 16px; padding: 20px 18px;
+    border: 0.5px solid rgba(27,58,107,0.08); display: flex; flex-direction: column; gap: 4px;
+  }
+  .kpi-num { font-family: 'DM Serif Display', serif; font-style: italic; font-size: 32px; color: var(--marine); line-height: 1; }
+  .kpi-label { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--marine); opacity: 0.4; }
+  .kpi-card.accent { background: var(--marine); }
+  .kpi-card.accent .kpi-num { color: var(--ivoire); }
+  .kpi-card.accent .kpi-label { color: var(--ivoire); opacity: 0.6; }
+
+  /* ─── TOP PORTÉS ─── */
+  .top-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 36px; }
+  .top-panel { background: var(--ivoire); border-radius: 16px; padding: 24px; border: 0.5px solid rgba(27,58,107,0.08); }
+  .top-panel-title { font-family: 'DM Serif Display', serif; font-style: italic; font-size: clamp(0.95rem, 1.5vw, 1.25rem); color: var(--marine); opacity: 0.72; margin-bottom: 18px; line-height: 1.3; }
+  .worn-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 0.5px solid rgba(27,58,107,0.05); }
+  .worn-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .worn-rank-big { font-family: 'DM Serif Display', serif; font-style: italic; font-size: 18px; color: var(--ardoise); opacity: 0.6; min-width: 22px; text-align: center; }
+  .worn-photo { width: 48px; height: 60px; border-radius: 8px; overflow: hidden; flex-shrink: 0; }
+  .worn-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .worn-photo-ph { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+  .worn-photo-ph svg { width: 24px; height: 24px; stroke: var(--marine); fill: none; stroke-width: 1.2; opacity: 0.3; }
+  .worn-info-col { flex: 1; min-width: 0; }
+  .worn-name-big { font-size: 13px; font-weight: 400; color: var(--marine); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 3px; }
+  .worn-meta-small { font-size: 10px; color: var(--marine); opacity: 0.4; }
+  .worn-count-col { text-align: right; flex-shrink: 0; }
+  .worn-count-num { font-family: 'DM Serif Display', serif; font-style: italic; font-size: 20px; color: var(--marine); line-height: 1; }
+  .worn-count-x { font-size: 9px; color: var(--marine); opacity: 0.4; letter-spacing: 0.1em; }
+  .worn-bar-track { height: 3px; background: var(--lin); border-radius: 2px; margin-top: 4px; }
+  .worn-bar-fill { height: 100%; background: var(--ardoise); border-radius: 2px; transition: width 0.8s ease; }
+
+  /* ─── STARS ─── */
+  .stars-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 36px; }
+  .star-card {
+    background: var(--ivoire); border-radius: 16px; padding: 20px;
+    border: 0.5px solid rgba(27,58,107,0.08); display: flex; gap: 14px; align-items: center;
+  }
+  .star-card.semaine { background: linear-gradient(135deg, var(--ciel) 0%, var(--bleu-givré) 100%); border: none; }
+  .star-card.mois    { background: linear-gradient(135deg, var(--vert-sage) 0%, #C5E8D2 100%); border: none; }
+  .star-photo-lg { width: 70px; height: 88px; border-radius: 10px; overflow: hidden; flex-shrink: 0; background: var(--ivoire); }
+  .star-photo-lg img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .star-photo-lg-ph { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+  .star-eyebrow { font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--bleu-profond); opacity: 0.65; margin-bottom: 5px; }
+  .star-name { font-family: 'DM Serif Display', serif; font-style: italic; font-size: 18px; color: var(--marine); line-height: 1.2; margin-bottom: 4px; }
+  .star-meta { font-size: 11px; color: var(--marine); opacity: 0.5; }
+  .star-empty { font-size: 12px; color: var(--marine); opacity: 0.35; }
+
+  /* ─── DORMANTS ─── */
+  .dormant-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; margin-bottom: 36px; }
+  .dormant-card {
+    background: var(--ivoire); border-radius: 12px; overflow: hidden;
+    border: 0.5px solid rgba(27,58,107,0.08);
+  }
+  .dormant-photo { aspect-ratio: 3/4; background: var(--lin); position: relative; }
+  .dormant-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .dormant-photo-ph { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+  .dormant-photo-ph svg { width: 28px; height: 28px; stroke: var(--marine); fill: none; stroke-width: 1.2; opacity: 0.2; }
+  .dormant-badge { position: absolute; top: 6px; right: 6px; background: var(--terracotta); border-radius: 6px; padding: 2px 6px; font-size: 9px; color: var(--marine); opacity: 0.8; }
+  .dormant-label { padding: 8px 10px; font-size: 11px; color: var(--marine); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .dormant-empty { padding: 40px; text-align: center; font-size: 13px; color: var(--marine); opacity: 0.35; }
+
+  /* ─── COULEURS ─── */
+  .couleurs-list { display: grid; grid-template-columns: 1fr 1fr; gap: 7px 20px; margin-bottom: 36px; }
+  .couleur-row { display: flex; align-items: center; gap: 8px; }
+  .couleur-dot { width: 13px; height: 13px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+  .couleur-name { font-size: 11px; color: var(--marine); min-width: 70px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .couleur-bar-track { flex: 1; height: 4px; background: var(--lin); border-radius: 2px; }
+  .couleur-bar-fill { height: 100%; border-radius: 2px; transition: width 0.8s ease; }
+  .couleur-count { font-size: 10px; color: var(--marine); opacity: 0.4; min-width: 22px; text-align: right; }
+
+  /* ─── SAISONS ─── */
+  .saisons-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 36px; }
+  .saison-card {
+    background: var(--ivoire); border-radius: 12px; padding: 14px 12px;
+    border: 0.5px solid rgba(27,58,107,0.08); text-align: center;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+  }
+  .saison-icon { font-size: 20px; line-height: 1; }
+  .saison-name { font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--marine); opacity: 0.4; }
+  .saison-count { font-family: 'DM Serif Display', serif; font-style: italic; font-size: 26px; color: var(--marine); line-height: 1; }
+  .saison-sub { font-size: 9px; color: var(--marine); opacity: 0.3; }
+
+  /* ─── HISTORIQUE ─── */
+  .timeline { display: flex; flex-direction: column; gap: 0; }
+  .timeline-item { display: flex; align-items: flex-start; gap: 14px; padding: 12px 0; border-bottom: 0.5px solid rgba(27,58,107,0.06); }
+  .timeline-item:last-child { border-bottom: none; }
+  .timeline-dot-col { display: flex; flex-direction: column; align-items: center; padding-top: 3px; }
+  .timeline-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--ardoise); opacity: 0.6; flex-shrink: 0; }
+  .timeline-dot.today { background: var(--marine); opacity: 1; }
+  .timeline-dot.manual { background: var(--terracotta); border: 1px solid rgba(27,58,107,0.2); }
+  .timeline-date { font-size: 10px; color: var(--marine); opacity: 0.35; letter-spacing: 0.06em; white-space: nowrap; min-width: 76px; padding-top: 1px; }
+  .timeline-photos { display: flex; gap: 4px; flex-wrap: wrap; }
+  .timeline-photo { width: 36px; height: 46px; border-radius: 6px; overflow: hidden; background: var(--lin); flex-shrink: 0; }
+  .timeline-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .timeline-photo-ph { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+  .timeline-photo-ph svg { width: 16px; height: 16px; stroke: var(--marine); fill: none; stroke-width: 1.3; opacity: 0.25; }
+  .timeline-desc { font-size: 11px; color: var(--marine); opacity: 0.5; align-self: center; }
+  .timeline-empty { padding: 32px; text-align: center; font-size: 12px; color: var(--marine); opacity: 0.35; }
+
+  /* ─── CARD WRAPPER ─── */
+  .stat-section { background: var(--ivoire); border-radius: 20px; padding: 28px; margin-bottom: 24px; border: 0.5px solid rgba(27,58,107,0.07); }
+
+  /* ─── À VENDRE ─── */
+  .vendre-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; margin-bottom: 28px; }
+  .vendre-card {
+    background: var(--ivoire); border-radius: 16px; overflow: hidden;
+    border: 0.5px solid rgba(27,58,107,0.08);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .vendre-card:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(27,58,107,0.08); }
+  .vendre-card.removing { opacity: 0; transform: scale(0.95); transition: opacity 0.3s, transform 0.3s; }
+  .vendre-photo { aspect-ratio: 3/4; background: var(--lin); position: relative; overflow: hidden; }
+  .vendre-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .vendre-photo-ph { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+  .vendre-photo-ph svg { width: 32px; height: 32px; stroke: var(--marine); fill: none; stroke-width: 1.2; opacity: 0.2; }
+  .vendre-sleeping { position: absolute; top: 8px; left: 8px; background: rgba(245,228,216,0.95); color: var(--marine); font-size: 9px; padding: 3px 8px; border-radius: 8px; letter-spacing: 0.06em; backdrop-filter: blur(4px); }
+  .vendre-info { padding: 12px 14px 6px; }
+  .vendre-name { font-size: 13px; font-weight: 400; color: var(--marine); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .vendre-meta { font-size: 10px; color: var(--marine); opacity: 0.4; margin-bottom: 4px; }
+  .vendre-since { font-size: 10px; color: #A32D2D; opacity: 0.8; font-style: italic; margin-bottom: 10px; }
+  .vendre-actions { display: flex; flex-direction: column; gap: 6px; padding: 0 14px 14px; }
+  .btn-vinted {
+    min-height: 44px; border-radius: 8px; border: none; cursor: pointer;
+    font-family: 'Jost', sans-serif; font-size: 11px; letter-spacing: 0.08em;
+    text-transform: uppercase; transition: all 0.18s; display: flex;
+    align-items: center; justify-content: center; gap: 7px;
+  }
+  .btn-vinted.primary { background: var(--marine); color: var(--ivoire); }
+  .btn-vinted.primary:hover { background: var(--bleu-profond); }
+  .btn-vinted.primary:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-vinted.secondary { background: var(--lin); color: var(--marine); opacity: 0.65; }
+  .btn-vinted.secondary:hover { opacity: 1; background: var(--vert-sage); }
+  .vendre-empty {
+    grid-column: 1 / -1; text-align: center; padding: 48px 24px;
+    background: var(--ivoire); border-radius: 16px; border: 0.5px solid rgba(27,58,107,0.06);
+  }
+  .vendre-empty-icon { font-size: 36px; margin-bottom: 12px; }
+  .vendre-empty p { font-size: 14px; color: var(--marine); opacity: 0.5; }
+
+  /* Style Vinted block */
+  .vendre-style-block {
+    background: linear-gradient(135deg, var(--poudre) 0%, var(--bleu-givré) 100%);
+    border-radius: 16px; padding: 22px 24px; margin-bottom: 36px;
+  }
+  .vendre-style-eyebrow { font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--bleu-profond); opacity: 0.6; margin-bottom: 6px; }
+  .vendre-style-title { font-size: 14px; font-weight: 400; color: var(--marine); margin-bottom: 14px; }
+  .vendre-style-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+  .vendre-style-tag {
+    padding: 7px 16px; border-radius: 20px;
+    background: rgba(250,250,248,0.85); color: var(--marine);
+    font-size: 12px; letter-spacing: 0.04em; cursor: pointer;
+    border: none; transition: all 0.18s; text-decoration: none;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .vendre-style-tag:hover { background: var(--ivoire); transform: translateY(-1px); }
+  .vendre-style-tag svg { width: 10px; height: 10px; stroke: var(--ardoise); fill: none; stroke-width: 2; stroke-linecap: round; }
+  .vendre-style-regen { margin-top: 12px; font-size: 10px; color: var(--marine); opacity: 0.4; cursor: pointer; background: none; border: none; letter-spacing: 0.06em; }
+  .vendre-style-regen:hover { opacity: 0.7; }
+  .vendre-style-spinner { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--marine); opacity: 0.5; }
+  .vendre-style-spinner svg { width: 14px; height: 14px; stroke: var(--ardoise); fill: none; stroke-width: 1.5; animation: spin 1s linear infinite; }
+
+  /* ─── MODALE VINTED ─── */
+  .modal-vinted-overlay {
+    display: none; position: fixed; inset: 0; z-index: 300;
+    background: rgba(27,58,107,0.2); backdrop-filter: blur(8px);
+    align-items: center; justify-content: center; padding: 20px;
+  }
+  .modal-vinted-overlay.show { display: flex; }
+  .modal-vinted {
+    background: var(--ivoire); border-radius: 24px; padding: 36px;
+    max-width: 520px; width: 100%; animation: modalIn 0.3s ease;
+    max-height: 90vh; overflow-y: auto;
+  }
+  @keyframes modalIn { from { opacity: 0; transform: translateY(16px) scale(0.98); } to { opacity: 1; transform: none; } }
+  .modal-vinted-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 24px; }
+  .modal-vinted-title { font-family: 'DM Serif Display', serif; font-style: italic; font-size: 26px; color: var(--marine); line-height: 1.1; }
+  .modal-vinted-close { width: 44px; height: 44px; border-radius: 50%; background: var(--lin); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.2s; }
+  .modal-vinted-close:hover { background: var(--bleu-givré); }
+  .modal-vinted-close svg { width: 13px; height: 13px; stroke: var(--marine); fill: none; stroke-width: 2; stroke-linecap: round; }
+  .modal-vinted-spinner { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 40px 0; }
+  .modal-vinted-spinner svg { width: 36px; height: 36px; stroke: var(--ardoise); fill: none; stroke-width: 1.5; animation: spin 1s linear infinite; }
+  .modal-vinted-spinner span { font-size: 12px; color: var(--marine); opacity: 0.45; letter-spacing: 0.06em; }
+  .modal-vinted-body { display: none; }
+  .modal-field { background: var(--lin); border-radius: 12px; padding: 14px 16px; margin-bottom: 12px; position: relative; }
+  .modal-field-label { font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--marine); opacity: 0.4; margin-bottom: 6px; }
+  .modal-field-value { font-size: 13px; color: var(--marine); line-height: 1.5; padding-right: 36px; }
+  .btn-copy {
+    position: absolute; top: 12px; right: 12px;
+    width: 28px; height: 28px; border-radius: 8px;
+    background: var(--ivoire); border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.18s; flex-shrink: 0;
+  }
+  .btn-copy:hover { background: var(--ciel); }
+  .btn-copy svg { width: 13px; height: 13px; stroke: var(--marine); fill: none; stroke-width: 1.8; stroke-linecap: round; }
+  .btn-copy.copied svg { stroke: #1D9E75; }
+  .modal-kw-label { font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--marine); opacity: 0.4; margin-bottom: 8px; margin-top: 4px; }
+  .modal-kw-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+  .modal-kw-tag {
+    padding: 6px 14px; border-radius: 20px;
+    background: var(--ciel); color: var(--marine);
+    font-size: 12px; cursor: pointer; border: none;
+    transition: background 0.18s, transform 0.12s; letter-spacing: 0.03em;
+  }
+  .modal-kw-tag:hover { background: var(--bleu-givré); transform: scale(1.04); }
+  .modal-kw-tag.copied-kw { background: var(--vert-sage); color: #1D6B4E; }
+  .btn-open-vinted {
+    width: 100%; height: 46px; border-radius: 12px; border: none; cursor: pointer;
+    background: var(--marine); color: var(--ivoire);
+    font-family: 'Jost', sans-serif; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    transition: background 0.2s, transform 0.15s; text-decoration: none;
+  }
+  .btn-open-vinted:hover { background: var(--bleu-profond); transform: translateY(-1px); }
+  .btn-open-vinted svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 1024px) {
+    .app-nav { padding: 18px 32px; }
+    .main { padding: 28px 32px 48px; }
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .top-grid { grid-template-columns: 1fr; }
+    .stars-grid { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 768px) {
+    .app-nav { padding: 16px 20px; }
+    .main { padding: 20px 16px 40px; }
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .saisons-grid { grid-template-columns: repeat(2, 1fr); }
+    .couleurs-list { grid-template-columns: 1fr; }
+    .dormant-grid { grid-template-columns: repeat(3, 1fr); }
+    .vendre-grid { grid-template-columns: repeat(2, 1fr); }
+    .stat-section { padding: 20px 18px; }
+    .top-panel { padding: 18px; }
+    .modal-vinted { padding: 24px; max-height: 95vh; }
+  }
+
+  @media (max-width: 480px) {
+    .main { padding: 16px 16px 32px; }
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .kpi-num { font-size: 26px; }
+    .saisons-grid { grid-template-columns: repeat(2, 1fr); }
+    .dormant-grid { grid-template-columns: repeat(2, 1fr); }
+    .vendre-grid { grid-template-columns: 1fr; }
+    .stars-grid { grid-template-columns: 1fr; }
+    .top-grid { grid-template-columns: 1fr; }
+    .stat-section { padding: 16px; }
+    .couleurs-list { grid-template-columns: 1fr; }
+    .vendre-style-block { padding: 18px; }
+    .modal-vinted { padding: 20px; }
+    .worn-photo { width: 40px; height: 50px; }
+    .star-photo-lg { width: 60px; height: 76px; }
+  }
+</style>
+<script src="sw-data.js"></script>
+</head>
+<body>
+
+<!-- ─── NAV ─── -->
+<nav class="app-nav" aria-label="Navigation principale">
+  <div class="nav-left">
+    <a href="page_apres_connection.html" class="logo">Smart<span>Wear</span></a>
+    <div class="nav-sep"></div>
+    <span class="nav-breadcrumb">Statistiques</span>
+  </div>
+  <div class="nav-right">
+    <a href="page_gestion_compte.html" class="nav-avatar" id="nav-avatar" aria-label="Mon compte">…</a>
+    <button class="nav-burger" aria-label="Ouvrir le menu" aria-expanded="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+</nav>
+
+<div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+<div class="page">
+
+  <!-- ─── SIDEBAR ─── -->
+  <aside class="sidebar" id="sidebar" aria-label="Navigation de l'application">
+    <div class="sidebar-section">
+      <span class="sidebar-label">Navigation</span>
+      <a class="sidebar-item" href="page_apres_connection.html">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Accueil
+      </a>
+      <a class="sidebar-item" href="page_garderobe.html">
+        <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        Ma garde-robe
+      </a>
+      <a class="sidebar-item" href="page_chatbot.html">
+        <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Assistant IA
+      </a>
+      <a class="sidebar-item active" href="page_statistiques.html">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Statistiques
+      </a>
+      <a class="sidebar-item" href="page_tendances.html">
+        <svg viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+        Tendances
+      </a>
+    </div>
+    <div class="sidebar-section">
+      <span class="sidebar-label">Compte</span>
+      <a class="sidebar-item" href="page_gestion_compte.html">
+        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Mon compte
+      </a>
+    </div>
+    <div class="sidebar-bottom">
+      <a class="sidebar-item danger" href="#" onclick="SW.logout();return false;">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Se déconnecter
+      </a>
+    </div>
+  </aside>
+
+  <!-- ─── MAIN ─── -->
+  <main class="main" id="main-content">
+
+    <!-- Header -->
+    <div class="page-header fade-up d1">
+      <div>
+        <p class="page-eyebrow">Ma garde-robe</p>
+        <h1 class="page-title">Mes <em>statistiques</em></h1>
+      </div>
+      <span class="reset-badge" id="reset-badge"></span>
+    </div>
+
+    <!-- Chiffres clés -->
+    <div class="kpi-grid fade-up d2" id="kpi-grid" role="region" aria-label="Chiffres clés de la garde-robe">
+      <div class="kpi-card"><div class="kpi-num" id="kpi-total">—</div><div class="kpi-label">Vêtements</div></div>
+      <div class="kpi-card"><div class="kpi-num" id="kpi-tenues">—</div><div class="kpi-label">Tenues validées</div></div>
+      <div class="kpi-card"><div class="kpi-num" id="kpi-portes">—</div><div class="kpi-label">Plus portés (max)</div></div>
+      <div class="kpi-card accent"><div class="kpi-num" id="kpi-dormants">—</div><div class="kpi-label">Jamais portés</div></div>
+    </div>
+
+    <!-- Stars de la semaine / du mois -->
+    <div class="fade-up d2">
+      <div class="section-title">Vêtement star</div>
+      <div class="stars-grid" id="stars-grid">
+        <div class="star-card semaine"><span class="star-empty">Chargement…</span></div>
+        <div class="star-card mois"><span class="star-empty">Chargement…</span></div>
+      </div>
+    </div>
+
+    <!-- Top portés -->
+    <div class="fade-up d3">
+      <div class="section-title">Classement des ports</div>
+      <div class="top-grid" id="top-grid">
+        <div class="top-panel">
+          <div class="top-panel-title">5 les plus portés (annuel)</div>
+          <div id="top-plus"></div>
+        </div>
+        <div class="top-panel">
+          <div class="top-panel-title">5 les moins portés</div>
+          <div id="top-moins"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Couleurs dominantes -->
+    <div class="stat-section fade-up d3">
+      <div class="section-title">Couleurs dominantes</div>
+      <div class="couleurs-list" id="couleurs-list"></div>
+    </div>
+
+    <!-- Répartition saisons -->
+    <div class="fade-up d4">
+      <div class="section-title">Répartition par saison</div>
+      <div class="saisons-grid" id="saisons-grid"></div>
+    </div>
+
+    <!-- Vêtements dormants -->
+    <div class="fade-up d4">
+      <div class="section-title">Vêtements jamais portés</div>
+      <div class="dormant-grid" id="dormant-grid"></div>
+    </div>
+
+    <!-- Historique des ports -->
+    <div class="stat-section fade-up d5">
+      <div class="section-title">Historique des ports</div>
+      <div class="timeline" id="timeline"></div>
+    </div>
+
+    <!-- À vendre -->
+    <div id="a-vendre" class="fade-up d6" role="region" aria-label="Suggestions de vêtements à vendre">
+      <div class="section-title">🛍️ À vendre ?</div>
+      <div class="vendre-grid" id="vendre-grid"></div>
+      <div id="vendre-style-block" class="vendre-style-block" style="display:none;"></div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ─── MODALE VINTED ─── -->
+<div class="modal-vinted-overlay" id="modal-vinted">
+  <div class="modal-vinted">
+    <div class="modal-vinted-header">
+      <div class="modal-vinted-title">Annonce<br><em style="color:var(--ardoise);">Vinted</em></div>
+      <button class="modal-vinted-close" onclick="closeModalVinted()" aria-label="Fermer la modale">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-vinted-spinner" id="vinted-spinner">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-dasharray="32" stroke-dashoffset="10"/></svg>
+      <span>Génération de l'annonce en cours…</span>
+    </div>
+    <div class="modal-vinted-body" id="vinted-body">
+      <div class="modal-field">
+        <div class="modal-field-label">Titre de l'annonce</div>
+        <div class="modal-field-value" id="vinted-titre"></div>
+        <button class="btn-copy" onclick="copyField('vinted-titre', this)" title="Copier">
+          <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        </button>
+      </div>
+      <div class="modal-field">
+        <div class="modal-field-label">Description</div>
+        <div class="modal-field-value" id="vinted-desc"></div>
+        <button class="btn-copy" onclick="copyField('vinted-desc', this)" title="Copier">
+          <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        </button>
+      </div>
+      <div class="modal-kw-label">Mots-clés (cliquer pour copier)</div>
+      <div class="modal-kw-row" id="vinted-kw"></div>
+      <a id="vinted-open-link" class="btn-open-vinted" href="#" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Ouvrir Vinted
+      </a>
+    </div>
+  </div>
+</div>
+
+<script src="js/ui-nav.js"></script>
+<script>
+  // ─── Helpers partagés ────────────────────────────────────────────────────────
+  const CAT_BG = { manteau:'#EEF2FA', haut:'#F5F0EC', bas:'#F0EDF8', ensemble:'#F5E4D8', chaussures:'#FDF4EE', accessoires:'#DDF0E4' };
+  const CAT_PATHS = {
+    manteau:    'M8 6 L4 12 L8 14 L8 26 L24 26 L24 14 L28 12 L24 6 Q20 9 16 9 Q12 9 8 6Z',
+    haut:       'M10 6 L5 13 L9 15 L9 26 L23 26 L23 15 L27 13 L22 6 Q19 8 16 8 Q13 8 10 6Z',
+    bas:        'M10 6 L8 10 L10 10 L10 26 L14 26 L16 18 L18 26 L22 26 L22 10 L24 10 L22 6Z',
+    ensemble:   'M9 6 Q16 10 23 6 L25 14 L23 14 L23 26 L9 26 L9 14 L7 14Z',
+    chaussures: 'M8 22 Q8 18 12 17 L20 17 Q24 18 24 22 L24 26 L8 26Z',
+    accessoires:'M9 12 L9 26 L23 26 L23 12 Q20 7 16 7 Q12 7 9 12Z',
+  };
+  const CAT_LABELS = { manteau:'Manteau', haut:'Haut', bas:'Bas', ensemble:'Ensemble', chaussures:'Chaussures', accessoires:'Accessoire' };
+
+  const COLOR_HEX = {
+    blanc:'#F5F5F0', noir:'#1A1A1A', gris:'#9E9E9E', beige:'#D4C5A9', crème:'#FAFAF0',
+    ivoire:'#FFFFF0', marine:'#1B3A6B', bleu:'#3A7BD5', 'bleu ciel':'#7EC8E3',
+    'bleu nuit':'#162447', vert:'#4CAF50', kaki:'#8A7D50', 'vert sauge':'#87A878',
+    olive:'#6B7028', rouge:'#C0392B', bordeaux:'#7B1D1D', rose:'#F48FB1',
+    saumon:'#FA8072', orange:'#E67E22', jaune:'#F1C40F', camel:'#C19A6B',
+    taupe:'#8B7D6B', marron:'#795548', chocolat:'#3E2000', lavande:'#9C88E8',
+    violet:'#6B3FA0', lilas:'#BDB0D3', poudre:'#E8D5E0', terracotta:'#CB6D51',
+    rouille:'#B7410E', corail:'#FF7F6E', argenté:'#C0C0C0', doré:'#D4AF37',
+    turquoise:'#1ABC9C', nude:'#E8C9A0',
+  };
+  // Convertit un nom de couleur (français) en code hexadécimal approximatif.
+  function colorToHex(name) {
+    if (!name || name === '—') return '#C2D4EC';
+    const k = name.toLowerCase().trim();
+    if (COLOR_HEX[k]) return COLOR_HEX[k];
+    for (const [key, val] of Object.entries(COLOR_HEX)) if (k.includes(key) || key.includes(k)) return val;
+    return '#C2D4EC';
+  }
+
+  // Retourne le HTML d'une photo d'article, ou un pictogramme de
+  // remplacement propre à sa catégorie si elle n'a pas de photo.
+  function photoOrPlaceholder(item, cat, photoStyle, phStyle) {
+    const bg = CAT_BG[cat] || '#F5F0EC';
+    const path = CAT_PATHS[cat] || CAT_PATHS.haut;
+    if (item.photo) return '<img src="' + item.photo + '" alt="' + (item.nom || '') + '" style="' + (photoStyle||'width:100%;height:100%;object-fit:cover;display:block;') + '">';
+    return '<div style="background:' + bg + ';' + (phStyle||'width:100%;height:100%;display:flex;align-items:center;justify-content:center;') + '"><svg viewBox="0 0 32 32" fill="none" stroke="#1B3A6B" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;opacity:0.25;"><path d="' + path + '"/></svg></div>';
+  }
+
+  // Formate une date ISO en libellé relatif (Aujourd'hui/Hier) ou
+  // en date courte (jour mois année).
+  function fmtDate(iso) {
+    if (!iso) return '';
+    const d = new Date(iso);
+    const months = ['jan','fév','mar','avr','mai','jun','jul','aoû','sep','oct','nov','déc'];
+    const today = new Date(); const yest = new Date(); yest.setDate(yest.getDate()-1);
+    if (d.toDateString() === today.toDateString()) return 'Aujourd\'hui';
+    if (d.toDateString() === yest.toDateString()) return 'Hier';
+    return d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+  }
+
+  // ─── Render KPIs ─────────────────────────────────────────────────────────────
+  function renderKPIs(all, tenues) {
+    document.getElementById('kpi-total').textContent = all.length;
+    document.getElementById('kpi-tenues').textContent = tenues;
+    const maxPort = all.length ? Math.max(...all.map(a => a.count)) : 0;
+    document.getElementById('kpi-portes').textContent = maxPort;
+    const dormants = all.filter(a => !a.total).length;
+    document.getElementById('kpi-dormants').textContent = dormants;
+  }
+
+  // ─── Render Stars ─────────────────────────────────────────────────────────────
+  function renderStars(all) {
+    const now = Date.now();
+    const semaine = all.filter(a => a.dernierPort && (now - new Date(a.dernierPort)) < 7*86400000);
+    const mois    = all.filter(a => a.dernierPort && (now - new Date(a.dernierPort)) < 30*86400000);
+    const starSem  = semaine.sort((a,b) => b.count - a.count)[0] || null;
+    const starMois = mois.sort((a,b) => b.total - a.total)[0] || null;
+
+    const starGrid = document.getElementById('stars-grid');
+    starGrid.innerHTML = [
+      { item: starSem,  cls: 'semaine', label: '★ Star de la semaine',  empty: 'Aucun vêtement porté cette semaine' },
+      { item: starMois, cls: 'mois',    label: '★ Star du mois',        empty: 'Aucun vêtement porté ce mois-ci' },
+    ].map(({ item, cls, label, empty }) => {
+      if (!item) return '<div class="star-card ' + cls + '"><span class="star-empty">' + empty + '</span></div>';
+      const bg = CAT_BG[item.cat] || '#F5F0EC';
+      const path = CAT_PATHS[item.cat] || CAT_PATHS.haut;
+      return '<div class="star-card ' + cls + '">'
+        + '<div class="star-photo-lg">'
+        + (item.item.photo
+          ? '<img src="' + item.item.photo + '" alt="' + item.name + '" style="width:100%;height:100%;object-fit:cover;display:block;">'
+          : '<div class="star-photo-lg-ph" style="background:' + bg + ';"><svg viewBox="0 0 32 32" fill="none" stroke="#1B3A6B" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px;opacity:0.25;"><path d="' + path + '"/></svg></div>')
+        + '</div>'
+        + '<div>'
+        + '<div class="star-eyebrow">' + label + '</div>'
+        + '<div class="star-name">' + item.name + '</div>'
+        + '<div class="star-meta">' + item.total + ' port' + (item.total > 1 ? 's' : '') + ' au total · ' + CAT_LABELS[item.cat] + '</div>'
+        + '</div>'
+        + '</div>';
+    }).join('');
+  }
+
+  // ─── Render Top Portés ───────────────────────────────────────────────────────
+  // Construit une ligne du classement : rang, photo, nom, barre de
+  // proportion par rapport au maximum, et nombre de ports.
+  function renderWornRow(a, maxCount) {
+    const bg   = CAT_BG[a.cat]   || '#F5F0EC';
+    const pct  = maxCount > 0 ? Math.round((a.count / maxCount) * 100) : 0;
+    return '<div class="worn-row">'
+      + '<div class="worn-rank-big">' + (a._rank||'') + '</div>'
+      + '<div class="worn-photo" style="background:' + bg + ';">' + photoOrPlaceholder(a.item, a.cat) + '</div>'
+      + '<div class="worn-info-col">'
+      + '<div class="worn-name-big">' + a.name + '</div>'
+      + '<div class="worn-meta-small">' + (CAT_LABELS[a.cat]||'') + '</div>'
+      + '<div class="worn-bar-track"><div class="worn-bar-fill" style="width:' + pct + '%;"></div></div>'
+      + '</div>'
+      + '<div class="worn-count-col">'
+      + '<div class="worn-count-num">' + a.count + '</div>'
+      + '<div class="worn-count-x">ports</div>'
+      + '</div>'
+      + '</div>';
+  }
+
+  function renderTopPortes(all) {
+    const sorted = [...all].sort((a, b) => b.count - a.count);
+    const top5   = sorted.slice(0, 5).map((a,i) => ({ ...a, _rank: i+1 }));
+    const maxTop = top5.length ? top5[0].count : 1;
+
+    const bottom5 = [...all].sort((a, b) => a.count - b.count).slice(0, 5).map((a,i) => ({ ...a, _rank: i+1 }));
+    const maxBot  = bottom5.length ? Math.max(...bottom5.map(a => a.count)) || 1 : 1;
+
+    const plusEl  = document.getElementById('top-plus');
+    const moinsEl = document.getElementById('top-moins');
+    const empty = '<div style="padding:20px 0;text-align:center;font-size:12px;color:var(--marine);opacity:0.35;">Aucun vêtement trouvé.</div>';
+
+    plusEl.innerHTML  = top5.length  ? top5.map(a  => renderWornRow(a, maxTop)).join('') : empty;
+    moinsEl.innerHTML = bottom5.length ? bottom5.map(a => renderWornRow(a, maxBot)).join('') : empty;
+  }
+
+  // ─── Render Couleurs ─────────────────────────────────────────────────────────
+  function renderCouleurs(all) {
+    const byColor = {};
+    all.forEach(a => {
+      const col = (a.item.couleur || '').trim();
+      if (!col || col === '—') return;
+      if (!byColor[col]) byColor[col] = { items: [], count: 0 };
+      byColor[col].items.push(a);
+      byColor[col].count++;
+    });
+    const sorted = Object.entries(byColor).sort((a, b) => b[1].count - a[1].count).slice(0, 10);
+    const maxCount = sorted.length ? sorted[0][1].count : 1;
+
+    const el = document.getElementById('couleurs-list');
+    if (!sorted.length) { el.innerHTML = '<div style="font-size:12px;color:var(--marine);opacity:0.35;padding:12px 0;">Aucune couleur renseignée.</div>'; return; }
+    el.innerHTML = sorted.map(([col, data]) => {
+      const hex = colorToHex(col);
+      const lum = (parseInt(hex.slice(1,3),16)*0.299 + parseInt(hex.slice(3,5),16)*0.587 + parseInt(hex.slice(5,7),16)*0.114) / 255;
+      const border = lum > 0.7 ? '1px solid rgba(27,58,107,0.15)' : 'none';
+      const pct = Math.round((data.count / maxCount) * 100);
+      return '<div class="couleur-row">'
+        + '<div class="couleur-dot" style="background:' + hex + ';border:' + border + ';"></div>'
+        + '<div class="couleur-name">' + col + '</div>'
+        + '<div class="couleur-bar-track"><div class="couleur-bar-fill" style="width:' + pct + '%;background:' + hex + ';"></div></div>'
+        + '<div class="couleur-count">' + data.count + '</div>'
+        + '</div>';
+    }).join('');
+  }
+
+  // ─── Render Saisons ──────────────────────────────────────────────────────────
+  function renderSaisons(all) {
+    const saisons = [
+      { key:'Printemps', icon:'🌸', bg:'#F0FAF0' },
+      { key:'Été',       icon:'☀️', bg:'#FFF8E1' },
+      { key:'Automne',   icon:'🍂', bg:'#FFF3E0' },
+      { key:'Hiver',     icon:'❄️', bg:'#E8F0FA' },
+    ];
+    const bySaison = {};
+    saisons.forEach(s => { bySaison[s.key] = []; });
+
+    all.forEach(a => {
+      const itemSaisons = Array.isArray(a.item.saisons) ? a.item.saisons : [];
+      if (!itemSaisons.length) {
+        saisons.forEach(s => bySaison[s.key].push(a));
+      } else {
+        itemSaisons.forEach(s => { if (bySaison[s]) bySaison[s].push(a); });
+      }
+    });
+
+    const el = document.getElementById('saisons-grid');
+    el.innerHTML = saisons.map(s => {
+      const count = bySaison[s.key].length;
+      return '<div class="saison-card" style="background:' + s.bg + ';border-color:rgba(27,58,107,0.06);">'
+        + '<span class="saison-icon">' + s.icon + '</span>'
+        + '<div class="saison-name">' + s.key + '</div>'
+        + '<div class="saison-count">' + count + '</div>'
+        + '<div class="saison-sub">vêtement' + (count > 1 ? 's' : '') + '</div>'
+        + '</div>';
+    }).join('');
+  }
+
+  // ─── Render Dormants ─────────────────────────────────────────────────────────
+  function renderDormants(all) {
+    const threeMonthsAgo = Date.now() - 90 * 86400000;
+    const dormants = all.filter(a => {
+      const total = a.total;
+      if (!total) return true;
+      if (a.dernierPort && new Date(a.dernierPort) < threeMonthsAgo) return true;
+      return false;
+    });
+
+    const el = document.getElementById('dormant-grid');
+    if (!dormants.length) {
+      el.innerHTML = '<div class="dormant-empty">Tous vos vêtements ont été portés récemment 🎉</div>';
+      return;
+    }
+    el.innerHTML = dormants.slice(0, 20).map(a => {
+      const bg = CAT_BG[a.cat] || '#F5F0EC';
+      const path = CAT_PATHS[a.cat] || CAT_PATHS.haut;
+      const label = a.total === 0 ? 'Jamais porté' : 'Inactif';
+      return '<div class="dormant-card">'
+        + '<div class="dormant-photo" style="background:' + bg + ';">'
+        + (a.item.photo
+          ? '<img src="' + a.item.photo + '" alt="' + a.name + '" style="width:100%;height:100%;object-fit:cover;display:block;">'
+          : '<div class="dormant-photo-ph"><svg viewBox="0 0 32 32" fill="none" stroke="#1B3A6B" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" style="width:28px;height:28px;opacity:0.2;"><path d="' + path + '"/></svg></div>')
+        + '<div class="dormant-badge">' + label + '</div>'
+        + '</div>'
+        + '<div class="dormant-label">' + a.name + '</div>'
+        + '</div>';
+    }).join('');
+    if (dormants.length > 20) el.innerHTML += '<div class="dormant-empty" style="grid-column:1/-1;">+ ' + (dormants.length - 20) + ' autres…</div>';
+  }
+
+  // ─── Render Timeline ─────────────────────────────────────────────────────────
+  function renderTimeline(all) {
+    const events = [];
+    all.forEach(a => {
+      if (!Array.isArray(a.item.historiquePort)) return;
+      a.item.historiquePort.forEach(h => {
+        events.push({ date: h.date, source: h.source, name: a.name, cat: a.cat, photo: a.item.photo || null });
+      });
+    });
+    events.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    // Group by date string
+    const byDay = {};
+    events.forEach(e => {
+      const key = fmtDate(e.date);
+      if (!byDay[key]) byDay[key] = [];
+      byDay[key].push(e);
+    });
+
+    const el = document.getElementById('timeline');
+    const days = Object.entries(byDay).slice(0, 30);
+    if (!days.length) {
+      el.innerHTML = '<div class="timeline-empty">Aucun historique de port disponible.<br>Validez des tenues pour voir votre historique.</div>';
+      return;
+    }
+
+    el.innerHTML = days.map(([day, evts]) => {
+      const photos = evts.map(e => {
+        const bg = CAT_BG[e.cat] || '#F5F0EC';
+        const path = CAT_PATHS[e.cat] || CAT_PATHS.haut;
+        return '<div class="timeline-photo" style="background:' + bg + ';">'
+          + (e.photo
+            ? '<img src="' + e.photo + '" alt="' + e.name + '">'
+            : '<div class="timeline-photo-ph"><svg viewBox="0 0 32 32" fill="none" stroke="#1B3A6B" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;opacity:0.3;"><path d="' + path + '"/></svg></div>')
+          + '</div>';
+      }).join('');
+      const isToday = day === 'Aujourd\'hui';
+      const isManual = evts.some(e => e.source === 'manuel');
+      const dotCls = isToday ? 'timeline-dot today' : (isManual ? 'timeline-dot manual' : 'timeline-dot');
+      const desc = evts.map(e => e.name).slice(0, 3).join(', ') + (evts.length > 3 ? '…' : '');
+      return '<div class="timeline-item">'
+        + '<div class="timeline-dot-col"><div class="' + dotCls + '"></div></div>'
+        + '<div class="timeline-date">' + day + '</div>'
+        + '<div class="timeline-photos">' + photos + '</div>'
+        + '<div class="timeline-desc">' + desc + '</div>'
+        + '</div>';
+    }).join('');
+  }
+
+  // ─── À vendre ────────────────────────────────────────────────────────────────
+  let _vendreUserId = 'guest';
+  let _vendreAll    = [];
+
+  // Clé localStorage des vêtements temporairement « gardés » (snooze 90 jours).
+  function _snoozedKey() { return 'sw_vendre_snoozed_' + _vendreUserId; }
+  // Clé localStorage du cache des mots-clés de style Vinted.
+  function _styleKey()   { return 'sw_vinted_style_'   + _vendreUserId; }
+
+  // Lit la liste des vêtements mis en sommeil (« Garder ce vêtement ») depuis localStorage.
+  function _getSnoozed() {
+    try { return JSON.parse(localStorage.getItem(_snoozedKey()) || '{}'); } catch { return {}; }
+  }
+
+  // Détermine si un vêtement est candidat à la vente : peu/jamais
+  // porté, pas ajouté récemment (< 3 mois) et pas mis en sommeil.
+  function _isVendable(a, snoozed) {
+    const id = String(a.item.id);
+    if (snoozed[id]) {
+      const until = snoozed[id] + 90 * 86400000;
+      if (Date.now() < until) return false;
+    }
+    // Exclure les vêtements ajoutés il y a moins de 3 mois
+    if (a.item.dateAjout && (Date.now() - new Date(a.item.dateAjout)) < 90 * 86400000) return false;
+
+    const total = a.total;
+    const threeMonthsAgo = Date.now() - 90 * 86400000;
+    if (total < 3) return true;
+    if (!a.dernierPort || new Date(a.dernierPort) < threeMonthsAgo) return true;
+    return false;
+  }
+
+  // Formate la durée écoulée depuis le dernier port en texte lisible.
+  function _sinceLabel(dernierPort) {
+    if (!dernierPort) return 'Jamais porté';
+    const days = Math.floor((Date.now() - new Date(dernierPort)) / 86400000);
+    if (days < 30)  return 'Pas porté depuis ' + days + ' jour' + (days > 1 ? 's' : '');
+    const months = Math.floor(days / 30);
+    return 'Pas porté depuis ' + months + ' mois';
+  }
+
+  // Affiche la grille des vêtements suggérés à la vente et déclenche
+  // le rendu du bloc de mots-clés de style Vinted.
+  function renderAVendre(all, userId) {
+    _vendreUserId = userId;
+    _vendreAll    = all;
+    const snoozed = _getSnoozed();
+    const vendables = all.filter(a => _isVendable(a, snoozed));
+
+    const grid = document.getElementById('vendre-grid');
+    if (!vendables.length) {
+      grid.innerHTML = '<div class="vendre-empty"><div class="vendre-empty-icon">👏</div><p>Bravo, tu portes bien toute ta garde-robe !</p></div>';
+    } else {
+      grid.innerHTML = vendables.map(a => _renderVendreCard(a)).join('');
+    }
+
+    // Style block Vinted
+    _renderStyleBlock(all);
+  }
+
+  // Construit la carte d'un vêtement candidat à la vente (photo, infos,
+  // bouton « Générer l'annonce Vinted » et bouton « Garder ce vêtement »).
+  function _renderVendreCard(a) {
+    const bg   = CAT_BG[a.cat]   || '#F5F0EC';
+    const path = CAT_PATHS[a.cat] || CAT_PATHS.haut;
+    const id = String(a.item.id);
+    const meta = [CAT_LABELS[a.cat], a.item.couleur, a.item.taille, a.item.marque].filter(v => v && v !== '—').join(' · ');
+    const since = _sinceLabel(a.dernierPort);
+    return '<div class="vendre-card" id="vcard-' + id + '">'
+      + '<div class="vendre-photo" style="background:' + bg + ';">'
+      + (a.item.photo
+        ? '<img src="' + a.item.photo + '" alt="' + a.name + '">'
+        : '<div class="vendre-photo-ph"><svg viewBox="0 0 32 32" fill="none" stroke="#1B3A6B" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="' + path + '"/></svg></div>')
+      + '<div class="vendre-sleeping">💤 Peu porté</div>'
+      + '</div>'
+      + '<div class="vendre-info">'
+      + '<div class="vendre-name">' + a.name + '</div>'
+      + '<div class="vendre-meta">' + meta + '</div>'
+      + '<div class="vendre-since">' + since + '</div>'
+      + '</div>'
+      + '<div class="vendre-actions">'
+      + '<button class="btn-vinted primary" id="btn-vinted-' + id + '" onclick="genererAnnonceVinted(\'' + id + '\')">'
+      + '<svg viewBox="0 0 24 24" style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>'
+      + 'Générer l\'annonce Vinted'
+      + '</button>'
+      + '<button class="btn-vinted secondary" onclick="garderVetement(\'' + id + '\')">'
+      + 'Garder ce vêtement'
+      + '</button>'
+      + '</div>'
+      + '</div>';
+  }
+
+  // Marque un vêtement comme « gardé » (snooze 90 jours) et retire sa carte de la grille.
+  function garderVetement(itemId) {
+    const snoozed = _getSnoozed();
+    snoozed[itemId] = Date.now();
+    localStorage.setItem(_snoozedKey(), JSON.stringify(snoozed));
+    const card = document.getElementById('vcard-' + itemId);
+    if (!card) return;
+    card.classList.add('removing');
+    setTimeout(() => {
+      card.remove();
+      const grid = document.getElementById('vendre-grid');
+      if (grid && !grid.querySelector('.vendre-card')) {
+        grid.innerHTML = '<div class="vendre-empty"><div class="vendre-empty-icon">👏</div><p>Bravo, tu portes bien toute ta garde-robe !</p></div>';
+      }
+    }, 320);
+  }
+
+  // ─── Génération annonce Vinted ───────────────────────────────────────────────
+  // Demande à l'IA (via /api/chat) un titre, une description et des
+  // mots-clés d'annonce Vinted pour le vêtement donné, puis affiche
+  // le résultat dans la modale.
+  async function genererAnnonceVinted(itemId) {
+    const a = _vendreAll.find(x => String(x.item.id) === String(itemId));
+    if (!a) return;
+
+    const overlay = document.getElementById('modal-vinted');
+    const spinner = document.getElementById('vinted-spinner');
+    const body    = document.getElementById('vinted-body');
+    overlay.classList.add('show');
+    spinner.style.display = '';
+    body.style.display = 'none';
+
+    const btn = document.getElementById('btn-vinted-' + itemId);
+    if (btn) btn.disabled = true;
+
+    const saisons = Array.isArray(a.item.saisons) && a.item.saisons.length ? a.item.saisons.join(', ') : 'Toutes saisons';
+    const prompt = 'Tu es un expert en vente de vêtements sur Vinted. À partir de ces informations :\n'
+      + '- Nom : ' + a.name + '\n'
+      + '- Marque : ' + (a.item.marque || 'Non renseignée') + '\n'
+      + '- Couleur : ' + (a.item.couleur || 'Non renseignée') + '\n'
+      + '- Taille : ' + (a.item.taille || 'Non renseignée') + '\n'
+      + '- Saison : ' + saisons + '\n\n'
+      + 'Génère :\n'
+      + '1. Un titre d\'annonce accrocheur pour Vinted (max 50 caractères)\n'
+      + '2. Une description courte et vendeuse (max 150 caractères)\n'
+      + '3. Une liste de 5 mots-clés pertinents à entrer dans la recherche Vinted\n\n'
+      + 'Retourne UNIQUEMENT un JSON valide sans markdown ni backticks :\n'
+      + '{"titre":"...","description":"...","motsCles":["...","...","...","...","..."]}';
+
+    try {
+      const token = SW.getToken();
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({ messages: [{ role: 'user', content: prompt }] }),
+      });
+      if (!res.ok) throw new Error('API error ' + res.status);
+      const raw = await res.json();
+      const text = (raw.choices && raw.choices[0] && raw.choices[0].message && raw.choices[0].message.content) || raw.content || '';
+      const cleaned = text.replace(/```json|```/g, '').trim();
+      const data = JSON.parse(cleaned);
+
+      document.getElementById('vinted-titre').textContent = data.titre || '';
+      document.getElementById('vinted-desc').textContent  = data.description || '';
+
+      const kwEl = document.getElementById('vinted-kw');
+      kwEl.innerHTML = (data.motsCles || []).map((kw, i) =>
+        '<button class="modal-kw-tag" id="kw-' + i + '" onclick="copyKw(\'' + kw.replace(/'/g,"&#39;") + '\', this)">' + kw + '</button>'
+      ).join('');
+
+      const firstKw = data.motsCles && data.motsCles[0] ? encodeURIComponent(data.motsCles[0]) : '';
+      document.getElementById('vinted-open-link').href = 'https://www.vinted.fr/catalog?search_text=' + firstKw;
+
+      spinner.style.display = 'none';
+      body.style.display = '';
+
+    } catch(e) {
+      spinner.style.display = 'none';
+      body.style.display = '';
+      document.getElementById('vinted-titre').textContent = 'Erreur lors de la génération';
+      document.getElementById('vinted-desc').textContent  = 'Vérifiez votre connexion et réessayez.';
+      document.getElementById('vinted-kw').innerHTML = '';
+    }
+
+    if (btn) btn.disabled = false;
+  }
+
+  // Ferme la modale de génération d'annonce Vinted.
+  function closeModalVinted() {
+    document.getElementById('modal-vinted').classList.remove('show');
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModalVinted(); });
+  document.getElementById('modal-vinted').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeModalVinted();
+  });
+
+  // Copie le contenu textuel d'un champ de la modale dans le presse-papiers.
+  function copyField(elId, btn) {
+    const text = document.getElementById(elId).textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      btn.classList.add('copied');
+      setTimeout(() => btn.classList.remove('copied'), 1800);
+    });
+  }
+
+  // Copie un mot-clé dans le presse-papiers et affiche une confirmation temporaire.
+  function copyKw(kw, btn) {
+    navigator.clipboard.writeText(kw).then(() => {
+      btn.classList.add('copied-kw');
+      const orig = btn.textContent;
+      btn.textContent = '✓ ' + kw;
+      setTimeout(() => { btn.classList.remove('copied-kw'); btn.textContent = orig; }, 1500);
+    });
+  }
+
+  // ─── Bloc style Vinted ───────────────────────────────────────────────────────
+  // Affiche le bloc de mots-clés de style Vinted, depuis le cache
+  // localStorage si la garde-robe n'a pas changé de taille, sinon
+  // déclenche une nouvelle génération via l'IA.
+  async function _renderStyleBlock(all) {
+    const block = document.getElementById('vendre-style-block');
+    if (!block) return;
+    block.style.display = '';
+
+    const cached = (() => { try { return JSON.parse(localStorage.getItem(_styleKey()) || 'null'); } catch { return null; } })();
+    if (cached && cached.size === all.length && cached.motsCles) {
+      _showStyleTags(cached.motsCles);
+      return;
+    }
+    _showStyleSpinner();
+    await _genererMotsClesStyle(all);
+  }
+
+  // Affiche l'état de chargement du bloc de suggestions de style Vinted.
+  function _showStyleSpinner() {
+    const block = document.getElementById('vendre-style-block');
+    block.innerHTML = '<div class="vendre-style-eyebrow">Trouve des pièces qui te correspondent</div>'
+      + '<div class="vendre-style-spinner">'
+      + '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-dasharray="32" stroke-dashoffset="10"/></svg>'
+      + 'Analyse de ta garde-robe…'
+      + '</div>';
+  }
+
+  // Affiche les mots-clés de style sous forme de tags cliquables vers Vinted.
+  function _showStyleTags(motsCles) {
+    const block = document.getElementById('vendre-style-block');
+    const tags = motsCles.map(kw =>
+      '<a class="vendre-style-tag" href="https://www.vinted.fr/catalog?search_text=' + encodeURIComponent(kw) + '" target="_blank" rel="noopener">'
+      + '<svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>'
+      + kw + '</a>'
+    ).join('');
+    block.innerHTML = '<div class="vendre-style-eyebrow">Trouve des pièces qui te correspondent</div>'
+      + '<div class="vendre-style-title">Recherches Vinted pour ton style</div>'
+      + '<div class="vendre-style-tags">' + tags + '</div>'
+      + '<button class="vendre-style-regen" onclick="_genererMotsClesStyle(window._vendreAllGlobal, true)">↻ Régénérer les suggestions</button>';
+    window._vendreAllGlobal = _vendreAll;
+  }
+
+  // Demande à l'IA (via /api/chat) 5 mots-clés de recherche Vinted
+  // correspondant au style de la garde-robe, met le résultat en
+  // cache localStorage, puis l'affiche.
+  async function _genererMotsClesStyle(all, force) {
+    if (!force) {
+      const cached = (() => { try { return JSON.parse(localStorage.getItem(_styleKey()) || 'null'); } catch { return null; } })();
+      if (cached && cached.size === all.length && cached.motsCles) { _showStyleTags(cached.motsCles); return; }
+    }
+    _showStyleSpinner();
+
+    // Build wardrobe overview
+    const couleurs = [...new Set(all.map(a => a.item.couleur).filter(v => v && v !== '—'))].slice(0, 6).join(', ') || 'Non renseigné';
+    const marques  = [...new Set(all.map(a => a.item.marque).filter(Boolean))].slice(0, 5).join(', ') || 'Non renseignée';
+    const saisons  = [...new Set(all.flatMap(a => Array.isArray(a.item.saisons) ? a.item.saisons : []))].join(', ') || 'Toutes saisons';
+
+    const prompt = 'Tu es un expert en mode et en vente Vinted. Voici une garde-robe :\n'
+      + '- Couleurs principales : ' + couleurs + '\n'
+      + '- Marques habituelles : ' + marques + '\n'
+      + '- Saisons favorites : ' + saisons + '\n\n'
+      + 'Génère 5 mots-clés de recherche Vinted pour trouver des pièces correspondant à ce style.\n'
+      + 'Retourne UNIQUEMENT un JSON valide sans markdown ni backticks :\n'
+      + '{"motsCles":["...","...","...","...","..."]}';
+
+    try {
+      const token = SW.getToken();
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({ messages: [{ role: 'user', content: prompt }] }),
+      });
+      const raw  = await res.json();
+      const text = (raw.choices && raw.choices[0] && raw.choices[0].message && raw.choices[0].message.content) || '';
+      const data = JSON.parse(text.replace(/```json|```/g, '').trim());
+      localStorage.setItem(_styleKey(), JSON.stringify({ size: all.length, motsCles: data.motsCles }));
+      _showStyleTags(data.motsCles);
+    } catch(e) {
+      const block = document.getElementById('vendre-style-block');
+      if (block) block.innerHTML = '<div class="vendre-style-eyebrow">Suggestions Vinted</div><div class="vendre-style-spinner" style="color:var(--marine);opacity:0.4;">Impossible de générer les suggestions.</div>';
+    }
+  }
+
+  // ─── Init ────────────────────────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', async () => {
+    const user = await SW.requireAuth();
+    if (!user) return;
+
+    const avatar = document.getElementById('nav-avatar');
+    if (avatar && user.prenom) avatar.textContent = (user.prenom[0] + (user.nom ? user.nom[0] : '')).toUpperCase();
+
+    // Reset date badge
+    if (user.statsResetDate) {
+      const resetDate = new Date(user.statsResetDate);
+      const nextReset = new Date(resetDate.getTime() + 365 * 86400000);
+      const months = ['jan','fév','mar','avr','mai','jun','jul','aoû','sep','oct','nov','déc'];
+      document.getElementById('reset-badge').textContent =
+        'Compteurs annuels · réinit. le ' + nextReset.getDate() + ' ' + months[nextReset.getMonth()] + ' ' + nextReset.getFullYear();
+    }
+
+    try {
+      const wardrobe = await SW.getWardrobe();
+
+      // Flatten all items into a uniform array
+      const all = [];
+      for (const [cat, items] of Object.entries(wardrobe)) {
+        if (!Array.isArray(items)) continue;
+        for (const item of items) {
+          all.push({
+            item,
+            name:       item.nom || item.name || 'Article',
+            cat,
+            count:      item.portesAnnuel || 0,
+            total:      item.foisPorte ?? item.portes ?? item.porte ?? 0,
+            dernierPort: item.dernierPort || null,
+          });
+        }
+      }
+
+      const userId = user.id || 'guest';
+      const tenues = parseInt(localStorage.getItem('sw_tenues_' + userId) || '0');
+
+      renderKPIs(all, tenues);
+      renderStars(all);
+      renderTopPortes(all);
+      renderCouleurs(all);
+      renderSaisons(all);
+      renderDormants(all);
+      renderTimeline(all);
+      renderAVendre(all, userId);
+
+    } catch(e) {
+      console.error('Erreur chargement statistiques :', e);
+    }
+  });
+</script>
+</body>
+</html>

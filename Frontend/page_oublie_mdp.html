@@ -1,3 +1,54 @@
+<!--
+============================================================
+Frontend/page_oublie_mdp.html
+============================================================
+RÔLE : Page « Mot de passe oublié » — flux de réinitialisation
+       du mot de passe en 3 étapes (email, code de vérification,
+       nouveau mot de passe).
+
+DESCRIPTION :
+  Page publique (pas de SW.requireAuth), accessible depuis
+  page_connexion_inscription.html. Le flux complet est simulé
+  côté client : goToStep() navigue entre les 3 panneaux d'étape
+  (+ barre de progression et pastilles numérotées du panneau
+  gauche), otpInput() gère la saisie/auto-focus du code à 6
+  chiffres, checkStrength()/checkMatch() valident le nouveau mot
+  de passe selon 5 critères, goToSuccess() affiche l'écran de
+  confirmation final.
+
+  ATTENTION (signalé, non corrigé) :
+  - Aucun appel API : l'envoi du code, sa vérification et la
+    réinitialisation du mot de passe ne sont pas reliés au
+    backend (server.js / Backend), tout est simulé en local.
+  - resendCode() (ligne ~921) contient un bug : `tyle.opacity = '1'`
+    au lieu de `link.style.opacity = '1'` -> ReferenceError dans
+    le setTimeout lors du "renvoi" du code.
+  - Lignes ~656 et ~784 : artefacts de "Cloudflare email
+    obfuscation" (`__cf_email__`, `data-cfemail`,
+    `/cdn-cgi/l/email-protection`,
+    `/cdn-cgi/scripts/.../email-decode.min.js`), probablement
+    copiés depuis une page servie via Cloudflare. Le site
+    n'étant pas derrière Cloudflare, l'email de l'étape 2 ne
+    sera jamais décodé (texte illisible/vide) et le script
+    /cdn-cgi/... renverra 404.
+
+SECTIONS PRINCIPALES :
+  - <nav class="site-nav">       : navigation simple (logo + retour connexion)
+  - .panel-left                  : illustration + 3 étapes du processus
+  - #panel-step1                 : saisie de l'adresse email
+  - #panel-step2                 : code de vérification (OTP 6 chiffres)
+  - #panel-step3                 : nouveau mot de passe + critères de robustesse
+  - #panel-success                : écran de confirmation
+
+DÉPENDANCES JS/CSS :
+  - css/styles.css (design system partagé)
+  - js/ui-nav.js (defer)
+  - (artefact, voir ATTENTION) /cdn-cgi/scripts/.../email-decode.min.js
+
+APPELS API :
+  - Aucun (flux entièrement simulé côté client, voir ATTENTION)
+============================================================
+-->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -5,76 +56,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Smart Wear — Mot de passe oublié</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  /* ─── Corps ─── */
+  body { overflow-x: hidden; min-height: 100vh; display: flex; flex-direction: column; }
 
-  :root {
-    --ivoire: #FAFAF8;
-    --lin: #E8E4DE;
-    --marine: #1B3A6B;
-    --bleu-givré: #C2D4EC;
-    --poudre: #E8D5E0;
-    --ardoise: #7A9CC0;
-    --bleu-profond: #2C5F8A;
-    --ciel: #D6E8F0;
-    --vert-sage: #DDF0E4;
-    --terracotta: #F5E4D8;
-  }
+  /* ─── NAV overrides ─── */
+  .site-nav { padding: 32px 60px; }
 
-  html { scroll-behavior: smooth; }
+  /* logo : sans italique et semi-gras sur cette page */
+  .logo { font-weight: 600; font-style: normal; }
 
-  body {
-    background: var(--ivoire);
-    color: var(--marine);
-    font-family: 'Jost', sans-serif;
-    font-weight: 300;
-    overflow-x: hidden;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
+  /* tagline : espacement et couleur propres à cette page */
+  .logo-tagline { letter-spacing: 0.22em; color: var(--ardoise); opacity: 0.7; }
 
-  /* ─── NAVIGATION ─── */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 32px 60px;
-    background: rgba(250,250,248,0.92);
-    backdrop-filter: blur(16px);
-    border-bottom: 0.5px solid rgba(27,58,107,0.12);
-  }
-
-  .nav-inner { display: flex; flex-direction: column; gap: 2px; }
-
-  .logo {
-    font-family: 'DM Serif Display', serif;
-    font-size: 28px;
-    font-weight: 600;
-    letter-spacing: 0.16em;
-    color: var(--marine);
-    text-transform: uppercase;
-    line-height: 1;
-    text-decoration: none;
-  }
-
-  .logo span { color: var(--ardoise); }
-
-  .logo-tagline {
-    font-size: 10px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--ardoise);
-    opacity: 0.7;
-  }
-
+  /* nav-back : couleur et transition différentes du design system */
   .nav-back {
-    display: flex;
-    align-items: center;
-    gap: 8px;
     font-size: 12px;
     letter-spacing: 0.08em;
     color: var(--marine);
@@ -82,12 +79,11 @@
     text-decoration: none;
     transition: opacity 0.25s;
   }
-
-  .nav-back:hover { opacity: 1; }
+  .nav-back:hover { opacity: 1; color: var(--marine); }
   .nav-back::before { content: '←'; transition: transform 0.25s; }
   .nav-back:hover::before { transform: translateX(-4px); }
 
-  /* ─── LAYOUT ─── */
+  /* ─── LAYOUT deux panneaux ─── */
   .page {
     flex: 1;
     display: grid;
@@ -168,7 +164,6 @@
     margin-bottom: 52px;
   }
 
-  /* étapes visuelles */
   .steps { display: flex; flex-direction: column; gap: 0; }
 
   .step-item {
@@ -203,40 +198,16 @@
     transition: all 0.4s;
   }
 
-  .step-num.active {
-    background: var(--ardoise);
-    border-color: var(--ardoise);
-    color: var(--ivoire);
-  }
-
-  .step-num.done {
-    background: rgba(221,240,228,0.15);
-    border-color: var(--vert-sage);
-    color: var(--vert-sage);
-  }
+  .step-num.active { background: var(--ardoise); border-color: var(--ardoise); color: var(--ivoire); }
+  .step-num.done   { background: rgba(221,240,228,0.15); border-color: var(--vert-sage); color: var(--vert-sage); }
 
   .step-body { padding-top: 6px; padding-bottom: 28px; }
-
-  .step-title {
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--ivoire);
-    margin-bottom: 3px;
-    opacity: 0.9;
-  }
-
-  .step-sub {
-    font-size: 12px;
-    color: var(--bleu-givré);
-    opacity: 0.55;
-    line-height: 1.5;
-  }
+  .step-title { font-size: 13px; font-weight: 500; color: var(--ivoire); margin-bottom: 3px; opacity: 0.9; }
+  .step-sub   { font-size: 12px; color: var(--bleu-givré); opacity: 0.55; line-height: 1.5; }
 
   .panel-quote {
     position: absolute;
-    bottom: 48px;
-    left: 48px;
-    right: 48px;
+    bottom: 48px; left: 48px; right: 48px;
     z-index: 2;
     padding-top: 24px;
     border-top: 0.5px solid rgba(194,212,236,0.15);
@@ -261,17 +232,9 @@
     background: var(--ivoire);
   }
 
-  .form-container {
-    width: 100%;
-    max-width: 400px;
-  }
+  .form-container { width: 100%; max-width: 400px; }
 
-  /* barre de progression */
-  .progress-bar {
-    display: flex;
-    gap: 6px;
-    margin-bottom: 40px;
-  }
+  .progress-bar { display: flex; gap: 6px; margin-bottom: 40px; }
 
   .progress-segment {
     flex: 1;
@@ -284,7 +247,6 @@
   .progress-segment.active { background: var(--ardoise); }
   .progress-segment.done   { background: var(--marine); }
 
-  /* icône centrale */
   .form-icon {
     width: 56px;
     height: 56px;
@@ -315,13 +277,9 @@
     line-height: 1.65;
   }
 
-  .form-subtitle strong {
-    color: var(--marine);
-    opacity: 1;
-    font-weight: 500;
-  }
+  .form-subtitle strong { color: var(--marine); opacity: 1; font-weight: 500; }
 
-  /* champs */
+  /* ─── CHAMPS ─── */
   .field { margin-bottom: 18px; }
 
   .field label {
@@ -336,7 +294,7 @@
 
   .field input {
     width: 100%;
-    height: 46px;
+    min-height: 44px;
     padding: 0 16px;
     background: var(--ivoire);
     border: 0.5px solid rgba(27,58,107,0.2);
@@ -397,15 +355,16 @@
 
   .eye-btn {
     position: absolute;
-    right: 14px;
-    top: 50%;
-    transform: translateY(-50%);
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 44px;
     background: none;
     border: none;
     cursor: pointer;
-    padding: 0;
     display: flex;
     align-items: center;
+    justify-content: center;
     color: var(--marine);
     opacity: 0.3;
     transition: opacity 0.2s;
@@ -588,12 +547,52 @@
   .d3 { animation-delay: 0.2s; }
   .d4 { animation-delay: 0.28s; }
   .d5 { animation-delay: 0.36s; }
+
+  /* ─── RESPONSIVE mobile-first ─── */
+  @media (max-width: 900px) {
+    .page {
+      grid-template-columns: 1fr;
+      padding-top: 82px;
+    }
+
+    .panel-left {
+      padding: 28px 24px;
+      justify-content: flex-start;
+    }
+
+    /* panneau marine = hero-band compact, on masque les éléments longs */
+    .deco-circle,
+    .panel-quote,
+    .steps,
+    .panel-desc {
+      display: none;
+    }
+
+    .panel-eyebrow { margin-bottom: 8px; font-size: 12px; }
+    .panel-title   { font-size: clamp(24px, 5vw, 32px); margin-bottom: 0; }
+
+    .panel-right { padding: 32px 32px 48px; }
+  }
+
+  @media (max-width: 600px) {
+    .site-nav { padding: 16px 24px; }
+    .panel-left { padding: 20px 20px; }
+    .panel-right { padding: 24px 20px 40px; }
+    .form-container { max-width: 100%; }
+    .otp-row { gap: 6px; }
+    .otp-row input { width: 40px; }
+  }
+
+  @media (max-width: 480px) {
+    .panel-right { padding: 20px 16px 32px; }
+    .otp-row input { width: 36px; height: 48px; font-size: 18px; }
+  }
 </style>
 </head>
 <body>
 
 <!-- NAV -->
-<nav>
+<nav class="site-nav" aria-label="Navigation principale">
   <div class="nav-inner">
     <a href="page_accueil_site.html" class="logo">Smart<span>Wear</span></a>
     <div class="logo-tagline">Votre dressing intelligent</div>
@@ -602,6 +601,7 @@
 </nav>
 
 <!-- PAGE -->
+<main id="main-content">
 <div class="page">
 
   <!-- ══ PANNEAU GAUCHE ══ -->
@@ -679,8 +679,8 @@
         <p class="form-subtitle fade-in d2">Saisissez votre adresse email et nous vous enverrons un code de vérification pour réinitialiser votre mot de passe.</p>
 
         <div class="field fade-in d3">
-          <label>Adresse email</label>
-          <input type="email" id="email-input" placeholder="votre@email.com">
+          <label for="email-input">Adresse email</label>
+          <input type="email" id="email-input" placeholder="votre@email.com" autocomplete="email">
         </div>
 
         <button class="btn-submit fade-in d4" onclick="goToStep(2)">Envoyer le code</button>
@@ -707,13 +707,13 @@
           Nous avons envoyé un code à 6 chiffres à <strong id="email-display"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="5c2a33282e391c39313d3530723f3331">[email&#160;protected]</a></strong>. Vérifiez vos spams si besoin.
         </p>
 
-        <div class="otp-row fade-in d3">
-          <input type="text" maxlength="1" class="otp-digit" id="otp1" oninput="otpInput(this, null, 'otp2')">
-          <input type="text" maxlength="1" class="otp-digit" id="otp2" oninput="otpInput(this, 'otp1', 'otp3')">
-          <input type="text" maxlength="1" class="otp-digit" id="otp3" oninput="otpInput(this, 'otp2', 'otp4')">
-          <input type="text" maxlength="1" class="otp-digit" id="otp4" oninput="otpInput(this, 'otp3', 'otp5')">
-          <input type="text" maxlength="1" class="otp-digit" id="otp5" oninput="otpInput(this, 'otp4', 'otp6')">
-          <input type="text" maxlength="1" class="otp-digit" id="otp6" oninput="otpInput(this, 'otp5', null)">
+        <div class="otp-row fade-in d3" role="group" aria-label="Code de vérification à 6 chiffres">
+          <input type="text" maxlength="1" class="otp-digit" id="otp1" aria-label="Chiffre 1" inputmode="numeric" oninput="otpInput(this, null, 'otp2')">
+          <input type="text" maxlength="1" class="otp-digit" id="otp2" aria-label="Chiffre 2" inputmode="numeric" oninput="otpInput(this, 'otp1', 'otp3')">
+          <input type="text" maxlength="1" class="otp-digit" id="otp3" aria-label="Chiffre 3" inputmode="numeric" oninput="otpInput(this, 'otp2', 'otp4')">
+          <input type="text" maxlength="1" class="otp-digit" id="otp4" aria-label="Chiffre 4" inputmode="numeric" oninput="otpInput(this, 'otp3', 'otp5')">
+          <input type="text" maxlength="1" class="otp-digit" id="otp5" aria-label="Chiffre 5" inputmode="numeric" oninput="otpInput(this, 'otp4', 'otp6')">
+          <input type="text" maxlength="1" class="otp-digit" id="otp6" aria-label="Chiffre 6" inputmode="numeric" oninput="otpInput(this, 'otp5', null)">
         </div>
 
         <p class="resend-row fade-in d3">
@@ -741,11 +741,11 @@
         <p class="form-subtitle fade-in d2">Choisissez un mot de passe qui respecte tous les critères ci-dessous.</p>
 
         <div class="field fade-in d3">
-          <label>Nouveau mot de passe</label>
+          <label for="pwd-new">Nouveau mot de passe</label>
           <div class="input-wrap">
-            <input type="password" id="pwd-new" placeholder="••••••••" oninput="checkStrength(this)">
-            <button class="eye-btn" onclick="togglePwd('pwd-new', this)" type="button">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <input type="password" id="pwd-new" placeholder="••••••••" autocomplete="new-password" oninput="checkStrength(this)">
+            <button class="eye-btn" onclick="togglePwd('pwd-new', this)" type="button" aria-label="Afficher le mot de passe">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
               </svg>
             </button>
@@ -793,11 +793,11 @@
         </div>
 
         <div class="field fade-in d4">
-          <label>Confirmer le mot de passe</label>
+          <label for="pwd-confirm">Confirmer le mot de passe</label>
           <div class="input-wrap">
-            <input type="password" id="pwd-confirm" placeholder="••••••••" oninput="checkMatch()">
-            <button class="eye-btn" onclick="togglePwd('pwd-confirm', this)" type="button">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <input type="password" id="pwd-confirm" placeholder="••••••••" autocomplete="new-password" oninput="checkMatch()">
+            <button class="eye-btn" onclick="togglePwd('pwd-confirm', this)" type="button" aria-label="Afficher la confirmation du mot de passe">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
               </svg>
             </button>
@@ -830,10 +830,17 @@
   </div>
 
 </div>
+</main>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+<script src="js/ui-nav.js" defer></script>
+<script>
   let currentStep = 1;
 
+  // ── Navigation entre étapes ──
+  // Affiche le panneau de l'étape demandée, met à jour la barre de
+  // progression et les pastilles numérotées du panneau gauche, puis
+  // relance les animations d'apparition.
   function goToStep(step) {
     const email = document.getElementById('email-input')?.value || 'votre@email.com';
     if (step === 2) {
@@ -875,6 +882,7 @@
     if (step === 2) setTimeout(() => document.getElementById('otp1').focus(), 100);
   }
 
+  // Affiche l'écran de confirmation et marque les 3 étapes comme terminées.
   function goToSuccess() {
     document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
     document.getElementById('panel-success').classList.add('active');
@@ -895,6 +903,9 @@
     });
   }
 
+  // ── Code OTP ──
+  // Filtre la saisie d'un chiffre, passe au champ suivant et active le
+  // bouton « Vérifier » une fois les 6 chiffres remplis.
   function otpInput(el, prevId, nextId) {
     el.value = el.value.replace(/[^0-9]/g, '');
     if (el.value) {
@@ -910,6 +921,8 @@
     document.getElementById('btn-verify').disabled = !allFilled;
   }
 
+  // ── Nouveau mot de passe ──
+  // Bascule l'affichage en clair/masqué d'un champ mot de passe.
   function togglePwd(id, btn) {
     const input = document.getElementById(id);
     const isText = input.type === 'text';
@@ -917,6 +930,8 @@
     btn.style.opacity = isText ? '0.3' : '0.7';
   }
 
+  // Évalue le nouveau mot de passe selon 4 critères (longueur, majuscule,
+  // chiffre, caractère spécial) et met à jour les coches et les barres de force.
   function checkStrength(input) {
     const val = input.value;
 
@@ -946,6 +961,8 @@
     checkMatch();
   }
 
+  // Vérifie que les deux mots de passe correspondent et active le bouton
+  // de réinitialisation si tous les critères sont valides.
   function checkMatch() {
     const pwd   = document.getElementById('pwd-new')?.value || '';
     const conf  = document.getElementById('pwd-confirm')?.value || '';
@@ -961,6 +978,9 @@
     if (btn) btn.disabled = !allValid;
   }
 
+  // ── Renvoi du code ──
+  // Simule le renvoi du code de vérification (affiche un état temporaire
+  // pendant 4s). Voir ATTENTION en tête de fichier : bug `tyle.opacity`.
   function resendCode() {
     const link = event.target;
     link.style.opacity = '0.4';
@@ -971,6 +991,7 @@
     }, 4000);
   }
 
+  // ── Initialisation ──
   // désactiver le bouton vérifier par défaut
   document.getElementById('btn-verify').disabled = true;
 </script>

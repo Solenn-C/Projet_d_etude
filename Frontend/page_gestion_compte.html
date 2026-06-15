@@ -1,3 +1,54 @@
+<!--
+============================================================
+Frontend/page_gestion_compte.html
+============================================================
+RÔLE : Page « Mon compte » — gestion des paramètres et préférences de l'utilisateur.
+
+DESCRIPTION:
+  Page multi-sections (navigation interne via showSection()) permettant de gérer :
+  les informations personnelles (identité, coordonnées, localisation, tailles),
+  les profils additionnels (famille/partenaires, limités selon le plan), les
+  préférences (villes météo supplémentaires, limitées selon le plan), l'abonnement
+  (gratuit/premium/famille, changement de plan, moyens de paiement, factures) et la
+  sécurité du compte (double authentification 2FA, sessions actives). Les données
+  sont chargées au démarrage via initFromAPI() puis sauvegardées section par
+  section via SW.saveUser/addProfile/updateProfile/savePreferences.
+
+ATTENTION (signalé, non corrigé) :
+  - Cette page n'appelle jamais SW.requireAuth(), contrairement aux autres pages
+    protégées (page_apres_connection.html, page_garderobe.html, etc.) — absence
+    de garde d'authentification côté client à l'ouverture de la page.
+  - initFromAPI() contient des blocs dupliqués : la restauration du 2FA est répétée
+    3 fois (vers les lignes ~2893, ~2934, ~2977) et le chargement des cartes de
+    paiement 2 fois (vers les lignes ~2944, ~2987) — code redondant non nettoyé.
+  - saveLocalisation2() (vers la ligne ~2997) est une fonction placeholder vide
+    (`/* placeholder supprimé */`), jamais appelée — code mort résiduel.
+  - Le commentaire "// init au chargement" (vers la ligne ~2706) précède la
+    déclaration de renderExtraCities() au lieu de son appel dans DOMContentLoaded —
+    commentaire mal placé.
+
+SECTIONS PRINCIPALES :
+  - #section-infos : informations personnelles (identité, coordonnées, localisation, tailles)
+  - #section-profils : grille de profils (#profiles-grid) + édition du profil actif
+  - #section-preferences : villes météo supplémentaires (#city-list)
+  - #section-abonnement : plan actuel, cartes bancaires, factures
+  - #section-securite : double authentification (2FA), sessions actives
+  - Modales : #modal-delete, #modal-add (nouveau profil), #modal-change-plan,
+    #modal-payment, #modal-invoices, #modal-plan-payment, #modal-plan-lock
+
+DÉPENDANCES JS/CSS :
+  - css/styles.css
+  - sw-data.js (SW.saveUser, SW.getData, SW.getUser, SW.addProfile, SW.updateProfile,
+    SW.savePreferences, SW.logout)
+  - js/ui-nav.js
+
+APPELS API :
+  - SW.getData() (initFromAPI : charge utilisateur, profils, cartes, 2FA)
+  - SW.saveUser(...) (identité, coordonnées, localisation, tailles/contextes/styles, 2FA)
+  - SW.addProfile(...) / SW.updateProfile(...) (création/mise à jour des profils)
+  - SW.savePreferences(...) (villes météo)
+============================================================
+-->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -5,123 +56,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Smart Wear — Mon compte</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
+  /* ─── Overrides ─── */
   :root {
-    --ivoire: #FAFAF8;
-    --lin: #E8E4DE;
-    --marine: #1B3A6B;
     --bleu-givré: #C2D4EC;
     --poudre: #E8D5E0;
-    --ardoise: #7A9CC0;
-    --bleu-profond: #2C5F8A;
-    --ciel: #D6E8F0;
-    --vert-sage: #DDF0E4;
-    --terracotta: #F5E4D8;
   }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--ivoire);
-    color: var(--marine);
-    font-family: 'Jost', sans-serif;
-    font-weight: 300;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  /* ─── NAVIGATION ─── */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 28px 60px;
-    background: rgba(250,250,248,0.92);
-    backdrop-filter: blur(16px);
-    border-bottom: 0.5px solid rgba(27,58,107,0.12);
-  }
-
-  .nav-inner { display: flex; flex-direction: column; gap: 2px; }
-
-  .logo {
-    font-family:'DM Serif Display',serif;font-style:italic;
-    font-size: 28px;
-    font-weight: 600;
-    letter-spacing: 0.16em;
-    color: var(--marine);
-    text-transform: uppercase;
-    line-height: 1;
-    text-decoration: none;
-  }
-
-  .logo span { color: var(--ardoise); }
-
-  .logo-tagline {
-    font-size: 10px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--ardoise);
-    opacity: 0.7;
-  }
-
-  .nav-right {
-    display: flex;
-    align-items: center;
-    gap: 24px;
-  }
-
-  .nav-greeting {
-    font-size: 13px;
-    color: var(--marine);
-    opacity: 0.55;
-  }
-
+  body { background: var(--ivoire); }
+  .app-nav { padding: 22px 60px; }
+  .logo { font-size: 28px; font-weight: 600; letter-spacing: 0.16em; }
+  .nav-avatar { width: 38px; height: 38px; font-size: 15px; }
+  .nav-greeting { font-size: 13px; color: var(--marine); opacity: 0.55; }
   .nav-greeting strong { font-weight: 500; opacity: 1; color: var(--marine); }
 
-  .nav-avatar {
-    width: 38px; height: 38px;
-    border-radius: 50%;
-    background: var(--marine);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family:'DM Serif Display',serif;font-style:italic;
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--ivoire);
-    letter-spacing: 0.05em;
-    cursor: pointer;
-  }
+  /* ─── MAIN override ─── */
+  .main { padding: 40px 56px; max-width: 860px; }
 
-  /* ─── LAYOUT ─── */
-  .page {
-    display: flex;
-    min-height: 100vh;
-    padding-top: 90px;
-  }
-
-  /* ─── SIDEBAR ─── */
-  .sidebar {
-    position: fixed;
-    top: 90px;
-    left: 0;
-    width: 260px;
-    height: calc(100vh - 90px);
-    background: var(--ivoire);
-    border-right: 0.5px solid rgba(27,58,107,0.08);
-    display: flex;
-    flex-direction: column;
-    padding: 32px 0 24px;
-    overflow-y: auto;
-    z-index: 10;
-  }
-
-  /* profil dans la sidebar */
+  /* ─── profil dans la sidebar (unique à cette page) ─── */
   .sidebar-profile {
     display: flex;
     flex-direction: column;
@@ -176,80 +128,6 @@
     letter-spacing: 0.02em;
   }
 
-  /* menu items */
-  .sidebar-section {
-    padding: 0 12px;
-    margin-bottom: 4px;
-  }
-
-  .sidebar-label {
-    font-size: 9px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--marine);
-    opacity: 0.3;
-    padding: 8px 12px 6px;
-    display: block;
-  }
-
-  .sidebar-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 11px 12px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.2s;
-    text-decoration: none;
-    color: var(--marine);
-    opacity: 0.55;
-    font-size: 13px;
-    font-weight: 400;
-    letter-spacing: 0.02em;
-    margin-bottom: 2px;
-  }
-
-  .sidebar-item:hover { background: var(--lin); opacity: 0.9; }
-
-  .sidebar-item.active {
-    background: var(--ciel);
-    opacity: 1;
-    font-weight: 500;
-  }
-
-  .sidebar-item svg {
-    width: 16px; height: 16px;
-    flex-shrink: 0;
-    stroke: currentColor;
-    fill: none;
-    stroke-width: 1.5;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
-
-  .sidebar-item.active svg { stroke: var(--bleu-profond); }
-  .sidebar-item.active { color: var(--bleu-profond); }
-
-  /* badge danger dans sidebar */
-  .sidebar-item.danger { color: #A32D2D; opacity: 0.6; }
-  .sidebar-item.danger:hover { background: #FCEBEB; opacity: 1; }
-  .sidebar-item.danger svg { stroke: #A32D2D; }
-
-  /* déconnexion */
-  .sidebar-bottom {
-    margin-top: auto;
-    padding: 16px 12px 0;
-    border-top: 0.5px solid rgba(27,58,107,0.08);
-  }
-
-  /* ─── CONTENU PRINCIPAL ─── */
-  .main {
-    margin-left: 260px;
-    padding: 40px 56px;
-    max-width: 860px;
-    width: 100%;
-    min-height: calc(100vh - 90px);
-  }
 
   /* sections */
   .section { display: none; }
@@ -290,16 +168,11 @@
 
   .section-title em { font-style: italic; color: var(--ardoise); }
 
-  /* card */
-  .card {
-    background: white;
-    border: 0.5px solid rgba(27,58,107,0.08);
-    border-radius: 14px;
-    padding: 28px 32px;
-    margin-bottom: 20px;
-  }
-
+  /* ─── card override ─── */
+  .card { background: white; padding: 28px 32px; margin-bottom: 20px; }
   .card-title {
+    font-family: 'Jost', sans-serif;
+    font-style: normal;
     font-size: 13px;
     font-weight: 500;
     letter-spacing: 0.06em;
@@ -309,7 +182,6 @@
     align-items: center;
     gap: 10px;
   }
-
   .card-title svg {
     width: 16px; height: 16px;
     stroke: var(--ardoise);
@@ -319,46 +191,8 @@
     stroke-linejoin: round;
   }
 
-  /* grille champs */
-  .fields-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-  }
-
+  /* ─── fields override ─── */
   .fields-grid.single { grid-template-columns: 1fr; }
-
-  .field { display: flex; flex-direction: column; gap: 7px; }
-
-  .field label {
-    font-size: 11px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--marine);
-    opacity: 0.5;
-  }
-
-  .field input,
-  .field select {
-    height: 44px;
-    padding: 0 14px;
-    background: var(--ivoire);
-    border: 0.5px solid rgba(27,58,107,0.18);
-    border-radius: 8px;
-    font-family: 'Jost', sans-serif;
-    font-size: 13px;
-    font-weight: 300;
-    color: var(--marine);
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    appearance: none;
-  }
-
-  .field input:focus,
-  .field select:focus {
-    border-color: var(--ardoise);
-    box-shadow: 0 0 0 3px rgba(122,156,192,0.12);
-  }
 
   /* boutons */
   .btn-save {
@@ -852,29 +686,8 @@
   .status-dot.ok { background: #1D9E75; }
   .status-dot.warn { background: #BA7517; }
 
-  /* toast de sauvegarde */
-  .toast {
-    position: fixed;
-    bottom: 32px;
-    right: 32px;
-    background: var(--marine);
-    color: var(--ivoire);
-    padding: 14px 24px;
-    border-radius: 10px;
-    font-size: 13px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    opacity: 0;
-    transform: translateY(12px);
-    transition: opacity 0.3s, transform 0.3s;
-    pointer-events: none;
-    z-index: 200;
-  }
-
-  .toast.show { opacity: 1; transform: translateY(0); }
-
-  .toast svg { width: 16px; height: 16px; stroke: var(--vert-sage); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  /* ─── toast icon override ─── */
+  .toast svg { stroke: var(--vert-sage); }
 
   /* animation */
   .fade-in {
@@ -888,75 +701,7 @@
   .d2 { animation-delay: 0.1s; }
   .d3 { animation-delay: 0.17s; }
   .d4 { animation-delay: 0.24s; }
-  /* ── Modals ── */
-  .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(27,58,107,0.25);
-    backdrop-filter: blur(4px);
-    z-index: 300;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.25s;
-  }
-
-  .modal-overlay.show {
-    opacity: 1;
-    pointer-events: all;
-  }
-
-  .modal {
-    background: var(--ivoire);
-    border-radius: 20px;
-    box-shadow: 0 32px 80px rgba(27,58,107,0.2);
-    width: 100%;
-    max-width: 540px;
-    max-height: 90vh;
-    overflow-y: auto;
-    padding: 36px 40px;
-    transform: translateY(16px);
-    transition: transform 0.25s;
-  }
-
-  .modal-overlay.show .modal { transform: translateY(0); }
-
-  .modal-header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    margin-bottom: 28px;
-  }
-
-  .modal-title {
-    font-family:'DM Serif Display',serif;font-style:italic;
-    font-size: 28px;
-    font-weight: 300;
-    color: var(--marine);
-    line-height: 1.15;
-  }
-
-  .modal-title em { font-style: italic; color: var(--ardoise); }
-
-  .modal-close {
-    width: 32px; height: 32px;
-    border-radius: 50%;
-    background: var(--lin);
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    margin-left: 16px;
-    transition: background 0.2s;
-  }
-
-  .modal-close:hover { background: var(--bleu-givré); }
-  .modal-close svg { width: 14px; height: 14px; stroke: var(--marine); fill: none; stroke-width: 2; stroke-linecap: round; }
-
+  /* ── Modals (extensions page-spécifiques) ── */
   .modal .field { margin-bottom: 16px; }
 
   .modal .fields-grid {
@@ -1220,27 +965,69 @@
 
   .invoice-dl:hover { background: var(--bleu-givré); transform: translateY(-1px); }
   .invoice-dl svg { width: 14px; height: 14px; stroke: var(--marine); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 1024px) {
+    .app-nav { padding: 18px 32px; }
+    .main { padding: 28px 32px; }
+  }
+  @media (max-width: 768px) {
+    .app-nav { padding: 16px 20px; }
+    .main { padding: 20px 16px 40px; max-width: 100%; }
+    .card { padding: 20px 18px; }
+    .fields-grid { grid-template-columns: 1fr; }
+    .size-grid { grid-template-columns: 1fr; gap: 10px; }
+    .plan-cards { grid-template-columns: 1fr; }
+    .context-selector { flex-wrap: wrap; }
+    .context-btn { flex: 1 1 calc(50% - 5px); min-height: 44px; }
+    .btn-save, .btn-outline, .btn-danger { min-height: 44px; }
+    .section-title { font-size: 28px; }
+    .profiles-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+    .modal .fields-grid { grid-template-columns: 1fr; }
+    .modal .size-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 480px) {
+    .main { padding: 16px; }
+    .card { padding: 18px 16px; }
+    .section-title { font-size: 24px; }
+    .plan-cards { gap: 10px; }
+    .plan-card { padding: 18px 16px; }
+    .style-tags { gap: 6px; }
+    .style-tag { padding: 6px 12px; }
+    .modal { padding: 24px 20px; }
+    .modal-btn-row { flex-direction: column; }
+    .modal-btn-row .btn-save,
+    .modal-btn-row .btn-outline { width: 100%; margin-top: 0; }
+    .profiles-grid { grid-template-columns: repeat(2, 1fr); }
+  }
 </style>
 <script src="sw-data.js"></script>
 </head>
 <body>
 
 <!-- NAV -->
-<nav>
-  <div class="nav-inner">
-    <a href="page_accueil_site.html" class="logo">Smart<span>Wear</span></a>
-    <div class="logo-tagline">Votre dressing intelligent</div>
+<nav class="app-nav" aria-label="Navigation principale">
+  <div class="nav-left">
+    <a href="page_apres_connection.html" class="logo">Smart<span>Wear</span></a>
+    <div class="nav-sep"></div>
+    <span class="nav-page">Mon compte</span>
   </div>
   <div class="nav-right">
     <span class="nav-greeting">Bonjour, <strong id="nav-prenom"></strong></span>
-    <div class="nav-avatar" id="nav-avatar">SM</div>
+    <div class="nav-avatar" id="nav-avatar" aria-label="Mon compte">SM</div>
+    <button class="nav-burger" aria-label="Ouvrir le menu" aria-expanded="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
+        <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+    </button>
   </div>
 </nav>
 
+<div class="sidebar-backdrop" id="sidebar-backdrop"></div>
 <div class="page">
 
   <!-- ══ SIDEBAR ══ -->
-  <aside class="sidebar">
+  <aside class="sidebar" id="sidebar" aria-label="Navigation de l'application">
     <div class="sidebar-profile">
       <div class="profile-avatar" id="sidebar-avatar"><span id="sidebar-avatar-text">SM</span>
         <div class="avatar-edit">
@@ -1284,6 +1071,18 @@
         <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
         Accueil
       </a>
+      <a class="sidebar-item" href="page_garderobe.html">
+        <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        Ma garde-robe
+      </a>
+      <a class="sidebar-item" href="page_chatbot.html">
+        <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Assistant IA
+      </a>
+      <a class="sidebar-item" href="page_statistiques.html">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Statistiques
+      </a>
       <a class="sidebar-item danger" href="#" onclick="SW.logout(); return false;">
         <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
         Se déconnecter
@@ -1292,10 +1091,10 @@
   </aside>
 
   <!-- ══ CONTENU PRINCIPAL ══ -->
-  <main class="main">
+  <main class="main" id="main-content">
 
     <!-- ── SECTION : Informations personnelles ── -->
-    <div class="section active" id="section-infos">
+    <div class="section active" id="section-infos" role="region" aria-label="Informations personnelles">
       <div class="section-header fade-in d1">
         <p class="section-eyebrow">Mon compte</p>
         <h1 class="section-title">Informations <em>personnelles</em></h1>
@@ -1308,19 +1107,19 @@
         </div>
         <div class="fields-grid">
           <div class="field">
-            <label>Prénom</label>
-            <input id="inp-prenom" type="text" value="">
+            <label for="inp-prenom">Prénom</label>
+            <input id="inp-prenom" type="text" value="" autocomplete="given-name">
           </div>
           <div class="field">
-            <label>Nom</label>
-            <input id="inp-nom" type="text" value="Martin">
+            <label for="inp-nom">Nom</label>
+            <input id="inp-nom" type="text" value="Martin" autocomplete="family-name">
           </div>
           <div class="field">
-            <label>Date de naissance</label>
-            <input id="inp-dob" type="date">
+            <label for="inp-dob">Date de naissance</label>
+            <input id="inp-dob" type="date" autocomplete="bday">
           </div>
           <div class="field">
-            <label>Genre</label>
+            <label for="inp-genre">Genre</label>
             <select id="inp-genre">
               <option>Femme</option>
               <option>Homme</option>
@@ -1339,12 +1138,12 @@
         </div>
         <div class="fields-grid">
           <div class="field">
-            <label>Adresse email</label>
-            <input id="inp-email" type="email" value="sophie.martin@email.com">
+            <label for="inp-email">Adresse email</label>
+            <input id="inp-email" type="email" value="sophie.martin@email.com" autocomplete="email">
           </div>
           <div class="field">
-            <label>Téléphone</label>
-            <input id="inp-tel" type="tel" placeholder="+33 6 00 00 00 00">
+            <label for="inp-tel">Téléphone</label>
+            <input id="inp-tel" type="tel" placeholder="+33 6 00 00 00 00" autocomplete="tel">
           </div>
         </div>
         <button class="btn-save" onclick="saveCoordonnees()">Enregistrer</button>
@@ -1357,12 +1156,12 @@
         </div>
         <div class="fields-grid">
           <div class="field">
-            <label>Ville principale</label>
-            <input id="inp-ville" type="text" value="Paris" placeholder="Ex : Paris">
+            <label for="inp-ville">Ville principale</label>
+            <input id="inp-ville" type="text" value="Paris" placeholder="Ex : Paris" autocomplete="address-level2">
           </div>
           <div class="field">
-            <label>Pays</label>
-            <select id="inp-pays">
+            <label for="inp-pays">Pays</label>
+            <select id="inp-pays" autocomplete="country-name">
               <option>France</option>
               <option>Belgique</option>
               <option>Suisse</option>
@@ -1375,7 +1174,7 @@
     </div>
 
     <!-- ── SECTION : Gestion des profils ── -->
-    <div class="section" id="section-profils">
+    <div class="section" id="section-profils" role="region" aria-label="Gestion des profils">
       <div class="section-header fade-in d1">
         <p class="section-eyebrow">Mon compte</p>
         <h1 class="section-title">Gestion des <em>profils</em></h1>
@@ -1416,11 +1215,11 @@
 
         <div class="fields-grid" style="margin-bottom:20px;">
           <div class="field">
-            <label>Prénom</label>
+            <label for="ep-prenom">Prénom</label>
             <input id="ep-prenom" type="text" value="">
           </div>
           <div class="field">
-            <label>Type de profil</label>
+            <label for="ep-type">Type de profil</label>
             <select id="ep-type">
               <option>Mon profil</option>
               <option>Partenaire</option>
@@ -1428,7 +1227,7 @@
             </select>
           </div>
           <div class="field">
-            <label>Genre</label>
+            <label for="ep-genre">Genre</label>
             <select id="ep-genre">
               <option>Femme</option><option>Homme</option><option>Non-binaire</option><option>Enfant</option>
             </select>
@@ -1446,9 +1245,9 @@
                 <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:var(--ardoise);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;">
                   <path d="M8 6 L4 12 L8 14 L8 22 L16 22 L16 14 L20 12 L16 6 Q12 9 8 6Z"/>
                 </svg>
-                Haut
+                Haut <span style="font-size:9px;font-weight:300;opacity:0.45;text-transform:none;letter-spacing:0;">· 2 max</span>
               </div>
-              <div class="size-options" id="size-haut">
+              <div class="size-options" id="size-haut" data-max="2">
                 <div class="size-opt" onclick="selectSize('haut', this)">XS</div>
                 <div class="size-opt" onclick="selectSize('haut', this)">S</div>
                 <div class="size-opt" onclick="selectSize('haut', this)">M</div>
@@ -1468,7 +1267,7 @@
                 <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:var(--ardoise);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;">
                   <path d="M7 3 L5 10 L7 10 L7 21 L11 21 L12 14 L13 21 L17 21 L17 10 L19 10 L17 3Z"/>
                 </svg>
-                Bas
+                Bas <span style="font-size:9px;font-weight:300;opacity:0.45;text-transform:none;letter-spacing:0;">· 2 max</span>
               </div>
               <div class="size-options" id="size-bas">
                 <div class="size-opt" onclick="selectSize('bas', this)">34</div>
@@ -1574,7 +1373,7 @@
     </div>
 
     <!-- ── SECTION : Préférences ── -->
-    <div class="section" id="section-preferences">
+    <div class="section" id="section-preferences" role="region" aria-label="Préférences">
       <div class="section-header fade-in d1">
         <p class="section-eyebrow">Mon compte</p>
         <h1 class="section-title">Mes <em>préférences</em></h1>
@@ -1699,7 +1498,7 @@
     </div>
 
     <!-- ── SECTION : Abonnement ── -->
-    <div class="section" id="section-abonnement">
+    <div class="section" id="section-abonnement" role="region" aria-label="Abonnement">
       <div class="section-header fade-in d1">
         <p class="section-eyebrow">Mon compte</p>
         <h1 class="section-title">Mon <em>abonnement</em></h1>
@@ -1765,7 +1564,7 @@
     </div>
 
     <!-- ── SECTION : Sécurité ── -->
-    <div class="section" id="section-securite">
+    <div class="section" id="section-securite" role="region" aria-label="Sécurité du compte">
       <div class="section-header fade-in d1">
         <p class="section-eyebrow">Sécurité</p>
         <h1 class="section-title">Sécurité du <em>compte</em></h1>
@@ -1898,11 +1697,11 @@
     <div class="modal-section-label">Identité</div>
     <div class="fields-grid">
       <div class="field">
-        <label>Prénom</label>
+        <label for="np-prenom">Prénom</label>
         <input id="np-prenom" type="text" placeholder="Ex : Lucas">
       </div>
       <div class="field">
-        <label>Type de profil</label>
+        <label for="np-type">Type de profil</label>
         <select id="np-type" onchange="onProfileTypeChange(this.value)">
           <option>Partenaire</option>
           <option>Enfant</option>
@@ -1910,7 +1709,7 @@
         </select>
       </div>
       <div class="field">
-        <label>Genre</label>
+        <label for="np-genre">Genre</label>
         <select id="np-genre">
           <option>Femme</option><option>Homme</option><option>Non-binaire</option><option>Enfant</option>
         </select>
@@ -1934,7 +1733,7 @@
       <div class="size-block">
         <div class="size-block-header">
           <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:var(--ardoise);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;"><path d="M8 6 L4 12 L8 14 L8 22 L16 22 L16 14 L20 12 L16 6 Q12 9 8 6Z"/></svg>
-          Haut
+          Haut <span style="font-size:9px;font-weight:300;opacity:0.45;text-transform:none;letter-spacing:0;">· 2 max</span>
         </div>
         <div class="size-options" id="np-size-haut">
           <div class="size-opt" onclick="selectSize('np-haut', this)">XS</div>
@@ -1948,7 +1747,7 @@
       <div class="size-block">
         <div class="size-block-header">
           <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:var(--ardoise);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;"><path d="M7 3 L5 10 L7 10 L7 21 L11 21 L12 14 L13 21 L17 21 L17 10 L19 10 L17 3Z"/></svg>
-          Bas
+          Bas <span style="font-size:9px;font-weight:300;opacity:0.45;text-transform:none;letter-spacing:0;">· 2 max</span>
         </div>
         <div class="size-options" id="np-size-bas">
           <div class="size-opt" onclick="selectSize('np-bas', this)">34</div>
@@ -2135,25 +1934,25 @@
 
     <!-- Formulaire -->
     <div class="field" style="margin-bottom:16px;">
-      <label>Numéro de carte</label>
+      <label for="card-number">Numéro de carte</label>
       <input id="card-number" type="text" placeholder="1234 5678 9012 3456" maxlength="19"
-        oninput="formatCardNumber(this)" style="font-size:15px;letter-spacing:0.1em;">
+        oninput="formatCardNumber(this)" style="font-size:15px;letter-spacing:0.1em;" autocomplete="cc-number">
     </div>
 
     <div class="fields-grid">
       <div class="field">
-        <label>Titulaire</label>
+        <label for="card-name">Titulaire</label>
         <input id="card-name" type="text" placeholder="Nom Prénom" oninput="updateCardPreview()"
-          style="text-transform:uppercase;">
+          style="text-transform:uppercase;" autocomplete="cc-name">
       </div>
       <div class="field">
-        <label>Date d'expiration</label>
+        <label for="card-expiry">Date d'expiration</label>
         <input id="card-expiry" type="text" placeholder="MM / AA" maxlength="7"
-          oninput="formatExpiry(this)">
+          oninput="formatExpiry(this)" autocomplete="cc-exp">
       </div>
       <div class="field">
-        <label>CVV</label>
-        <input id="card-cvv" type="password" placeholder="•••" maxlength="4">
+        <label for="card-cvv">CVV</label>
+        <input id="card-cvv" type="password" placeholder="•••" maxlength="4" autocomplete="cc-csc">
       </div>
     </div>
 
@@ -2325,6 +2124,7 @@
   <span id="toast-msg">Modifications enregistrées</span>
 </div>
 
+<script src="js/ui-nav.js"></script>
 <script>
   // ── Données des profils ──
   const profiles = [
@@ -2346,6 +2146,7 @@
 
 
 
+  // Reflète l'état local (state, profil principal) dans tous les champs/affichages de la page
   function applyState() {
     const initiales = (state.prenom[0] + state.nom[0]).toUpperCase();
     const nomComplet = state.prenom + ' ' + state.nom;
@@ -2370,6 +2171,7 @@
     }
   }
 
+  // Sélectionne l'option d'un <select> correspondant à une valeur ou un libellé donné
   function setSelectValue(id, val) {
     const sel = document.getElementById(id);
     if (!sel) return;
@@ -2380,34 +2182,49 @@
 
   // ── Tailles ──
   function selectSize(cat, el) {
-    // cat peut être 'haut', 'bas', 'chaussures' (formulaire edit)
-    // ou 'np-haut', 'np-bas', 'np-chaussures' (modal ajout)
-    const prefix = cat.startsWith('np-') ? '#np-size-' + cat.replace('np-','') : '#size-' + cat;
-    document.querySelectorAll(prefix + ' .size-opt').forEach(o => o.classList.remove('selected'));
-    el.classList.add('selected');
+    const baseCat  = cat.replace('np-', '');
+    const isMulti  = baseCat === 'haut' || baseCat === 'bas';
+    const prefix   = cat.startsWith('np-') ? '#np-size-' + baseCat : '#size-' + cat;
+    if (!isMulti) {
+      document.querySelectorAll(prefix + ' .size-opt').forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+    } else {
+      if (el.classList.contains('selected')) {
+        el.classList.remove('selected');
+      } else {
+        if (document.querySelectorAll(prefix + ' .size-opt.selected').length >= 2) {
+          showToast('Maximum 2 tailles pour cette catégorie', true);
+          return;
+        }
+        el.classList.add('selected');
+      }
+    }
   }
 
+  // Affiche les tailles d'un profil dans les sélecteurs de taille (haut/bas/chaussures)
   function loadSizes(t) {
+    const toArr = v => Array.isArray(v) ? v : (v ? [v] : []);
     // haut
-    document.querySelectorAll('#size-haut .size-opt').forEach(o => o.classList.toggle('selected', o.textContent.trim() === t.haut));
+    const hautVals = toArr(t.haut);
+    document.querySelectorAll('#size-haut .size-opt').forEach(o => o.classList.toggle('selected', hautVals.includes(o.textContent.trim())));
     document.getElementById('ep-poitrine').value = t.poitrine || '';
     // bas
-    document.querySelectorAll('#size-bas .size-opt').forEach(o => o.classList.toggle('selected', o.textContent.trim() === t.bas));
+    const basVals = toArr(t.bas);
+    document.querySelectorAll('#size-bas .size-opt').forEach(o => o.classList.toggle('selected', basVals.includes(o.textContent.trim())));
     document.getElementById('ep-taille-cm').value = t.tailleCm || '';
     // chaussures
     document.querySelectorAll('#size-chaussures .size-opt').forEach(o => o.classList.toggle('selected', o.textContent.trim() === t.chaussures));
     document.getElementById('ep-pointure').value = t.pointure || '';
   }
 
+  // Lit les tailles actuellement sélectionnées dans les sélecteurs de taille
   function readSizes() {
-    const getSelected = (cat) => {
-      const el = document.querySelector('#size-' + cat + ' .size-opt.selected');
-      return el ? el.textContent.trim() : '';
-    };
+    const getMulti = (cat) => [...document.querySelectorAll('#size-' + cat + ' .size-opt.selected')].map(e => e.textContent.trim());
+    const getOne   = (cat) => { const e = document.querySelector('#size-' + cat + ' .size-opt.selected'); return e ? e.textContent.trim() : ''; };
     return {
-      haut:       getSelected('haut'),
-      bas:        getSelected('bas'),
-      chaussures: getSelected('chaussures'),
+      haut:       getMulti('haut'),
+      bas:        getMulti('bas'),
+      chaussures: getOne('chaussures'),
       poitrine:   document.getElementById('ep-poitrine').value,
       tailleCm:   document.getElementById('ep-taille-cm').value,
       pointure:   document.getElementById('ep-pointure').value,
@@ -2424,15 +2241,18 @@
     state.prenom = prenom; state.nom = nom; state.dob = dob; state.genre = genre;
     profiles[0].prenom = prenom;
     applyState();
-    showToast('Identité mise à jour ✓');
     const styles    = [...document.querySelectorAll('.style-tag.selected')].map(e => e.textContent.trim());
     const contextes = ['quotidien','bureau','sport','soiree'].filter(c => document.getElementById('ctx-'+c)?.classList.contains('selected'));
     try {
       await SW.saveUser({ prenom, nom, dateNaissance: dob, genre, styles, contextes });
-      console.log('Sauvegardé :', { prenom, nom, dob, genre, styles, contextes });
-    } catch(e) { console.error('Erreur sauvegarde', e); }
+      showToast('Identité mise à jour ✓');
+    } catch(e) {
+      console.error('Erreur sauvegarde', e);
+      showToast('Erreur lors de la sauvegarde', true);
+    }
   }
 
+  // Valide et sauvegarde l'email et le téléphone de l'utilisateur
   async function saveCoordonnees() {
     const email = document.getElementById('inp-email').value.trim();
     if (!email || !email.includes('@')) { showToast('Adresse email invalide', true); return; }
@@ -2446,12 +2266,17 @@
     } catch(e) { showToast('Erreur lors de la sauvegarde', true); }
   }
 
+  // Sauvegarde la ville et le pays de l'utilisateur
   async function saveLocalisation() {
     state.ville = document.getElementById('inp-ville').value.trim();
     state.pays  = document.getElementById('inp-pays').value;
     applyState();
-    showToast('Localisation mise à jour ✓');
-    try { await SW.saveUser({ ville: state.ville, pays: state.pays }); } catch(e) {}
+    try {
+      await SW.saveUser({ ville: state.ville, pays: state.pays });
+      showToast('Localisation mise à jour ✓');
+    } catch(e) {
+      showToast('Erreur lors de la sauvegarde', true);
+    }
   }
 
   // ── Profils ──
@@ -2468,8 +2293,8 @@
     setSelectValue('ep-type',  p.type);
     setSelectValue('ep-genre', p.genre);
     loadSizes(p.tailles);
-    ['quotidien','pro','sport','soiree'].forEach(c => {
-      document.getElementById('ctx-' + c).classList.toggle('selected', p.contextes.includes(c));
+    ['quotidien','bureau','sport','soiree'].forEach(c => {
+      document.getElementById('ctx-' + c)?.classList.toggle('selected', p.contextes.includes(c));
     });
     document.querySelectorAll('.style-tag').forEach(tag => {
       tag.classList.toggle('selected', p.styles.includes(tag.textContent.trim()));
@@ -2479,6 +2304,7 @@
     showToast('Profil de ' + p.prenom + ' sélectionné');
   }
 
+  // Sauvegarde le profil actif (tailles, styles, contextes) localement et via l'API
   async function saveProfile() {
     const idx    = activeProfileIdx;
     const prenom = document.getElementById('ep-prenom').value.trim();
@@ -2488,28 +2314,27 @@
     profiles[idx].genre     = document.getElementById('ep-genre').value;
     profiles[idx].tailles   = readSizes();
     profiles[idx].styles    = [...document.querySelectorAll('.style-tag.selected')].map(t => t.textContent.trim());
-    profiles[idx].contextes = ['quotidien','pro','sport','soiree'].filter(c =>
-      document.getElementById('ctx-' + c).classList.contains('selected')
+    profiles[idx].contextes = ['quotidien','bureau','sport','soiree'].filter(c =>
+      document.getElementById('ctx-' + c)?.classList.contains('selected')
     );
     document.getElementById('pcard-name-' + idx).textContent = prenom;
     document.getElementById('pcard-type-' + idx).textContent = profiles[idx].type;
     document.getElementById('edit-profile-title').textContent = prenom;
+    let hasError = false;
     if (idx === 0) {
       state.prenom = prenom;
       applyState();
-      // Sauvegarder tailles et contextes dans user pour profil principal
       try {
         const sizes = readSizes();
         await SW.saveUser({
-          tailleHaut:       sizes.haut        || '',
-          tailleBas:        sizes.bas         || '',
+          tailleHaut:       sizes.haut,
+          tailleBas:        sizes.bas,
           tailleChaussures: sizes.chaussures  || '',
           contextes:        profiles[idx].contextes,
           styles:           profiles[idx].styles,
         });
-      } catch(e) { console.error('Erreur sauvegarde tailles/contextes', e); }
+      } catch(e) { console.error('Erreur sauvegarde tailles/contextes', e); hasError = true; }
     }
-    // Sauvegarder le profil via API
     try {
       if (profiles[idx].id) {
         await SW.updateProfile(profiles[idx].id, profiles[idx]);
@@ -2517,14 +2342,16 @@
         const saved = await SW.addProfile(profiles[idx]);
         profiles[idx].id = saved.id;
       }
-    } catch(e) { console.error('Erreur sauvegarde profil', e); }
-    showToast('Profil de ' + prenom + ' mis à jour ✓');
+    } catch(e) { console.error('Erreur sauvegarde profil', e); hasError = true; }
+    showToast(hasError ? 'Erreur lors de la sauvegarde' : 'Profil de ' + prenom + ' mis à jour ✓', hasError);
   }
 
+  // Bascule la sélection d'un contexte (quotidien/bureau/sport/soirée) pour le profil actif
   function toggleContext(ctx) {
     document.getElementById('ctx-' + ctx).classList.toggle('selected');
   }
 
+  // Bascule la sélection d'un tag de style (limite 3) pour le profil actif
   function toggleStyle(tag) {
     const isSelected    = tag.classList.contains('selected');
     const totalSelected = document.querySelectorAll('.style-tag.selected').length;
@@ -2533,6 +2360,7 @@
     updateStyleCount();
   }
 
+  // Met à jour le compteur "x / 3 sélectionnés" et désactive les tags non sélectionnés au-delà de 3
   function updateStyleCount() {
     const count = document.querySelectorAll('.style-tag.selected').length;
     document.getElementById('style-count').textContent = count + ' / 3 sélectionné' + (count > 1 ? 's' : '');
@@ -2582,6 +2410,7 @@
     limitMsg.textContent   = 'Maximum 3 cartes enregistrées.';
   }
 
+  // Active ou désactive une carte bancaire enregistrée
   function toggleCard(id, active) {
     const card = paymentCards.find(c => c.id === id);
     if (card) card.active = active;
@@ -2589,6 +2418,7 @@
     showToast(active ? 'Carte activée ✓' : 'Carte désactivée');
   }
 
+  // Supprime une carte bancaire de la liste locale
   function removeCard(id) {
     paymentCards = paymentCards.filter(c => c.id !== id);
     renderPaymentCards();
@@ -2605,6 +2435,7 @@
     document.getElementById('modal-change-plan').classList.add('show');
   }
 
+  // Sélectionne un plan dans la modale de changement d'abonnement et affiche le récapitulatif si différent du plan actuel
   function selectPlan(plan) {
     selectedPlan = plan;
     updatePlanSelection(plan);
@@ -2620,6 +2451,7 @@
     }
   }
 
+  // Met à jour la mise en surbrillance visuelle du plan sélectionné dans la modale
   function updatePlanSelection(plan) {
     ['gratuit','premium','famille'].forEach(p => {
       document.getElementById('ps-' + p).classList.toggle('active', p === plan);
@@ -2627,6 +2459,7 @@
     });
   }
 
+  // Confirme le changement de plan : applique directement si gratuit, sinon ouvre la modale de paiement
   function confirmPlanChange() {
     if (selectedPlan === currentPlan) { closeModal('modal-change-plan'); return; }
     if (selectedPlan === 'gratuit') { applyPlanChange(); return; }
@@ -2651,11 +2484,13 @@
     document.getElementById('modal-plan-payment').classList.add('show');
   }
 
+  // Valide le paiement du nouveau plan et ferme la modale de paiement
   function finalizePayment() {
     applyPlanChange();
     closeModal('modal-plan-payment');
   }
 
+  // Applique le nouveau plan : met à jour le badge "Actuel" et les villes/profils débloqués
   function applyPlanChange() {
     const names = { gratuit: 'Gratuit', premium: 'Premium', famille: 'Famille' };
     currentPlan = selectedPlan;
@@ -2683,6 +2518,7 @@
     document.getElementById('modal-payment').classList.add('show');
   }
 
+  // Ouvre la modale d'ajout d'une nouvelle carte bancaire (limite 3 cartes)
   function openAddPaymentModal() {
     if (paymentCards.length >= 3) { showToast('Maximum 3 cartes enregistrées', true); return; }
     document.getElementById('payment-modal-title').innerHTML = 'Ajouter une<br><em>carte</em>';
@@ -2691,6 +2527,7 @@
     document.getElementById('modal-payment').classList.add('show');
   }
 
+  // Réinitialise le formulaire et l'aperçu de carte bancaire
   function resetPaymentForm() {
     ['card-number','card-name','card-expiry','card-cvv'].forEach(id => document.getElementById(id).value = '');
     document.getElementById('card-preview-number').textContent = '•••• •••• •••• ••••';
@@ -2698,6 +2535,7 @@
     document.getElementById('card-preview-expiry').textContent = 'MM / AA';
   }
 
+  // Formate la saisie du numéro de carte par groupes de 4 chiffres et met à jour l'aperçu
   function formatCardNumber(input) {
     let v = input.value.replace(/\D/g, '').substring(0, 16);
     input.value = v.replace(/(.{4})/g, '$1 ').trim();
@@ -2705,6 +2543,7 @@
     document.getElementById('card-preview-number').textContent = disp;
   }
 
+  // Formate la saisie de la date d'expiration en "MM / AA" et met à jour l'aperçu
   function formatExpiry(input) {
     let v = input.value.replace(/\D/g, '').substring(0, 4);
     if (v.length > 2) v = v.substring(0,2) + ' / ' + v.substring(2);
@@ -2712,10 +2551,12 @@
     document.getElementById('card-preview-expiry').textContent = v || 'MM / AA';
   }
 
+  // Met à jour le nom du titulaire affiché sur l'aperçu de carte
   function updateCardPreview() {
     document.getElementById('card-preview-name').textContent = document.getElementById('card-name').value.toUpperCase() || 'SOPHIE MARTIN';
   }
 
+  // Valide le formulaire de carte bancaire et l'ajoute à la liste des cartes
   function savePayment() {
     const num    = document.getElementById('card-number').value.replace(/\s/g,'');
     const name   = document.getElementById('card-name').value.trim();
@@ -2766,6 +2607,7 @@
     }
   }
 
+  // Met à jour l'indicateur visuel (actif/inactif) d'une méthode 2FA
   function update2FAStatus(method, isActive) {
     const statusEl = document.getElementById('2fa-' + method + '-status');
     const dot      = statusEl.querySelector('.status-dot');
@@ -2799,6 +2641,7 @@
     { id: 1, label: detectBrowser(), location: state.ville || 'Localisation inconnue', time: 'Session actuelle · Connecté maintenant', current: true, active: true, date: dateStr },
   ];
 
+  // Affiche la liste des sessions (active, déconnectées) avec leurs actions
   function renderSessions() {
     const list    = document.getElementById('sessions-list');
     const allOff  = document.getElementById('sessions-all-off');
@@ -2833,6 +2676,7 @@
     btnRow.style.display  = anyActive ? 'flex' : 'none';
   }
 
+  // Marque une session comme déconnectée
   function disconnectSession(id) {
     const s = sessions.find(s => s.id === id);
     if (s) s.active = false;
@@ -2840,6 +2684,7 @@
     showToast('Session déconnectée');
   }
 
+  // Réactive une session déconnectée
   function reactivateSession(id) {
     const s = sessions.find(s => s.id === id);
     if (s) s.active = true;
@@ -2847,12 +2692,14 @@
     showToast('Session réactivée ✓');
   }
 
+  // Déconnecte toutes les sessions sauf la session actuelle
   function disconnectAllSessions() {
     sessions.forEach(s => { if (!s.current) s.active = false; });
     renderSessions();
     showToast('Toutes les autres sessions sont déconnectées');
   }
 
+  // Réactive toutes les sessions
   function reactivateAllSessions() {
     sessions.forEach(s => s.active = true);
     renderSessions();
@@ -2864,6 +2711,7 @@
     document.getElementById('modal-invoices').classList.add('show');
   }
 
+  // Simule le téléchargement de la facture d'une période donnée
   function downloadInvoice(period) {
     // Simule un téléchargement PDF
     const link = document.createElement('a');
@@ -2872,6 +2720,7 @@
     showToast('Téléchargement de la facture ' + period + ' ✓');
   }
 
+  // Simule le téléchargement groupé de toutes les factures
   function downloadAllInvoices() {
     showToast('Téléchargement de toutes les factures ✓');
   }
@@ -2901,6 +2750,7 @@
     }
   }
 
+  // Ajoute un champ de ville météo supplémentaire (limité selon le plan d'abonnement)
   function addCity() {
     const maxExtra  = PLAN_EXTRA_CITIES[currentPlan];
     const maxTotal  = 1 + maxExtra;
@@ -2929,6 +2779,7 @@
     setTimeout(() => row.querySelector('input').focus(), 50);
   }
 
+  // Supprime un champ de ville météo supplémentaire
   function removeCity(btn) {
     const row = btn.closest('.city-row');
     row.style.opacity    = '0';
@@ -2939,6 +2790,7 @@
   // init au chargement
   function renderExtraCities() { initCities(); }
 
+  // Ouvre la modale de création d'un nouveau profil (vérifie d'abord la limite du plan)
   function openAddModal() {
     const maxProfiles  = PLAN_MAX_PROFILES[currentPlan];
     const currentCount = profiles.length;
@@ -2961,15 +2813,18 @@
     document.getElementById('modal-add').classList.add('show');
   }
 
+  // Affiche la modale informant que la limite du plan actuel est atteinte
   function openPlanLockModal(msg) {
     document.getElementById('plan-lock-msg').textContent = msg;
     document.getElementById('modal-plan-lock').classList.add('show');
   }
 
+  // Ferme une modale par son id
   function closeModal(id) {
     document.getElementById(id).classList.remove('show');
   }
 
+  // Supprime le profil actif et réindexe les profils restants
   function confirmDelete() {
     const idx    = activeProfileIdx;
     const prenom = profiles[idx].prenom;
@@ -2990,14 +2845,17 @@
     showToast('Profil de ' + prenom + ' supprimé');
   }
 
+  // Sélectionne la couleur d'avatar pour le nouveau profil dans la modale d'ajout
   function selectAvatarColor(el) {
     document.querySelectorAll('#np-color-row .avatar-color').forEach(c => c.classList.remove('selected'));
     el.classList.add('selected');
   }
 
+  // Listes de styles proposés selon le type de profil (adulte ou enfant)
   const STYLES_ADULTE = ['Casual chic','Minimaliste','Classique','Streetwear','Bohème','Romantique','Élégant','Sportswear','Vintage','Smart casual','Preppy','Avant-garde'];
   const STYLES_ENFANT = ['Casual','Coloré & fun','Confort','Sportswear','Cartoon & imprimés','Nature & animaux','Princesse / Fée','Super-héros','Denim cool','Cosy & douillet'];
 
+  // Adapte la liste de styles et les options de genre selon le type de profil choisi (adulte/enfant)
   function onProfileTypeChange(type) {
     const isEnfant = type === 'Enfant';
     const container = document.getElementById('np-style-tags');
@@ -3017,6 +2875,7 @@
     }
   }
 
+  // Bascule la sélection d'un tag de style (limite 3) dans la modale de création de profil
   function toggleNewStyle(tag) {
     const isSelected    = tag.classList.contains('selected');
     const totalSelected = document.querySelectorAll('#np-style-tags .style-tag.selected').length;
@@ -3027,6 +2886,7 @@
     document.querySelectorAll('#np-style-tags .style-tag:not(.selected)').forEach(t => t.classList.toggle('disabled', count >= 3));
   }
 
+  // Crée le nouveau profil à partir du formulaire et l'ajoute à la grille des profils
   function confirmAddProfile() {
     const prenom = document.getElementById('np-prenom').value.trim();
     if (!prenom) { showToast('Le prénom est requis', true); return; }
@@ -3034,10 +2894,11 @@
     const bgColor  = colorEl ? colorEl.dataset.color : 'var(--marine)';
     const txtColor = ['var(--poudre)','var(--vert-sage)','var(--terracotta)','var(--ardoise)'].includes(bgColor) ? 'var(--marine)' : 'var(--ivoire)';
     const initiales = prenom.substring(0,2).toUpperCase();
-    const getSelected = (cat) => { const el = document.querySelector('#np-size-' + cat + ' .size-opt.selected'); return el ? el.textContent.trim() : ''; };
-    const contextes = ['quotidien','pro','sport','soiree'].filter(c => document.getElementById('np-ctx-' + c)?.classList.contains('selected'));
+    const getMultiNp = (cat) => [...document.querySelectorAll('#np-size-' + cat + ' .size-opt.selected')].map(e => e.textContent.trim());
+    const getOneNp   = (cat) => { const e = document.querySelector('#np-size-' + cat + ' .size-opt.selected'); return e ? e.textContent.trim() : ''; };
+    const contextes = ['quotidien','bureau','sport','soiree'].filter(c => document.getElementById('np-ctx-' + c)?.classList.contains('selected'));
     const styles    = [...document.querySelectorAll('#np-style-tags .style-tag.selected')].map(t => t.textContent.trim());
-    const newProfile = { prenom, initiales, bgColor, txtColor, type: document.getElementById('np-type').value, genre: document.getElementById('np-genre').value, contextes, styles, tailles: { haut: getSelected('haut'), bas: getSelected('bas'), chaussures: getSelected('chaussures'), poitrine: '', tailleCm: '', pointure: '' } };
+    const newProfile = { prenom, initiales, bgColor, txtColor, type: document.getElementById('np-type').value, genre: document.getElementById('np-genre').value, contextes, styles, tailles: { haut: getMultiNp('haut'), bas: getMultiNp('bas'), chaussures: getOneNp('chaussures'), poitrine: '', tailleCm: '', pointure: '' } };
     const idx = profiles.length;
     profiles.push(newProfile);
     const grid   = document.getElementById('profiles-grid');
@@ -3053,6 +2914,8 @@
     showToast('Profil de ' + prenom + ' créé ✓');
   }
 
+    // ── Navigation interne ──
+    // Affiche la section demandée et met à jour l'item actif de la barre latérale
     function showSection(id) {
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
@@ -3066,6 +2929,7 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
+  // Affiche une notification toast (succès ou erreur) en bas de page
   function showToast(msg, isError) {
     const toast = document.getElementById('toast');
     const icon  = toast.querySelector('svg');
@@ -3132,16 +2996,18 @@
         document.getElementById('2fa-info-banner').style.display = 'flex';
       }
 
-      // Tailles
+      // Tailles (haut/bas = tableau, chaussures = string)
       ['haut','bas','chaussures'].forEach(cat => {
         const key = 'taille' + cat.charAt(0).toUpperCase() + cat.slice(1);
         const val = u[key];
-        if (!val) return;
         const row = document.getElementById('size-' + cat);
         if (!row) return;
-        row.querySelectorAll('.size-opt').forEach(o => {
-          o.classList.toggle('selected', o.textContent.trim() === val);
-        });
+        if (cat === 'chaussures') {
+          row.querySelectorAll('.size-opt').forEach(o => o.classList.toggle('selected', o.textContent.trim() === val));
+        } else {
+          const vals = Array.isArray(val) ? val : (val ? [val] : []);
+          row.querySelectorAll('.size-opt').forEach(o => o.classList.toggle('selected', vals.includes(o.textContent.trim())));
+        }
       });
 
       // Contextes
@@ -3191,9 +3057,10 @@
         profiles[0].genre     = u.genre   || '';
         profiles[0].contextes = u.contextes || [];
         profiles[0].styles    = u.styles  || [];
-        if (u.tailleHaut) profiles[0].tailles.haut = u.tailleHaut;
-        if (u.tailleBas)  profiles[0].tailles.bas  = u.tailleBas;
-        if (u.tailleChaussures) profiles[0].tailles.chaussures = u.tailleChaussures;
+        profiles[0].tailles.haut       = u.tailleHaut       ?? profiles[0].tailles.haut;
+        profiles[0].tailles.bas        = u.tailleBas        ?? profiles[0].tailles.bas;
+        profiles[0].tailles.chaussures = u.tailleChaussures ?? profiles[0].tailles.chaussures;
+        loadSizes(profiles[0].tailles);
         const p = u.prenom || authUser?.prenom || '?';
         const n = u.nom    || authUser?.nom    || '';
         const initiales = (p[0] + (n[0] || '')).toUpperCase();
@@ -3219,12 +3086,13 @@
         renderPaymentCards();
       }
 
-    } catch(e) { console.log('Chargement local uniquement', e.message); }
+    } catch {}
   }
 
   // Sauvegarder infos principales
   async function saveLocalisation2() { /* placeholder supprimé */ }
 
+  // Sauvegarde la ville météo principale dans les préférences et le profil utilisateur
   async function savePrefs() {
     const villeInput = document.querySelector('#city-list input');
     const ville = villeInput ? villeInput.value : 'Paris';

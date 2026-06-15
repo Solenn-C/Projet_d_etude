@@ -1,3 +1,41 @@
+/**
+ * ============================================================
+ * Frontend/sw-data.js
+ * ============================================================
+ * RÔLE : Client API partagé (objet global SW) pour toutes les
+ *        pages du Frontend — auth, données, toasts.
+ *
+ * DESCRIPTION :
+ *   Centralise l'accès à l'API Node (/api/*) : gestion du token
+ *   de session (localStorage), authentification (register,
+ *   login, logout, checkAuth, requireAuth,
+ *   redirectIfLoggedIn), CRUD sur les données utilisateur
+ *   (garde-robe, profils, préférences, cartes, abonnement) et
+ *   affichage de notifications toast. Toutes les requêtes
+ *   passent par _get/_post/_put/_del qui ajoutent automatiquement
+ *   le header Authorization: Bearer et gèrent les 401 (redirection
+ *   vers la page de connexion).
+ *
+ *   Inclure dans chaque page : <script src="sw-data.js"></script>
+ *
+ * FONCTIONS PRINCIPALES :
+ *   - SW.register/login/logout/checkAuth/requireAuth/redirectIfLoggedIn : cycle de vie de la session
+ *   - SW.getData/getWardrobe/getCategory/getProfiles/...                : lecture des données utilisateur
+ *   - SW.addCloth/updateCloth/deleteCloth/addCard/...                    : CRUD garde-robe, profils, cartes
+ *   - SW.showToast(msg, isError)                                          : affiche une notification toast
+ *   - _headers()/_get()/_post()/_put()/_del()                             : helpers fetch internes avec Bearer token
+ *
+ * DÉPENDANCES :
+ *   - localStorage (sw_token, sw_user)
+ *
+ * APPELS ENTRANTS :
+ *   - Chargé via <script src="sw-data.js"> sur toutes les pages applicatives
+ *
+ * APPELS SORTANTS :
+ *   - server.js (toutes les routes /api/*)
+ * ============================================================
+ */
+
 // ══════════════════════════════════════════════
 //   Smart Wear — Client API partagé
 //   Inclure dans chaque page : <script src="sw-data.js"></script>
@@ -99,6 +137,7 @@ const SW = {
 };
 
 // ── Fonctions internes avec token ──
+// Construit les en-têtes de requête (Content-Type + Authorization: Bearer si connecté).
 function _headers() {
   const h = { 'Content-Type': 'application/json' };
   const tok = SW.getToken();
@@ -106,23 +145,27 @@ function _headers() {
   return h;
 }
 
+// Requête GET authentifiée ; déconnecte et redirige vers la connexion en cas de 401.
 async function _get(url) {
   const r = await fetch(url, { headers: _headers() });
   if (r.status === 401) { SW.clearToken(); window.location.href = 'page_connexion_inscription.html'; throw new Error('Non connecté'); }
   if (!r.ok) throw new Error('Erreur ' + r.status);
   return r.json();
 }
+// Requête POST authentifiée (JSON) ; lève une erreur avec le message renvoyé par l'API si non-OK.
 async function _post(url, data) {
   const r = await fetch(url, { method:'POST', headers:_headers(), body:JSON.stringify(data) });
   if (!r.ok) { const e = await r.json().catch(()=>({error:'Erreur'})); throw new Error(e.error || 'Erreur ' + r.status); }
   return r.json();
 }
+// Requête PUT authentifiée (JSON) ; déconnecte et redirige vers la connexion en cas de 401.
 async function _put(url, data) {
   const r = await fetch(url, { method:'PUT', headers:_headers(), body:JSON.stringify(data) });
   if (r.status === 401) { SW.clearToken(); window.location.href = 'page_connexion_inscription.html'; throw new Error('Non connecté'); }
   if (!r.ok) throw new Error('Erreur ' + r.status);
   return r.json();
 }
+// Requête DELETE authentifiée ; déconnecte et redirige vers la connexion en cas de 401.
 async function _del(url) {
   const r = await fetch(url, { method:'DELETE', headers:_headers() });
   if (r.status === 401) { SW.clearToken(); window.location.href = 'page_connexion_inscription.html'; throw new Error('Non connecté'); }

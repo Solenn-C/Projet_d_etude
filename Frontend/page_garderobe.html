@@ -1,3 +1,34 @@
+<!--
+============================================================
+Frontend/page_garderobe.html
+============================================================
+RÔLE : Page « Ma garde-robe » — vue d'accueil de la garde-robe,
+       affichant les 6 catégories de vêtements sous forme de
+       cartes avec leur nombre d'articles.
+
+DESCRIPTION :
+  Page applicative (post-connexion) protégée par SW.requireAuth().
+  Affiche une grille de 6 cartes-catégories (manteau, haut, bas,
+  ensemble, chaussures, accessoires), chacune menant vers
+  page_categorie_garderobe.html?cat=... . Au chargement, récupère
+  la garde-robe de l'utilisateur via SW.getWardrobe() pour
+  afficher le nombre d'articles par catégorie et le total.
+
+SECTIONS PRINCIPALES :
+  - <nav class="app-nav">      : navigation applicative (logo, accueil, assistant IA, avatar, burger)
+  - <aside class="sidebar">     : menu latéral (navigation, compte, déconnexion)
+  - <div class="page-header">   : titre de page + pastilles statistiques (total vêtements, catégories)
+  - <div class="categories-grid"> : grille des 6 cartes de catégories de vêtements
+
+DÉPENDANCES JS/CSS :
+  - css/styles.css (design system partagé)
+  - sw-data.js (SW.requireAuth, SW.getWardrobe, SW.logout)
+  - js/ui-nav.js (comportements sidebar/nav)
+
+APPELS API :
+  - SW.getWardrobe() -> GET /api/wardrobe (compteurs par catégorie)
+============================================================
+-->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -5,23 +36,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Smart Wear — Ma Garde-Robe</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
- 
-  :root {
-    --ivoire: #FAFAF8;
-    --lin: #E8E4DE;
-    --marine: #1B3A6B;
-    --bleu-givré: #C2D4EC;
-    --poudre: #E8D5E0;
-    --ardoise: #7A9CC0;
-    --bleu-profond: #2C5F8A;
-    --ciel: #D6E8F0;
-    --vert-sage: #DDF0E4;
-    --terracotta: #F5E4D8;
-  }
- 
-  html { scroll-behavior: smooth; }
   body {
     background: var(--lin);
     color: var(--marine);
@@ -30,82 +46,12 @@
     min-height: 100vh;
   }
  
-  /* ─── NAV ─── */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 22px 60px;
-    background: rgba(250,250,248,0.95);
-    backdrop-filter: blur(16px);
-    border-bottom: 0.5px solid rgba(27,58,107,0.1);
-  }
- 
-  .nav-left { display: flex; align-items: center; gap: 20px; }
-  .logo {
-    font-family: 'DM Serif Display', serif; font-style: italic;
-    font-size: 24px; font-weight: 400;
-    letter-spacing: 0.14em; color: var(--marine);
-    text-transform: uppercase; line-height: 1; text-decoration: none;
-  }
-  .logo span { color: var(--ardoise); }
-  .nav-sep { width: 0.5px; height: 18px; background: rgba(27,58,107,0.15); }
-  .nav-page { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--marine); opacity: 0.4; }
- 
-  .nav-right { display: flex; align-items: center; gap: 16px; }
-  .nav-btn {
-    display: flex; align-items: center; gap: 7px;
-    padding: 8px 14px; border-radius: 8px;
-    border: 0.5px solid rgba(27,58,107,0.15);
-    background: transparent;
-    font-family: 'Jost', sans-serif; font-size: 11px; letter-spacing: 0.08em;
-    color: var(--marine); cursor: pointer; text-decoration: none;
-    transition: background 0.2s; opacity: 0.6;
-  }
-  .nav-btn:hover { background: var(--ivoire); opacity: 1; }
-  .nav-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
-  .nav-avatar {
-    width: 34px; height: 34px; border-radius: 50%;
-    background: var(--marine); display: flex; align-items: center; justify-content: center;
-    font-family: 'DM Serif Display', serif; font-size: 13px; color: var(--ivoire);
-    cursor: pointer; text-decoration: none;
-  }
- 
-  /* ─── LAYOUT ─── */
-  .page { padding-top: 82px; display: flex; min-height: 100vh; }
- 
-  /* ─── SIDEBAR ─── */
-  .sidebar {
-    position: fixed; top: 82px; left: 0;
-    width: 250px; height: calc(100vh - 82px);
-    background: var(--ivoire); border-right: 0.5px solid rgba(27,58,107,0.08);
-    display: flex; flex-direction: column; padding: 28px 0 20px; overflow-y: auto; z-index: 10;
-  }
- 
-  .sidebar-section { padding: 0 12px; margin-bottom: 4px; }
-  .sidebar-label {
-    font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;
-    color: var(--marine); opacity: 0.3; padding: 8px 12px 6px; display: block;
-  }
-  .sidebar-item {
-    display: flex; align-items: center; gap: 12px;
-    padding: 11px 12px; border-radius: 8px; cursor: pointer;
-    transition: background 0.2s; text-decoration: none;
-    color: var(--marine); opacity: 0.55; font-size: 13px; margin-bottom: 2px;
-  }
-  .sidebar-item:hover { background: var(--lin); opacity: 0.9; }
-  .sidebar-item.active { background: var(--ciel); opacity: 1; font-weight: 500; color: var(--bleu-profond); }
-  .sidebar-item svg { width: 16px; height: 16px; flex-shrink: 0; stroke: currentColor; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
-  .sidebar-item.active svg { stroke: var(--bleu-profond); }
-  .sidebar-item.danger { color: #A32D2D; opacity: 0.6; }
-  .sidebar-item.danger:hover { background: #FCEBEB; opacity: 1; }
-  .sidebar-bottom { margin-top: auto; padding: 16px 12px 0; border-top: 0.5px solid rgba(27,58,107,0.08); }
- 
+  /* ─── NAV (surcharges) ─── */
+  .app-nav { padding: 22px 60px; }
+  .nav-avatar { width: 34px; height: 34px; font-size: 13px; }
+
   /* ─── MAIN ─── */
-  .main { margin-left: 250px; padding: 36px 48px; width: 100%; }
+  .main { padding: 36px 48px; }
  
   /* ─── HEADER ─── */
   .page-header { margin-bottom: 36px; display: flex; align-items: flex-end; justify-content: space-between; }
@@ -213,45 +159,59 @@
   .category-arrow svg { width: 12px; height: 12px; stroke: var(--marine); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: stroke 0.2s; }
   .category-card:hover .category-arrow svg { stroke: var(--ivoire); }
  
-  /* ─── ANIMATIONS ─── */
-  .fade-up { opacity: 0; transform: translateY(16px); animation: fadeUp 0.5s ease forwards; }
-  @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
-  .d1 { animation-delay: 0.05s; }
-  .d2 { animation-delay: 0.1s; }
-  .d3 { animation-delay: 0.15s; }
-  .d4 { animation-delay: 0.2s; }
-  .d5 { animation-delay: 0.25s; }
-  .d6 { animation-delay: 0.3s; }
-  .d7 { animation-delay: 0.35s; }
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 1024px) {
+    .app-nav { padding: 22px 32px; }
+    .categories-grid { grid-template-columns: repeat(2, 1fr); }
+    .nav-btn { display: none; }
+  }
+
+  @media (max-width: 768px) {
+    .app-nav { padding: 16px 20px; }
+    .main { padding: 24px 20px; }
+    .page-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+    .categories-grid { grid-template-columns: 1fr; }
+    .header-stats { width: 100%; }
+  }
+
+  @media (max-width: 480px) {
+    .category-card { padding: 24px 20px 20px; }
+    .stat-pill { flex: 1; }
+  }
 </style>
 <script src="sw-data.js"></script>
 </head>
 <body>
  
 <!-- ─── NAV ─── -->
-<nav>
+<nav class="app-nav" aria-label="Navigation principale">
   <div class="nav-left">
     <a href="page_apres_connection.html" class="logo">Smart<span>Wear</span></a>
-    <div class="nav-sep"></div>
+    <div class="nav-sep" aria-hidden="true"></div>
     <span class="nav-page">Ma Garde-Robe</span>
   </div>
   <div class="nav-right">
     <a href="page_apres_connection.html" class="nav-btn">
-      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
       Accueil
     </a>
     <a href="page_chatbot.html" class="nav-btn">
-      <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
       Assistant IA
     </a>
-    <a href="page_gestion_compte.html" class="nav-avatar" id="nav-avatar">?</a>
+    <a href="page_gestion_compte.html" class="nav-avatar" id="nav-avatar" aria-label="Mon compte">?</a>
+    <button class="nav-burger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="sidebar">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
   </div>
 </nav>
- 
+
+<div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
 <div class="page">
- 
+
   <!-- ─── SIDEBAR ─── -->
-  <aside class="sidebar">
+  <aside class="sidebar" id="sidebar" aria-label="Navigation de l'application">
     <div class="sidebar-section">
       <span class="sidebar-label">Navigation</span>
       <a class="sidebar-item" href="page_apres_connection.html">
@@ -265,6 +225,10 @@
       <a class="sidebar-item" href="page_chatbot.html">
         <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         Assistant IA
+      </a>
+      <a class="sidebar-item" href="page_statistiques.html">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Statistiques
       </a>
       <a class="sidebar-item" href="page_tendances.html">
         <svg viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/></svg>
@@ -287,7 +251,7 @@
   </aside>
  
   <!-- ─── MAIN ─── -->
-  <main class="main">
+  <main class="main" id="main-content">
  
     <!-- Header -->
     <div class="page-header fade-up d1">
@@ -444,7 +408,9 @@
 </div>
  
 
+<script src="js/ui-nav.js"></script>
 <script>
+  // Vérifie l'authentification, affiche l'avatar et charge le nombre d'articles par catégorie.
   document.addEventListener('DOMContentLoaded', async () => {
     const user = await SW.requireAuth();
     if (!user) return;

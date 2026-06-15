@@ -1,0 +1,36 @@
+version: '3.9'
+
+services:
+
+  # ── Frontend + API Node.js ──
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.node
+    container_name: smartwear-frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      # db.json et uploads partagés entre les deux containers
+      - ./Frontend/db.json:/app/Frontend/db.json
+      - ./Frontend/uploads:/app/Frontend/uploads
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  # ── Backend Python FastAPI ──
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.python
+    container_name: smartwear-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      # Accès en lecture à db.json pour l'auth Python
+      - ./Frontend/db.json:/app/Frontend/db.json:ro
+    restart: unless-stopped
+
+networks:
+  default:
+    name: smartwear-network

@@ -1,0 +1,19 @@
+# ── Node.js Frontend + API ──
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Copie les dépendances
+COPY package.json ./
+RUN npm install
+
+# Copie tout le projet
+COPY server.js ./
+COPY Frontend/ ./Frontend/
+
+# Crée le dossier uploads s'il n'existe pas
+RUN mkdir -p ./Frontend/uploads
+
+EXPOSE 3000
+
+CMD ["node", "server.js"]

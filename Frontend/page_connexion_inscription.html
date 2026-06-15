@@ -1,3 +1,41 @@
+<!--
+============================================================
+Frontend/page_connexion_inscription.html
+============================================================
+RÔLE : Page de connexion / inscription — formulaires à onglets
+       pour se connecter ou créer un compte SmartWear.
+
+DESCRIPTION :
+  Page publique (vitrine, sans authentification requise). Affiche
+  un panneau visuel à gauche (présentation des fonctionnalités) et
+  à droite un formulaire à onglets "Connexion" / "Inscription".
+  Au chargement, efface tout token existant (SW.clearToken()) pour
+  forcer une connexion explicite. Le formulaire de connexion appelle
+  SW.login() puis redirige vers page_apres_connection.html ; le
+  formulaire d'inscription appelle SW.register() puis redirige vers
+  page_onboarding.html. Inclut un indicateur de force du mot de
+  passe et un bouton afficher/masquer.
+
+  NOTE : les boutons "Google" / "Apple" sont des liens href="#"
+  décoratifs, non connectés à une authentification réelle.
+
+SECTIONS PRINCIPALES :
+  - <nav class="site-nav">       : navigation vitrine (logo + retour accueil)
+  - .panel-left                  : panneau visuel (accroche, fonctionnalités, citation)
+  - .panel-right .tabs           : onglets Connexion / Inscription
+  - #panel-connexion              : formulaire de connexion (email, mot de passe)
+  - #panel-inscription            : formulaire d'inscription (prénom, nom, email, mot de passe, CGU)
+
+DÉPENDANCES JS/CSS :
+  - css/styles.css (design system partagé)
+  - sw-data.js (SW.clearToken, SW.login, SW.register, SW.showToast)
+  - js/ui-nav.js (comportements nav, page sans sidebar)
+
+APPELS API :
+  - SW.login(email, password)            -> POST /api/auth/login
+  - SW.register(prenom, nom, email, password) -> POST /api/auth/register
+============================================================
+-->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -5,24 +43,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Smart Wear — Connexion</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --ivoire: #FAFAF8;
-    --lin: #E8E4DE;
-    --marine: #1B3A6B;
-    --bleu-givré: #C2D4EC;
-    --poudre: #E8D5E0;
-    --ardoise: #7A9CC0;
-    --bleu-profond: #2C5F8A;
-    --ciel: #D6E8F0;
-    --vert-sage: #DDF0E4;
-    --terracotta: #F5E4D8;
-  }
-
-  html { scroll-behavior: smooth; }
-
   body {
     background: var(--ivoire);
     color: var(--marine);
@@ -34,34 +56,8 @@
     flex-direction: column;
   }
 
-  /* ─── NAVIGATION ─── */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 32px 60px;
-    background: rgba(250,250,248,0.92);
-    backdrop-filter: blur(16px);
-    border-bottom: 0.5px solid rgba(27,58,107,0.12);
-  }
-
-  .nav-inner { display: flex; flex-direction: column; gap: 2px; }
-
-  .logo {
-    font-family:'DM Serif Display',serif;font-style:italic;
-    font-size: 28px;
-    font-weight: 600;
-    letter-spacing: 0.16em;
-    color: var(--marine);
-    text-transform: uppercase;
-    line-height: 1;
-    text-decoration: none;
-  }
-
-  .logo span { color: var(--ardoise); }
+  /* ─── NAVIGATION (surcharges page) ─── */
+  .site-nav { padding: 32px 60px; }
 
   .logo-tagline {
     font-size: 10px;
@@ -524,19 +520,33 @@
   .form-panel { display: none; }
   .form-panel.active { display: block; }
 
-  /* délais */
-  .d1 { animation-delay: 0.05s; }
-  .d2 { animation-delay: 0.12s; }
-  .d3 { animation-delay: 0.2s; }
-  .d4 { animation-delay: 0.28s; }
-  .d5 { animation-delay: 0.36s; }
+  /* ─── RESPONSIVE (mobile-first) ─── */
+  @media (max-width: 1024px) {
+    .site-nav { padding: 20px 32px; }
+    .page { padding-top: 80px; }
+  }
+
+  @media (max-width: 768px) {
+    .site-nav { padding: 16px 24px; }
+    .page { grid-template-columns: 1fr; min-height: auto; }
+    .panel-left { display: none; }
+    .panel-right { padding: 48px 24px; min-height: calc(100vh - 80px); }
+    .form-container { max-width: 100%; }
+  }
+
+  @media (max-width: 480px) {
+    .panel-right { padding: 36px 20px; }
+    .social-btns { flex-direction: column; }
+    .field-row { grid-template-columns: 1fr; }
+    .btn-submit { height: 54px; }
+  }
 </style>
 <script src="sw-data.js"></script>
 </head>
 <body>
 
 <!-- NAV -->
-<nav>
+<nav class="site-nav" aria-label="Navigation principale">
   <div class="nav-inner">
     <a href="page_accueil_site.html" class="logo">Smart<span>Wear</span></a>
     <div class="logo-tagline">Votre dressing intelligent</div>
@@ -545,7 +555,7 @@
 </nav>
 
 <!-- PAGE -->
-<div class="page">
+<main class="page" id="main-content">
 
   <!-- ══ PANNEAU GAUCHE ══ -->
   <div class="panel-left">
@@ -645,15 +655,15 @@
         <div class="divider fade-in d3"><span>ou</span></div>
 
         <div class="field fade-in d3">
-          <label>Adresse email</label>
-          <input type="email" id="email-login" placeholder="votre@email.com">
+          <label for="email-login">Adresse email</label>
+          <input type="email" id="email-login" placeholder="votre@email.com" autocomplete="email">
         </div>
 
         <div class="field fade-in d4">
-          <label>Mot de passe</label>
+          <label for="pwd-login">Mot de passe</label>
           <div class="input-wrap">
-            <input type="password" id="pwd-login" placeholder="••••••••">
-            <button class="eye-btn" onclick="togglePwd('pwd-login', this)" type="button">
+            <input type="password" id="pwd-login" placeholder="••••••••" autocomplete="current-password">
+            <button class="eye-btn" onclick="togglePwd('pwd-login', this)" type="button" aria-label="Afficher le mot de passe">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
               </svg>
@@ -699,25 +709,25 @@
 
         <div class="field-row fade-in d3">
           <div class="field" style="margin-bottom:0">
-            <label>Prénom</label>
-            <input type="text" id="prenom-register" placeholder="Sophie">
+            <label for="prenom-register">Prénom</label>
+            <input type="text" id="prenom-register" placeholder="Sophie" autocomplete="given-name">
           </div>
           <div class="field" style="margin-bottom:0">
-            <label>Nom</label>
-            <input type="text" id="nom-register" placeholder="Martin">
+            <label for="nom-register">Nom</label>
+            <input type="text" id="nom-register" placeholder="Martin" autocomplete="family-name">
           </div>
         </div>
 
         <div class="field fade-in d3">
-          <label>Adresse email</label>
-          <input type="email" id="email-register" placeholder="votre@email.com">
+          <label for="email-register">Adresse email</label>
+          <input type="email" id="email-register" placeholder="votre@email.com" autocomplete="email">
         </div>
 
         <div class="field fade-in d4">
-          <label>Mot de passe</label>
+          <label for="pwd-register">Mot de passe</label>
           <div class="input-wrap">
-            <input type="password" id="pwd-register" placeholder="••••••••" oninput="checkStrength(this)">
-            <button class="eye-btn" onclick="togglePwd('pwd-register', this)" type="button">
+            <input type="password" id="pwd-register" placeholder="••••••••" oninput="checkStrength(this)" autocomplete="new-password">
+            <button class="eye-btn" onclick="togglePwd('pwd-register', this)" type="button" aria-label="Afficher le mot de passe">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
               </svg>
@@ -747,9 +757,11 @@
     </div>
   </div>
 
-</div>
+</main>
 
 <script>
+  // ── Onglets ──
+  // Active l'onglet demandé (connexion/inscription) et relance les animations d'apparition du panneau.
   function switchTab(tab) {
     document.querySelectorAll('.tab').forEach((t, i) => {
       t.classList.toggle('active', (i === 0 && tab === 'connexion') || (i === 1 && tab === 'inscription'));
@@ -766,6 +778,8 @@
     });
   }
 
+  // ── Champs ──
+  // Bascule l'affichage en clair/masqué d'un champ mot de passe.
   function togglePwd(id, btn) {
     const input = document.getElementById(id);
     const isText = input.type === 'text';
@@ -773,6 +787,7 @@
     btn.style.opacity = isText ? '0.3' : '0.7';
   }
 
+  // Calcule un score de force du mot de passe (0-4) et met à jour les 4 barres d'indicateur.
   function checkStrength(input) {
     const val = input.value;
     let score = 0;
@@ -790,11 +805,15 @@
     });
   }
 
+  // ── Init ──
+  // Efface tout token existant : cette page exige toujours une connexion explicite.
   document.addEventListener('DOMContentLoaded', () => {
     // Pas de redirection automatique - l'utilisateur doit toujours se connecter
     SW.clearToken();
   });
 
+  // ── Connexion ──
+  // Valide les champs, appelle SW.login() puis redirige vers la page d'accueil connectée.
   async function handleLogin() {
     const email    = document.getElementById('email-login').value.trim();
     const password = document.getElementById('pwd-login').value;
@@ -810,6 +829,8 @@
     }
   }
 
+  // ── Inscription ──
+  // Valide les champs et les CGU, appelle SW.register() puis redirige vers l'onboarding.
   async function handleRegister() {
     const prenom   = document.getElementById('prenom-register').value.trim();
     const nom      = document.getElementById('nom-register').value.trim();
@@ -830,6 +851,6 @@
     }
   }
 </script>
-
+<script src="js/ui-nav.js"></script>
 </body>
 </html>

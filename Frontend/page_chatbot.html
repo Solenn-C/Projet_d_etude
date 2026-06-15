@@ -1,3 +1,41 @@
+<!--
+============================================================
+Frontend/page_chatbot.html
+============================================================
+RÔLE : Page « Assistant IA » — chatbot conversationnel avec
+       historique de conversations persistant.
+
+DESCRIPTION :
+  Page applicative protégée par SW.requireAuth(). Construit un
+  system prompt dynamique (buildSystemPrompt) à partir du profil
+  de l'utilisateur (prénom, plan) et de sa garde-robe récupérée
+  via SW.getWardrobe(), puis envoie les messages à /api/chat
+  (proxy Groq dans server.js). Les réponses sont formatées
+  (formatContent : gras/italique/listes/retours à la ligne) et
+  affichées avec un indicateur « en train d'écrire ». Les
+  conversations sont persistées dans localStorage (par
+  utilisateur) et listées dans la sidebar, regroupées par période
+  (Aujourd'hui / Hier / Cette semaine / Plus ancien).
+
+SECTIONS PRINCIPALES :
+  - <nav class="app-nav"> / <aside class="sidebar"> : navigation applicative
+  - .conv-sidebar      : historique des conversations (localStorage)
+  - .welcome-screen    : écran d'accueil avec suggestions de questions
+  - .messages-wrap     : fil de messages (utilisateur / Stylist IA)
+  - .input-area        : zone de saisie + actions rapides
+
+DÉPENDANCES JS/CSS :
+  - css/styles.css (design system partagé)
+  - sw-data.js (SW.requireAuth, SW.getWardrobe, SW.getToken, SW.logout)
+  - js/ui-nav.js (comportements sidebar/nav)
+
+APPELS API :
+  - SW.getWardrobe() -> GET /api/wardrobe (contexte garde-robe pour l'IA)
+  - fetch('/api/chat', ...) -> POST /api/chat (proxy Groq) ; la réponse
+    `data.choices[0].message.content` est lue correctement (contrairement
+    à page_tendances.html, voir son en-tête)
+============================================================
+-->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -5,49 +43,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Smart Wear — Assistant IA</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --ivoire: #FAFAF8;
-    --lin: #E8E4DE;
-    --marine: #1B3A6B;
-    --bleu-givré: #C2D4EC;
-    --poudre: #E8D5E0;
-    --ardoise: #7A9CC0;
-    --bleu-profond: #2C5F8A;
-    --ciel: #D6E8F0;
-    --vert-sage: #DDF0E4;
-    --terracotta: #F5E4D8;
-  }
-
+  /* ─── Layout plein-écran chat (overrides partagés) ─── */
   html, body { height: 100%; }
 
   body {
-    background: var(--ivoire);
-    color: var(--marine);
-    font-family: 'Jost', sans-serif;
     font-weight: 300;
     display: flex;
     flex-direction: column;
     overflow: hidden;
   }
 
-  /* ─── NAV ─── */
-  nav {
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 18px 48px;
-    background: rgba(250,250,248,0.97);
-    backdrop-filter: blur(16px);
-    border-bottom: 0.5px solid rgba(27,58,107,0.1);
-    z-index: 100;
-  }
+  /* Nav padding override */
+  .app-nav { padding: 18px 48px; }
 
-  .nav-left { display: flex; align-items: center; gap: 24px; }
-
+  /* Logo override (24px vs 28px partagé) */
   .logo {
     font-family: 'DM Serif Display', serif;
     font-style: italic;
@@ -60,10 +71,10 @@
     text-decoration: none;
   }
 
-  .logo span { color: var(--ardoise); }
+  /* Avatar override (34px vs 44px partagé) */
+  .nav-avatar { width: 34px; height: 34px; font-size: 13px; font-weight: 400; }
 
-  .nav-sep { width: 0.5px; height: 20px; background: rgba(27,58,107,0.15); }
-
+  /* Breadcrumb (classe locale, non couverte par styles.css .nav-page) */
   .nav-page-title {
     font-size: 12px;
     letter-spacing: 0.14em;
@@ -72,49 +83,14 @@
     opacity: 0.45;
   }
 
-  .nav-right { display: flex; align-items: center; gap: 14px; }
+  /* Page : flex: 1 + overflow:hidden = zone chat occupe toute la hauteur restante */
+  .page { flex: 1; min-height: 0; overflow: hidden; }
 
-  .nav-btn {
-    display: flex; align-items: center; gap: 7px;
-    padding: 8px 14px;
-    border-radius: 8px;
-    border: 0.5px solid rgba(27,58,107,0.15);
-    background: transparent;
-    font-family: 'Jost', sans-serif;
-    font-size: 11px;
-    font-weight: 400;
-    letter-spacing: 0.08em;
-    color: var(--marine);
-    cursor: pointer;
-    text-decoration: none;
-    transition: background 0.2s;
-    opacity: 0.6;
-  }
+  /* Main : flex row (conv-sidebar + chat-main), overflow:hidden + padding:0 */
+  .main { flex: 1; display: flex; overflow: hidden; padding: 0; min-height: 0; }
 
-  .nav-btn:hover { background: var(--lin); opacity: 1; }
-  .nav-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
-
-  .nav-avatar {
-    width: 34px; height: 34px;
-    border-radius: 50%;
-    background: var(--marine);
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'DM Serif Display', serif;
-    font-size: 13px; font-weight: 400;
-    color: var(--ivoire);
-    cursor: pointer;
-    text-decoration: none;
-  }
-
-  /* ─── LAYOUT ─── */
-  .page {
-    flex: 1;
-    display: flex;
-    overflow: hidden;
-  }
-
-  /* ─── SIDEBAR CONVERSATIONS ─── */
-  .sidebar {
+  /* ─── Sidebar conversations (spécifique chatbot) ─── */
+  .conv-sidebar {
     width: 260px;
     flex-shrink: 0;
     border-right: 0.5px solid rgba(27,58,107,0.08);
@@ -140,7 +116,7 @@
 
   .btn-new-chat {
     width: 100%;
-    height: 36px;
+    min-height: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -234,6 +210,7 @@
     flex: 1;
     overflow-y: auto;
     padding: 32px 0;
+    min-height: 0;
     scrollbar-width: thin;
     scrollbar-color: var(--lin) transparent;
   }
@@ -497,7 +474,7 @@
     width: 100%;
     min-height: 52px;
     max-height: 140px;
-    padding: 14px 52px 14px 18px;
+    padding: 14px 60px 14px 18px;
     background: var(--lin);
     border: 0.5px solid rgba(27,58,107,0.12);
     border-radius: 14px;
@@ -522,9 +499,9 @@
 
   .send-btn {
     position: absolute;
-    right: 10px;
-    bottom: 10px;
-    width: 34px; height: 34px;
+    right: 8px;
+    bottom: 8px;
+    width: 44px; height: 44px;
     border-radius: 10px;
     background: var(--marine);
     border: none;
@@ -556,7 +533,8 @@
 
   .input-action-btn {
     display: flex; align-items: center; gap: 5px;
-    padding: 5px 10px;
+    padding: 8px 12px;
+    min-height: 44px;
     border-radius: 6px;
     border: 0.5px solid rgba(27,58,107,0.12);
     background: transparent;
@@ -607,13 +585,35 @@
     color: #A32D2D;
     margin-top: 8px;
   }
+
+  /* ─── Responsive ─── */
+  @media (max-width: 1024px) {
+    .conv-sidebar { width: 220px; }
+  }
+
+  @media (max-width: 768px) {
+    .conv-sidebar { display: none; }
+    .messages-inner { padding: 0 16px; }
+    .input-area { padding: 12px 16px 16px; }
+    .welcome-chips { max-width: 100%; }
+    .input-hint { display: none; }
+  }
+
+  @media (max-width: 480px) {
+    .msg-bubble { font-size: 13px; }
+    .welcome-chips { grid-template-columns: 1fr; }
+    .welcome-title { font-size: 26px; }
+    .welcome-sub { font-size: 13px; }
+    .input-box { font-size: 16px; }
+    .input-actions { display: none; }
+  }
 </style>
 <script src="sw-data.js"></script>
 </head>
 <body>
 
 <!-- ─── NAV ─── -->
-<nav>
+<nav class="app-nav" aria-label="Navigation principale">
   <div class="nav-left">
     <a href="page_apres_connection.html" class="logo">Smart<span>Wear</span></a>
     <div class="nav-sep"></div>
@@ -621,33 +621,81 @@
   </div>
   <div class="nav-right">
     <a href="page_apres_connection.html" class="nav-btn">
-      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
       Accueil
     </a>
-    <a href="page_gestion_compte.html" class="nav-avatar" id="nav-avatar">?</a>
+    <a href="page_gestion_compte.html" class="nav-avatar" id="nav-avatar" aria-label="Mon compte">?</a>
+    <button class="nav-burger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="sidebar">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
   </div>
 </nav>
 
+<div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
 <div class="page">
 
-  <!-- ─── SIDEBAR ─── -->
-  <aside class="sidebar">
-    <div class="sidebar-header">
-      <div class="sidebar-header-title">Conversations</div>
-      <button class="btn-new-chat" onclick="newConversation()">
-        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Nouvelle conversation
-      </button>
+  <!-- ─── NAV SIDEBAR ─── -->
+  <aside class="sidebar" id="sidebar" aria-label="Navigation de l'application">
+    <div class="sidebar-section">
+      <span class="sidebar-label">Navigation</span>
+      <a class="sidebar-item" href="page_apres_connection.html">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Accueil
+      </a>
+      <a class="sidebar-item" href="page_garderobe.html">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        Ma garde-robe
+      </a>
+      <a class="sidebar-item active" href="page_chatbot.html">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Assistant IA
+      </a>
+      <a class="sidebar-item" href="page_statistiques.html">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Statistiques
+      </a>
+      <a class="sidebar-item" href="page_tendances.html">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+        Tendances
+      </a>
     </div>
-    <div class="conv-list" id="conv-list">
-      <div style="text-align:center;padding:32px 16px;font-size:12px;color:var(--marine);opacity:0.35;line-height:1.8;">
-        Aucune conversation.<br>Commencez en posant une question.
-      </div>
+    <div class="sidebar-section">
+      <span class="sidebar-label">Compte</span>
+      <a class="sidebar-item" href="page_gestion_compte.html">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Mon compte
+      </a>
+    </div>
+    <div class="sidebar-bottom">
+      <a class="sidebar-item danger" href="#" onclick="SW.logout();return false;">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Se déconnecter
+      </a>
     </div>
   </aside>
 
-  <!-- ─── CHAT PRINCIPAL ─── -->
-  <div class="chat-main">
+  <!-- ─── MAIN ─── -->
+  <main class="main" id="main-content">
+
+    <!-- Sidebar conversations -->
+    <aside class="conv-sidebar" aria-label="Historique des conversations">
+      <div class="sidebar-header">
+        <div class="sidebar-header-title">Conversations</div>
+        <button class="btn-new-chat" onclick="newConversation()">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Nouvelle conversation
+        </button>
+      </div>
+      <div class="conv-list" id="conv-list">
+        <div style="text-align:center;padding:32px 16px;font-size:12px;color:var(--marine);opacity:0.35;line-height:1.8;">
+          Aucune conversation.<br>Commencez en posant une question.
+        </div>
+      </div>
+    </aside>
+
+    <!-- ─── CHAT PRINCIPAL ─── -->
+    <div class="chat-main">
 
     <!-- Écran d'accueil -->
     <div class="welcome-screen" id="welcome-screen">
@@ -699,11 +747,12 @@
           class="input-box"
           id="input-box"
           placeholder="Demandez conseil à votre assistant style…"
+          aria-label="Message à envoyer à l'assistant"
           rows="1"
           onkeydown="handleKey(event)"
           oninput="autoResize(this)"
         ></textarea>
-        <button class="send-btn" id="send-btn" onclick="sendMessage()" disabled>
+        <button class="send-btn" id="send-btn" onclick="sendMessage()" disabled aria-label="Envoyer">
           <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
         </button>
       </div>
@@ -724,14 +773,19 @@
       </div>
     </div>
 
-  </div>
+    </div>
+
+  </main>
 </div>
 
+<script src="js/ui-nav.js"></script>
 <script>
   // ── Contexte utilisateur (chargé dynamiquement) ──
   let userContext = { name: '…', prenom: '…', initiales: '?', wardrobe: [], plan: 'gratuit' };
   let SYSTEM_PROMPT = '';
 
+  // Construit le system prompt envoyé à l'IA à partir du profil et de
+  // la garde-robe de l'utilisateur.
   function buildSystemPrompt() {
     const wardrobeStr = userContext.wardrobe.length > 0
       ? userContext.wardrobe.map(w => w.name + ' (' + w.type + ')').join(', ')
@@ -763,17 +817,22 @@ Règles de comportement :
   let isTyping = false;
 
   // ── Persistance localStorage ──
+  // Clé localStorage de l'historique des conversations, propre à l'utilisateur.
   function storageKey() { return 'sw_convs_' + (userContext.name || 'user'); }
 
+  // Charge la liste des conversations sauvegardées depuis localStorage.
   function loadConversations() {
     try { return JSON.parse(localStorage.getItem(storageKey())) || []; }
     catch { return []; }
   }
 
+  // Sauvegarde la liste des conversations dans localStorage.
   function saveConversations(convs) {
     localStorage.setItem(storageKey(), JSON.stringify(convs));
   }
 
+  // Enregistre (ou met à jour) la conversation courante dans
+  // localStorage et rafraîchit la sidebar.
   function saveCurrentConversation() {
     if (conversationHistory.length === 0) return;
     const convs = loadConversations();
@@ -792,6 +851,8 @@ Règles de comportement :
     renderSidebar();
   }
 
+  // Affiche la liste des conversations dans la sidebar, regroupées
+  // par période (Aujourd'hui / Hier / Cette semaine / Plus ancien).
   function renderSidebar() {
     const list = document.getElementById('conv-list');
     const convs = loadConversations();
@@ -837,6 +898,7 @@ Règles de comportement :
     list.innerHTML = html;
   }
 
+  // Recharge une conversation sauvegardée et affiche ses messages.
   function loadConvById(id) {
     const convs = loadConversations();
     const conv = convs.find(c => c.id === id);
@@ -854,6 +916,7 @@ Règles de comportement :
     renderSidebar();
   }
 
+  // Supprime une conversation sauvegardée.
   function deleteConv(id) {
     let convs = loadConversations();
     convs = convs.filter(c => c.id !== id);
@@ -863,6 +926,7 @@ Règles de comportement :
   }
 
   // ── Fonctions principales ──
+  // Envoie le message sur Entrée (sans Maj).
   function handleKey(e) {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -870,32 +934,38 @@ Règles de comportement :
     }
   }
 
+  // Ajuste la hauteur du textarea au contenu et active/désactive le bouton d'envoi.
   function autoResize(el) {
     el.style.height = 'auto';
     el.style.height = Math.min(el.scrollHeight, 140) + 'px';
     document.getElementById('send-btn').disabled = el.value.trim() === '';
   }
 
+  // Remplit le champ de saisie avec une suggestion et envoie le message.
   function sendSuggestion(text) {
     document.getElementById('input-box').value = text;
     autoResize(document.getElementById('input-box'));
     sendMessage();
   }
 
+  // Bascule de l'écran d'accueil vers la zone de messages.
   function showChat() {
     document.getElementById('welcome-screen').style.display = 'none';
     document.getElementById('messages-wrap').style.display = 'block';
   }
 
+  // Fait défiler la zone de messages jusqu'en bas.
   function scrollToBottom() {
     const wrap = document.getElementById('messages-wrap');
     wrap.scrollTop = wrap.scrollHeight;
   }
 
+  // Retourne l'heure actuelle au format HH:MM.
   function getTime() {
     return new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
   }
 
+  // Ajoute un message (utilisateur ou Stylist IA) dans le fil de conversation.
   function appendMessage(role, content) {
     showChat();
     const inner = document.getElementById('messages-inner');
@@ -916,6 +986,8 @@ Règles de comportement :
     scrollToBottom();
   }
 
+  // Convertit la syntaxe markdown simplifiée de la réponse IA (gras,
+  // italique, listes, retours à la ligne) en HTML.
   function formatContent(text) {
     // Markdown-like formatting
     text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
@@ -929,6 +1001,7 @@ Règles de comportement :
     return text;
   }
 
+  // Affiche l'indicateur « en train d'écrire » de l'IA.
   function showTyping() {
     const inner = document.getElementById('messages-inner');
     const div = document.createElement('div');
@@ -944,11 +1017,14 @@ Règles de comportement :
     scrollToBottom();
   }
 
+  // Masque l'indicateur « en train d'écrire ».
   function hideTyping() {
     const el = document.getElementById('typing-indicator');
     if (el) el.remove();
   }
 
+  // Envoie le message utilisateur à /api/chat, affiche la réponse de
+  // l'IA, sauvegarde la conversation et propose des suggestions de relance.
   async function sendMessage() {
     const input = document.getElementById('input-box');
     const text  = input.value.trim();
@@ -977,10 +1053,8 @@ Règles de comportement :
           'Authorization': 'Bearer ' + SW.getToken()
         },
         body: JSON.stringify({
-          model: 'claude-sonnet-4-6',
           max_tokens: 1000,
-          system: buildSystemPrompt(),
-          messages: conversationHistory
+          messages: [{ role: 'system', content: buildSystemPrompt() }, ...conversationHistory]
         })
       });
 
@@ -991,7 +1065,10 @@ Règles de comportement :
         throw new Error(msg);
       }
 
-      const aiText = data.content.find(b => b.type === 'text')?.text || '';
+      const aiText = data.choices?.[0]?.message?.content;
+      if (typeof aiText !== 'string') {
+        throw new Error('Réponse de l\'assistant invalide ou vide.');
+      }
 
       hideTyping();
       appendMessage('ai', aiText);
@@ -1017,6 +1094,7 @@ Règles de comportement :
     isTyping = false;
   }
 
+  // Ajoute des suggestions de questions rapides après une réponse de l'IA.
   function addSuggestionChips() {
     const inner = document.getElementById('messages-inner');
     const last  = inner.lastElementChild;
@@ -1043,6 +1121,7 @@ Règles de comportement :
     scrollToBottom();
   }
 
+  // Réinitialise la zone de chat pour démarrer une nouvelle conversation.
   function newConversation() {
     currentConvId = null;
     conversationHistory = [];

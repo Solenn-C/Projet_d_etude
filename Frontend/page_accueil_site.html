@@ -1,3 +1,35 @@
+<!--
+============================================================
+Frontend/page_accueil_site.html
+============================================================
+RÔLE : Page d'accueil publique (landing page) du site Smart Wear.
+
+DESCRIPTION :
+  Page publique non protégée, point d'entrée du site. Présente le
+  hero (titre d'accroche, sous-titre, CTA vers
+  page_connexion_inscription.html, statistiques et mockups animés
+  de l'application : rail de vêtements + 3 cartes flottantes
+  garde-robe/téléphone/chatbot), une grille de 6 fonctionnalités
+  (.features-grid), puis un footer avec un second CTA. Le seul
+  script de la page anime l'apparition des sections au scroll via
+  IntersectionObserver (ajout de la classe .visible sur les
+  éléments .fade-up).
+
+SECTIONS PRINCIPALES :
+  - <nav class="site-nav">     : navigation publique (logo, liens, CTA)
+  - .hero                       : accroche + CTA + mockups animés
+  - #features / .features-grid  : 6 cartes de fonctionnalités numérotées
+  - <footer class="footer-strip"> : bandeau de conclusion + CTA
+
+DÉPENDANCES JS/CSS :
+  - css/styles.css (design system partagé)
+  - js/ui-nav.js (defer)
+  - Frontend/images/*.jpg (visuels du rail de vêtements dans le hero)
+
+APPELS API :
+  - Aucun (page statique)
+============================================================
+-->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -8,108 +40,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Smart Wear — Votre dressing intelligent</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  /* ─── Corps ─── */
+  body { font-weight: 400; overflow-x: hidden; }
 
-  :root {
-    --ivoire: #FAFAF8;
-    --lin: #E8E4DE;
-    --marine: #1B3A6B;
-    --bleu-givré: #C2D4EC;
-    --poudre: #E8D5E0;
-    --ardoise: #7A9CC0;
-    --bleu-profond: #2C5F8A;
-    --ciel: #D6E8F0;
-    --vert-sage: #DDF0E4;
-    --terracotta: #F5E4D8;
-  }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--ivoire);
-    color: var(--marine);
-    font-family: 'Jost', sans-serif;
-    font-weight: 300;
-    overflow-x: hidden;
-  }
-
-  /* ─── NAVIGATION ─── */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 32px 60px;
-    background: rgba(250,250,248,0.92);
-    backdrop-filter: blur(16px);
-    border-bottom: 0.5px solid rgba(27,58,107,0.12);
-  }
-
-  .nav-inner {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  .logo {
-    font-family:'DM Serif Display',serif;font-style:italic;
-    font-size: 28px;
-    font-weight: 600;
-    letter-spacing: 0.16em;
-    color: var(--marine);
-    text-transform: uppercase;
-    line-height: 1;
-  }
-
-  .logo span { color: var(--ardoise); }
-
-  .logo-tagline {
-    font-size: 10px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--ardoise);
-    opacity: 0.7;
-  }
-
-  .nav-links {
-    display: flex;
-    gap: 44px;
-    list-style: none;
-    align-items: center;
-  }
-
-  .nav-links a {
-    font-size: 13px;
-    font-weight: 400;
-    letter-spacing: 0.08em;
-    color: var(--marine);
-    text-decoration: none;
-    opacity: 0.65;
-    transition: opacity 0.25s;
-  }
-
-  .nav-links a:hover { opacity: 1; }
-
-  .nav-cta {
-    background: var(--marine);
-    color: var(--ivoire) !important;
-    opacity: 1 !important;
-    padding: 13px 28px;
-    border-radius: 2px;
-    font-size: 11px !important;
-    letter-spacing: 0.14em !important;
-    text-transform: uppercase;
-    transition: background 0.25s !important;
-  }
-
-  .nav-cta:hover { background: var(--bleu-profond) !important; }
+  /* ─── NAV overrides (padding et gap propres à la page d'accueil) ─── */
+  .site-nav { padding: 20px 60px; }
+  .nav-links { gap: 44px; }
+  /* CTA nav : padding vertical plus compact et rayon 2px vs standard 4px */
+  .nav-cta { padding: 12px 24px; border-radius: 2px; }
 
   /* ─── HERO ─── */
   .hero {
-    min-height: 100vh;
+    height: 100vh;
+    min-height: 600px;
     display: grid;
     grid-template-columns: 1fr 1fr;
     padding-top: 100px;
@@ -121,14 +66,14 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: 80px 60px 80px 60px;
+    padding: 56px 60px;
     position: relative;
     z-index: 2;
   }
 
   .hero-eyebrow {
     font-size: 11px;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
     color: var(--ardoise);
     margin-bottom: 28px;
@@ -160,10 +105,9 @@
   }
 
   .hero-subtitle {
-    font-size: 15px;
+    font-size: 16px;
     line-height: 1.75;
-    color: var(--marine);
-    opacity: 0.65;
+    color: var(--marine-mid);
     max-width: 420px;
     margin-bottom: 52px;
   }
@@ -182,7 +126,7 @@
     font-family: 'Jost', sans-serif;
     font-size: 12px;
     font-weight: 400;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     text-decoration: none;
     transition: background 0.3s, transform 0.2s;
@@ -196,16 +140,18 @@
 
   .btn-secondary {
     font-size: 13px;
-    color: var(--marine);
-    opacity: 0.6;
+    color: var(--marine-mid);
     text-decoration: none;
     display: flex;
     align-items: center;
     gap: 8px;
-    transition: opacity 0.25s;
+    padding: 10px 18px;
+    border: 0.5px solid rgba(27,58,107,0.22);
+    border-radius: 2px;
+    transition: color 0.25s, border-color 0.25s;
   }
 
-  .btn-secondary:hover { opacity: 1; }
+  .btn-secondary:hover { color: var(--marine); border-color: rgba(27,58,107,0.5); }
 
   .btn-secondary::after {
     content: '→';
@@ -217,8 +163,8 @@
   .hero-stats {
     display: flex;
     gap: 40px;
-    margin-top: 64px;
-    padding-top: 40px;
+    margin-top: 40px;
+    padding-top: 20px;
     border-top: 0.5px solid rgba(27,58,107,0.12);
   }
 
@@ -233,10 +179,10 @@
 
   .stat-label {
     font-size: 11px;
-    letter-spacing: 0.1em;
+    font-weight: 400;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--marine);
-    opacity: 0.5;
+    color: var(--marine-dim);
   }
 
   /* ─── HERO RIGHT (visual) ─── */
@@ -263,67 +209,159 @@
     position: relative;
     width: 100%;
     height: 100%;
-    min-height: 760px;
+    min-height: 600px;
     z-index: 2;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 20px;
+    padding: 40px 16px 30px;
+  }
+
+  /* ── Rail dressing dans le héro ── */
+  .hero-dressing-rail {
+    position: relative;
+    width: 100%;
+    padding-top: 8px;
+    flex-shrink: 0;
+  }
+
+  .hero-dressing-bar {
+    position: absolute;
+    top: 0; left: 4%; right: 4%;
+    height: 5px;
+    background: linear-gradient(to right, #c8bfb0, #a89880, #c8bfb0);
+    border-radius: 3px;
+    box-shadow: 0 2px 6px rgba(100,80,60,0.18), inset 0 1px 0 rgba(255,255,255,0.3);
+  }
+
+  .hero-dressing-items {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding-top: 4px;
+  }
+
+  .hero-cloth-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    transform-origin: top center;
+    text-decoration: none;
+  }
+
+  .hero-cloth-item:nth-child(1) { animation: sway-a 4.2s ease-in-out infinite 0s; }
+  .hero-cloth-item:nth-child(2) { animation: sway-b 5.1s ease-in-out infinite 0.6s; }
+  .hero-cloth-item:nth-child(3) { animation: sway-c 3.8s ease-in-out infinite 1.1s; }
+  .hero-cloth-item:nth-child(4) { animation: sway-d 4.7s ease-in-out infinite 0.3s; }
+  .hero-cloth-item:nth-child(5) { animation: sway-e 5.5s ease-in-out infinite 1.8s; }
+  .hero-cloth-item:nth-child(6) { animation: sway-f 4.0s ease-in-out infinite 0.9s; }
+
+  @keyframes sway-a { 0%, 100% { transform: rotate(-2.5deg); } 50% { transform: rotate(2.5deg); } }
+  @keyframes sway-b { 0%, 100% { transform: rotate(2deg); }   50% { transform: rotate(-2deg); } }
+  @keyframes sway-c { 0%, 100% { transform: rotate(-1.5deg); } 50% { transform: rotate(3deg); } }
+  @keyframes sway-d { 0%, 100% { transform: rotate(1.5deg); }  50% { transform: rotate(-3deg); } }
+  @keyframes sway-e { 0%, 100% { transform: rotate(-3deg); }   50% { transform: rotate(1deg); } }
+  @keyframes sway-f { 0%, 100% { transform: rotate(2.5deg); }  50% { transform: rotate(-1.5deg); } }
+
+  .hero-cloth-hook {
+    width: 1.5px; height: 14px;
+    background: linear-gradient(to bottom, #9c8870, #bfb0a0);
+    border-radius: 1px;
+    position: relative;
+  }
+
+  .hero-cloth-hook::before {
+    content: '';
+    position: absolute;
+    top: -4px; left: 50%;
+    transform: translateX(-50%);
+    width: 6px; height: 6px;
+    border: 1.5px solid #9c8870;
+    border-bottom: none;
+    border-radius: 3px 3px 0 0;
+  }
+
+  .hero-cloth-card {
+    width: 82px; height: 105px;
+    border-radius: 10px; overflow: hidden;
+    background: #f0efed;
+    box-shadow: 0 4px 14px rgba(27,58,107,0.1), 0 1px 4px rgba(27,58,107,0.06);
+    display: flex; flex-direction: column;
+    transition: box-shadow 0.28s;
+  }
+
+  .hero-cloth-item:hover .hero-cloth-card {
+    box-shadow: 0 10px 22px rgba(27,58,107,0.18);
+  }
+
+  .hero-cloth-card img {
+    width: 100%; flex: 1; min-height: 0;
+    object-fit: contain; display: block;
+  }
+
+  .hero-cloth-label-mini {
+    font-size: 7px; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--marine);
+    opacity: 0.38; text-align: center;
+    padding: 4px 2px 5px; flex-shrink: 0;
   }
 
   .mockups-row {
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: center;
-    gap: 28px;
+    gap: 14px;
     position: relative;
     z-index: 2;
-    padding: 0 16px;
   }
 
   /* ── Taille commune à tous les mockups ── */
   .phone-mockup,
   .wardrobe-mockup,
   .chatbot-mockup {
-    width: 210px;
+    width: 130px;
     flex-shrink: 0;
-    border-radius: 22px;
-    box-shadow: 0 28px 56px rgba(27,58,107,0.17), 0 6px 18px rgba(27,58,107,0.09);
+    border-radius: 16px;
+    box-shadow: 0 16px 36px rgba(27,58,107,0.17), 0 4px 10px rgba(27,58,107,0.09);
     background: var(--ivoire);
-    padding: 20px 17px;
+    padding: 12px 10px;
   }
 
   /* ── Garde-robe (gauche) ── */
   .wardrobe-mockup {
-    transform: rotate(-2deg) translateY(12px);
+    transform: rotate(-2deg) translateY(8px);
     animation: floatWard 6s ease-in-out infinite 0.8s;
   }
 
   @keyframes floatWard {
-    0%, 100% { transform: rotate(-2deg) translateY(12px); }
+    0%, 100% { transform: rotate(-2deg) translateY(8px); }
     50%       { transform: rotate(-2deg) translateY(0px); }
   }
 
   /* ── Téléphone / compte (centre, légèrement surélevé) ── */
   .phone-mockup {
-    transform: rotate(0deg) translateY(-16px);
+    transform: rotate(0deg) translateY(-10px);
     animation: floatPhone 5s ease-in-out infinite;
     z-index: 3;
-    box-shadow: 0 36px 64px rgba(27,58,107,0.22), 0 8px 22px rgba(27,58,107,0.12);
+    box-shadow: 0 22px 42px rgba(27,58,107,0.22), 0 5px 14px rgba(27,58,107,0.12);
   }
 
   @keyframes floatPhone {
-    0%, 100% { transform: rotate(0deg) translateY(-16px); }
-    50%       { transform: rotate(0deg) translateY(-28px); }
+    0%, 100% { transform: rotate(0deg) translateY(-10px); }
+    50%       { transform: rotate(0deg) translateY(-18px); }
   }
 
   /* ── Chatbot (droite) ── */
   .chatbot-mockup {
-    transform: rotate(2deg) translateY(12px);
+    transform: rotate(2deg) translateY(8px);
     animation: floatChat 7s ease-in-out infinite 1.5s;
   }
 
   @keyframes floatChat {
-    0%, 100% { transform: rotate(2deg) translateY(12px); }
+    0%, 100% { transform: rotate(2deg) translateY(8px); }
     50%       { transform: rotate(2deg) translateY(0px); }
   }
 
@@ -482,7 +520,7 @@
     justify-content: space-between;
   }
 
-  .phone-weather-info { }
+  .phone-weather-info { display: block; }
   .phone-weather-city { font-size: 11px; font-weight: 400; color: var(--marine); margin-bottom: 2px; }
   .phone-weather-temp { font-family:'DM Serif Display',serif;font-style:italic; font-size: 28px; font-weight: 300; color: var(--marine); }
   .phone-weather-icon { font-size: 28px; }
@@ -579,8 +617,7 @@
   .hero-badge-2 {
     top: 52px;
     left: 45%;
-    transform: translateX(-35%);
-    animation: float2 7s ease-in-out infinite 0.3s;
+    animation: float2-centered 7s ease-in-out infinite 0.3s;
   }
 
   .hero-badge-3 {
@@ -592,6 +629,11 @@
   @keyframes float2 {
     0%, 100% { transform: translateY(0); }
     50%       { transform: translateY(-10px); }
+  }
+
+  @keyframes float2-centered {
+    0%, 100% { transform: translateX(-35%) translateY(0); }
+    50%       { transform: translateX(-35%) translateY(-10px); }
   }
 
   .badge-icon {
@@ -650,7 +692,7 @@
 
   /* ─── FEATURES ─── */
   .features {
-    padding: 140px 60px;
+    padding: 96px 60px;
     background: var(--ivoire);
   }
 
@@ -659,12 +701,12 @@
     grid-template-columns: 1fr 1fr;
     gap: 60px;
     align-items: end;
-    margin-bottom: 80px;
+    margin-bottom: 56px;
   }
 
   .features-eyebrow {
     font-size: 11px;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
     color: var(--ardoise);
     margin-bottom: 20px;
@@ -697,8 +739,7 @@
   .features-desc {
     font-size: 15px;
     line-height: 1.75;
-    color: var(--marine);
-    opacity: 0.6;
+    color: var(--marine-mid);
     align-self: end;
     padding-bottom: 8px;
   }
@@ -734,7 +775,7 @@
     font-family:'DM Serif Display',serif;font-style:italic;
     font-size: 13px;
     color: var(--ardoise);
-    letter-spacing: 0.1em;
+    letter-spacing: 0.08em;
     margin-bottom: 32px;
     display: block;
   }
@@ -760,8 +801,7 @@
   .feature-text {
     font-size: 13.5px;
     line-height: 1.7;
-    color: var(--marine);
-    opacity: 0.6;
+    color: var(--marine-mid);
   }
 
   .feature-card.featured .feature-text {
@@ -798,7 +838,7 @@
   .footer-logo {
     font-family:'DM Serif Display',serif;font-style:italic;
     font-size: 20px;
-    font-weight: 600;
+    font-weight: 400;
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--ivoire);
@@ -808,8 +848,7 @@
 
   .footer-tagline {
     font-size: 13px;
-    color: var(--bleu-givré);
-    opacity: 0.6;
+    color: #93AEC6;
     letter-spacing: 0.05em;
   }
 
@@ -820,7 +859,7 @@
     border-radius: 2px;
     font-size: 11px;
     font-weight: 500;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     text-decoration: none;
     transition: background 0.25s, transform 0.2s;
@@ -847,23 +886,59 @@
   .delay-2 { transition-delay: 0.2s; }
   .delay-3 { transition-delay: 0.35s; }
   .delay-4 { transition-delay: 0.5s; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 1024px) {
+    .site-nav { padding: 20px 32px; }
+    .hero-left { padding: 56px 40px; }
+    .features { padding: 80px 40px; }
+    .footer-strip { padding: 40px; }
+    .mockups-row { gap: 8px; }
+    .phone-mockup, .wardrobe-mockup, .chatbot-mockup { width: 108px; }
+  }
+
+  @media (max-width: 768px) {
+    .site-nav { padding: 16px 24px; flex-wrap: wrap; gap: 12px; }
+    .nav-links { gap: 20px; }
+    .nav-links li:not(:last-child) { display: none; }
+
+    .hero { grid-template-columns: 1fr; height: auto; min-height: auto; padding-top: 80px; }
+    .hero-left { padding: 48px 24px 40px; }
+    .hero-right { display: none; }
+    .hero-stats { gap: 24px; flex-wrap: wrap; }
+
+    .features { padding: 64px 24px; }
+    .features-header { grid-template-columns: 1fr; gap: 24px; }
+    .features-grid { grid-template-columns: 1fr 1fr; }
+
+    .footer-strip { flex-direction: column; gap: 24px; padding: 40px 24px; text-align: center; }
+  }
+
+  @media (max-width: 480px) {
+    .hero-title { font-size: 42px; }
+    .features-grid { grid-template-columns: 1fr; }
+    .hero-stats { justify-content: center; }
+  }
+
 </style>
 </head>
 <body>
 
 <!-- NAV -->
-<nav>
+<nav class="site-nav" aria-label="Navigation principale">
   <div class="nav-inner">
-    <div class="logo">Smart<span>Wear</span></div>
+    <div class="logo" aria-label="SmartWear — Accueil">Smart<span>Wear</span></div>
     <div class="logo-tagline">Votre dressing intelligent</div>
   </div>
   <ul class="nav-links">
     <li><a href="#features">Fonctionnalités</a></li>
     <li><a href="#">Comment ça marche</a></li>
     <li><a href="#">À propos</a></li>
-    <li><a href="page_connexion_inscription.html" class="nav-cta">Commencer</a></li>
+    <li><a href="page_connexion_inscription.html" class="nav-cta">Créer mon dressing</a></li>
   </ul>
 </nav>
+
+<main id="main-content">
 
 <!-- HERO -->
 <section class="hero">
@@ -885,8 +960,8 @@
         <div class="stat-label">Personnalisé</div>
       </div>
       <div>
-        <div class="stat-num">IA</div>
-        <div class="stat-label">Intégrée</div>
+        <div class="stat-num">6</div>
+        <div class="stat-label">Catégories</div>
       </div>
       <div>
         <div class="stat-num">3</div>
@@ -896,173 +971,177 @@
   </div>
 
   <div class="hero-right">
-    <div class="visuals-scene">
-      <div class="mockups-row">
 
-        <!-- ══ MOCKUP 1 : Garde-robe (gauche) ══ -->
-        <div class="wardrobe-mockup">
-          <div class="mock-header">
-            <span class="mock-title">Ma garde-robe</span>
-            <div class="mock-dot-row">
-              <div class="mock-dot"></div>
-              <div class="mock-dot"></div>
-              <div class="mock-dot" style="background:var(--ardoise);opacity:0.4;"></div>
+    <!-- Badges flottants -->
+    <div class="hero-badge hero-badge-1">
+      <div class="badge-icon" style="background:var(--vert-sage);">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#085041" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>
+      </div>
+      <div class="badge-text">
+        <div class="badge-title">Style score</div>
+        <div class="badge-sub">+12 cette semaine</div>
+      </div>
+    </div>
+
+    <div class="hero-badge hero-badge-2">
+      <div class="badge-icon" style="background:var(--poudre);">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#6B2045" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      </div>
+      <div class="badge-text">
+        <div class="badge-title">32 vêtements</div>
+        <div class="badge-sub">Garde-robe complète</div>
+      </div>
+    </div>
+
+    <div class="hero-badge hero-badge-3">
+      <div class="badge-icon" style="background:var(--ciel);">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#1B3A6B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+      </div>
+      <div class="badge-text">
+        <div class="badge-title">Tenue du jour</div>
+        <div class="badge-sub">Prête en 30 sec</div>
+      </div>
+    </div>
+
+    <div class="visuals-scene">
+
+      <!-- Rail vêtements -->
+      <div class="hero-dressing-rail">
+        <div class="hero-dressing-bar"></div>
+        <div class="hero-dressing-items">
+          <div class="hero-cloth-item">
+            <div class="hero-cloth-hook"></div>
+            <div class="hero-cloth-card">
+              <img src="images/00108022505-e1.jpg" alt="Veste">
+              <div class="hero-cloth-label-mini">Veste</div>
             </div>
           </div>
-          <div style="font-size:8px;color:var(--ardoise);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;opacity:0.7;">24 pièces</div>
+          <div class="hero-cloth-item">
+            <div class="hero-cloth-hook"></div>
+            <div class="hero-cloth-card">
+              <img src="images/04387072250-e1.jpg" alt="Chemise">
+              <div class="hero-cloth-label-mini">Chemise</div>
+            </div>
+          </div>
+          <div class="hero-cloth-item">
+            <div class="hero-cloth-hook"></div>
+            <div class="hero-cloth-card">
+              <img src="images/04661309070-e1.jpg" alt="Robe">
+              <div class="hero-cloth-label-mini">Robe</div>
+            </div>
+          </div>
+          <div class="hero-cloth-item">
+            <div class="hero-cloth-hook"></div>
+            <div class="hero-cloth-card">
+              <img src="images/05584369716-e1.jpg" alt="Mini robe">
+              <div class="hero-cloth-label-mini">Mini robe</div>
+            </div>
+          </div>
+          <div class="hero-cloth-item">
+            <div class="hero-cloth-hook"></div>
+            <div class="hero-cloth-card">
+              <img src="images/03607220800-e1.jpg" alt="Jean noir">
+              <div class="hero-cloth-label-mini">Jean noir</div>
+            </div>
+          </div>
+          <div class="hero-cloth-item">
+            <div class="hero-cloth-hook"></div>
+            <div class="hero-cloth-card">
+              <img src="images/08727021427-e1.jpg" alt="Jean bleu">
+              <div class="hero-cloth-label-mini">Jean bleu</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Trois mockups flottants -->
+      <div class="mockups-row">
+
+        <!-- Garde-robe -->
+        <div class="wardrobe-mockup">
+          <div class="mock-header">
+            <div class="mock-title">Ma garde-robe</div>
+            <div class="mock-dot-row">
+              <div class="mock-dot"></div><div class="mock-dot"></div><div class="mock-dot"></div>
+            </div>
+          </div>
           <div class="ward-grid">
-            <div class="ward-item" style="background:#EEF2FA;">
-              <svg class="cloth-svg" viewBox="0 0 32 32" fill="none" stroke="#1B3A6B" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M8 6 L4 12 L8 14 L8 26 L24 26 L24 14 L28 12 L24 6 Q20 9 16 9 Q12 9 8 6Z"/>
-              </svg>
-              <div class="ward-item-label">Manteau</div>
-            </div>
             <div class="ward-item" style="background:#F5F0EC;">
-              <svg class="cloth-svg" viewBox="0 0 32 32" fill="none" stroke="#1B3A6B" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M10 6 L5 13 L9 15 L9 26 L23 26 L23 15 L27 13 L22 6 Q19 8 16 8 Q13 8 10 6Z"/>
-              </svg>
-              <div class="ward-item-label">Pull</div>
+              <svg class="cloth-svg" viewBox="0 0 32 32" fill="none" stroke="#1B3A6B" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 4L6 8l4 2v12h12V10l4-2-4-4c-2 2-8 2-8 0Z"/></svg>
+              <div class="ward-item-label">T-shirt</div>
             </div>
-            <div class="ward-item" style="background:#F0EDF8;">
-              <svg class="cloth-svg" viewBox="0 0 32 32" fill="none" stroke="#6B2045" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M9 6 Q16 10 23 6 L25 14 L23 14 L23 26 L9 26 L9 14 L7 14Z"/>
-              </svg>
+            <div class="ward-item" style="background:#E8D5E0;">
+              <svg class="cloth-svg" viewBox="0 0 32 32" fill="none" stroke="#1B3A6B" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6c0 0-2 2-2 4l4 1v15h12V11l4-1c0-2-2-4-2-4-2 2-5 3-7 3S10 8 8 6Z"/></svg>
               <div class="ward-item-label">Robe</div>
             </div>
-            <div class="ward-item" style="background:#F5F8EC;">
-              <svg class="cloth-svg" viewBox="0 0 32 32" fill="none" stroke="#085041" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M10 6 L8 10 L10 10 L10 26 L14 26 L16 18 L18 26 L22 26 L22 10 L24 10 L22 6Z"/>
-              </svg>
-              <div class="ward-item-label">Jeans</div>
+            <div class="ward-item" style="background:#DDF0E4;">
+              <svg class="cloth-svg" viewBox="0 0 32 32" fill="none" stroke="#1B3A6B" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 8L6 12l4 1v13h12V13l4-1-2-4-4 2c0 2-8 2-8 0Z"/></svg>
+              <div class="ward-item-label">Veste</div>
             </div>
-            <div class="ward-item" style="background:#FDF4EE;">
-              <svg class="cloth-svg" viewBox="0 0 32 32" fill="none" stroke="#7A3820" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 8 Q16 6 20 8 L21 20 Q16 24 11 20Z"/>
-                <path d="M10 20 L8 28 L12 28 L14 22 M22 20 L24 28 L20 28 L18 22"/>
-              </svg>
-              <div class="ward-item-label">Bottines</div>
+            <div class="ward-item" style="background:#D6E8F0;">
+              <svg class="cloth-svg" viewBox="0 0 32 32" fill="none" stroke="#1B3A6B" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 6v10L8 26h6l2-8 2 8h6l-2-10V6Z"/></svg>
+              <div class="ward-item-label">Pantalon</div>
             </div>
-            <div class="ward-item" style="background:#EEF4FA; border:1.5px dashed rgba(27,58,107,0.2);">
-              <svg viewBox="0 0 24 24" style="width:20px;height:20px;stroke:var(--ardoise);fill:none;stroke-width:1.5;stroke-linecap:round;">
-                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-              </svg>
-              <div class="ward-item-label" style="color:var(--ardoise);">Ajouter</div>
+            <div class="ward-item" style="background:#F5E4D8;">
+              <svg class="cloth-svg" viewBox="0 0 32 32" fill="none" stroke="#1B3A6B" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h14v12H9Z"/></svg>
+              <div class="ward-item-label">Jupe</div>
+            </div>
+            <div class="ward-item" style="background:#C2D4EC;">
+              <svg class="cloth-svg" viewBox="0 0 32 32" fill="none" stroke="#1B3A6B" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 6L8 12l2 2v12h12V14l2-2-2-6-3 2c0 2-6 2-6 0Z"/></svg>
+              <div class="ward-item-label">Pull</div>
             </div>
           </div>
         </div>
 
-        <!-- ══ MOCKUP 2 : Page compte / tenue du jour (centre) ══ -->
+        <!-- Téléphone / tenue du jour -->
         <div class="phone-mockup">
           <div class="phone-bar"></div>
-          <div class="phone-section-label">Météo du jour</div>
+          <div class="phone-section-label">Aujourd'hui</div>
           <div class="phone-weather-card">
             <div class="phone-weather-info">
-              <div class="phone-weather-city">Paris, France</div>
-              <div class="phone-weather-temp">14°</div>
+              <div class="phone-weather-city">Paris</div>
+              <div class="phone-weather-temp">18°</div>
             </div>
-            <svg viewBox="0 0 24 24" style="width:26px;height:26px;stroke:var(--bleu-profond);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;">
-              <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
-            </svg>
+            <div class="phone-weather-icon">⛅</div>
           </div>
           <div class="phone-tenue-label">Tenue suggérée</div>
           <div class="phone-outfit-row">
-            <div class="outfit-item" style="background:#EEF2FA;">
-              <svg class="cloth-svg" viewBox="0 0 32 32" fill="none" stroke="#1B3A6B" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M8 6 L4 12 L8 14 L8 26 L24 26 L24 14 L28 12 L24 6 Q20 9 16 9 Q12 9 8 6Z"/>
-              </svg>
-              <span>Manteau</span>
-            </div>
-            <div class="outfit-item" style="background:#F5F0EC;">
-              <svg class="cloth-svg" viewBox="0 0 32 32" fill="none" stroke="#1B3A6B" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M10 6 L5 13 L9 15 L9 26 L23 26 L23 15 L27 13 L22 6 Q19 8 16 8 Q13 8 10 6Z"/>
-              </svg>
-              <span>Pull</span>
-            </div>
-            <div class="outfit-item" style="background:#F0EDF8;">
-              <svg class="cloth-svg" viewBox="0 0 32 32" fill="none" stroke="#1B3A6B" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M10 6 L8 10 L10 10 L10 26 L14 26 L16 18 L18 26 L22 26 L22 10 L24 10 L22 6Z"/>
-              </svg>
-              <span>Pantalon</span>
-            </div>
+            <div class="outfit-item" style="background:var(--ciel);">🧥<span>Veste</span></div>
+            <div class="outfit-item" style="background:var(--poudre);">👗<span>Robe</span></div>
+            <div class="outfit-item" style="background:var(--vert-sage);">👟<span>Basket</span></div>
           </div>
           <div class="phone-ai-card">
             <div class="ai-dot"></div>
-            <div class="phone-ai-text">Il vous manque un t-shirt blanc basique — indispensable pour compléter cet ensemble.</div>
+            <div class="phone-ai-text">Idéal pour 18° — pensez une légère veste en soirée.</div>
           </div>
         </div>
 
-        <!-- ══ MOCKUP 3 : Chatbot IA (droite) ══ -->
+        <!-- Chatbot -->
         <div class="chatbot-mockup">
           <div class="mock-header">
-            <div style="display:flex;align-items:center;gap:7px;">
-              <div style="width:22px;height:22px;border-radius:50%;background:var(--marine);display:flex;align-items:center;justify-content:center;">
-                <svg viewBox="0 0 24 24" style="width:12px;height:12px;stroke:var(--ivoire);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;">
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                </svg>
-              </div>
-              <span class="mock-title">Assistant Smart Wear</span>
+            <div class="mock-title">Assistant IA</div>
+            <div class="mock-dot-row">
+              <div class="mock-dot"></div>
+              <div class="mock-dot" style="background:var(--vert-sage);opacity:1;"></div>
             </div>
-            <div style="width:7px;height:7px;border-radius:50%;background:#DDF0E4;border:1.5px solid #085041;"></div>
           </div>
           <div class="chat-msg user">
             <div class="chat-sender">Vous</div>
-            <div class="chat-bubble">Qu'est-ce que je peux porter ce soir pour un dîner ?</div>
+            <div class="chat-bubble">Que mettre pour un brunch ce dimanche ?</div>
           </div>
           <div class="chat-msg ai">
-            <div class="chat-sender">IA</div>
-            <div class="chat-bubble">Pour ce soir (12°C), je suggère votre robe noire avec les bottines camel et le manteau crème. Élégant et adapté à la météo ✦</div>
+            <div class="chat-sender">SmartWear IA</div>
+            <div class="chat-bubble">Ta robe en lin beige avec les sandales blanches — parfait pour un brunch ✨</div>
           </div>
           <div class="chat-input-row">
             <div class="chat-input-fake"></div>
             <div class="chat-send-btn">
-              <svg viewBox="0 0 24 24" style="width:12px;height:12px;stroke:var(--ivoire);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;">
-                <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
-              </svg>
+              <svg viewBox="0 0 16 16" width="10" height="10" fill="none" stroke="#FAFAF8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8h12M9 4l5 4-5 4"/></svg>
             </div>
           </div>
         </div>
 
-      </div> <!-- end mockups-row -->
-
-      <!-- Badge 1 : Tendance (bas gauche) -->
-      <div class="hero-badge hero-badge-1">
-        <div class="badge-icon" style="background:var(--vert-sage);">
-          <svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:#085041;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;">
-            <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>
-          </svg>
-        </div>
-        <div class="badge-text">
-          <div class="badge-title">Tendance du moment</div>
-          <div class="badge-sub">Mis à jour chaque semaine</div>
-        </div>
       </div>
-
-      <!-- Badge 2 : Météo (haut gauche) -->
-      <div class="hero-badge hero-badge-2">
-        <div class="badge-icon" style="background:var(--ciel);">
-          <svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:#1B3A6B;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;">
-            <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
-          </svg>
-        </div>
-        <div class="badge-text">
-          <div class="badge-title">Paris — 14°C</div>
-          <div class="badge-sub">Partiellement nuageux</div>
-        </div>
-      </div>
-
-      <!-- Badge 3 : Pièce manquante (bas droite) -->
-      <div class="hero-badge hero-badge-3">
-        <div class="badge-icon" style="background:var(--terracotta);">
-          <svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:#7A3820;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;">
-            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-          </svg>
-        </div>
-        <div class="badge-text">
-          <div class="badge-title">1 pièce manquante</div>
-          <div class="badge-sub">T-shirt blanc basique</div>
-        </div>
-      </div>
-
     </div>
   </div>
 </section>
@@ -1144,14 +1223,20 @@
   </div>
 </section>
 
+</main>
+
 <!-- FOOTER STRIP -->
 <footer class="footer-strip">
   <div class="footer-logo">Smart<span>Wear</span></div>
   <p class="footer-tagline">L'intelligence au service de votre style</p>
-  <a href="page_connexion_inscription.html" class="footer-cta">Rejoindre la bêta</a>
+  <a href="page_connexion_inscription.html" class="footer-cta">Créer mon dressing</a>
 </footer>
 
+<script src="js/ui-nav.js" defer></script>
 <script>
+  // ── Animations au scroll ──
+  // Ajoute la classe .visible aux éléments .fade-up lorsqu'ils
+  // entrent dans le viewport (déclenche les transitions CSS).
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(e => {
       if (e.isIntersecting) e.target.classList.add('visible');

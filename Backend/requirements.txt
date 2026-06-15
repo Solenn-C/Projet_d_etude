@@ -1,0 +1,26 @@
+# ============================================================
+# SmartWear — Dépendances Python
+# ============================================================
+
+# Backend FastAPI (port 8000)
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+pydantic==2.9.2
+python-multipart==0.0.12
+
+# Modèle IA & vision
+onnxruntime==1.25.1
+rembg[cpu]==2.0.75
+Pillow==12.2.0
+
+# Agents Groq
+groq==1.4.0
+python-dotenv==1.2.1
+requests==2.32.5
+
+# Data / utilitaires
+scikit-learn==1.5.2
+numpy==2.4.4
+
+# Frontend/db.py (pipeline scraping, hors backend FastAPI)
+SQLAlchemy==2.0.48
