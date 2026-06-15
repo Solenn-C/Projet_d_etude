@@ -6,6 +6,44 @@
 
 ---
 
+## 🚀 Lancer le projet
+
+> Branche à utiliser : `solenn`
+
+```bash
+git clone -b solenn https://github.com/Solenn-C/Projet_d_etude.git
+cd Projet_d_etude
+```
+
+**Variables d'environnement**
+Copier `.env.example` en `.env` et renseigner :
+- `GROQ_API_KEY` → clé gratuite sur [console.groq.com](https://console.groq.com)
+
+**Dépendances**
+```bash
+# Node.js
+npm install
+
+# Python (Windows)
+py -m pip install -r Backend/requirements.txt
+
+# Python (Mac/Linux)
+python3 -m pip install -r Backend/requirements.txt
+```
+
+**Lancement — dans cet ordre**
+```bash
+# 1. FastAPI (port 8000) — depuis Backend/
+py -m uvicorn main:app --reload --port 8000
+
+# 2. Node.js (port 3000) — depuis la racine
+node server.js
+```
+
+Ouvrir → http://localhost:3000
+
+---
+
 ## Table des matières
 
 1. [Présentation du projet](#1-présentation-du-projet)
