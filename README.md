@@ -6,7 +6,7 @@
 
 ---
 
-## 🚀 Lancer le projet
+## Lancer le projet
 
 > Branche à utiliser : `solenn`
 
