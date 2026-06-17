@@ -8,6 +8,7 @@ from scrapers.asos import AsosScraper
 from scrapers.zara import ZaraScraper
 from scrapers.lecoqsportif import LeCoqSportifScraper
 from scrapers.jules import JulesScraper
+from scrapers.mango import MangoScraper
 
 SCRAPERS: dict[str, type] = {
     "hm":            HMScraper,
@@ -15,6 +16,7 @@ SCRAPERS: dict[str, type] = {
     "zara":          ZaraScraper,
     "lecoqsportif":  LeCoqSportifScraper,
     "jules":         JulesScraper,
+    "mango":         MangoScraper,
 }
 
 

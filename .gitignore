@@ -9,9 +9,6 @@ __pycache__/
 venv/
 env/
 
-# Outputs JSON (trop lourds pour git)
-output/
-
 # IDE
 .vscode/
 .idea/
@@ -19,3 +16,7 @@ output/
 # OS
 .DS_Store
 Thumbs.db
+
+# Fichiers volumineux
+dataset.zip
+dataset/
