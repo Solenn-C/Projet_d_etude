@@ -1,0 +1,154 @@
+
+<style>
+:root{
+  --teal:#1D9E75;--terra:#D85A30;--pink:#D4537E;
+  --navy:#1f2a44;--cream:#f7f3ec;--grid:var(--color-border-tertiary);
+}
+.gantt-wrap{font-family:"Jost","Segoe UI",system-ui,sans-serif;padding:0 0 8px;}
+h1{font-family:"DM Serif Display",Georgia,serif;color:var(--navy);font-size:1.6rem;font-weight:400;margin:0 0 2px;}
+.sub{font-size:.83rem;color:var(--color-text-secondary);margin:0 0 14px;}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin:0 0 16px;font-size:.8rem;color:var(--color-text-secondary);}
+.legend span{display:inline-flex;align-items:center;gap:6px;}
+.chip{width:12px;height:12px;border-radius:2px;display:inline-block;}
+
+.g-outer{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:12px;overflow:hidden;}
+
+.g-grid{display:grid;grid-template-columns:220px 1fr 1fr 1fr 1fr;}
+
+/* header */
+.g-h-label{padding:10px 16px;font-size:.75rem;font-weight:500;color:var(--color-text-secondary);border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;}
+.g-h-month{padding:10px 0;font-size:.75rem;color:var(--color-text-secondary);text-align:center;border-bottom:0.5px solid var(--color-border-tertiary);border-left:0.5px solid var(--color-border-tertiary);}
+
+/* epic row */
+.g-epic-label{background:var(--navy);color:#fff;font-size:.78rem;font-weight:500;padding:7px 16px;letter-spacing:.3px;display:flex;align-items:center;}
+.g-epic-bar{background:#26314f;}
+
+/* task row */
+.g-name{padding:0 16px;font-size:.78rem;color:var(--color-text-primary);border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;min-height:32px;}
+.g-lane{position:relative;border-bottom:0.5px solid var(--color-border-tertiary);border-left:0.5px solid var(--color-border-tertiary);}
+.g-lane-span{position:absolute;inset:0;}
+
+.bar{position:absolute;top:6px;height:19px;border-radius:4px;display:flex;align-items:center;font-size:.68rem;color:#fff;padding:0 6px;white-space:nowrap;overflow:hidden;}
+.bar.teal{background:var(--teal);}
+.bar.terra{background:var(--terra);}
+.bar.pink{background:var(--pink);}
+
+footer{font-size:.72rem;color:var(--color-text-secondary);text-align:right;margin-top:10px;}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Jost:wght@400;500&display=swap" rel="stylesheet">
+
+<div class="gantt-wrap">
+  <h2 class="sr-only">Diagramme de Gantt SmartWear — mars à juin 2026</h2>
+  <h1>SmartWear — Diagramme de Gantt</h1>
+  <p class="sub">Mode &amp; Météo · Mastère 2 Big Data &amp; IA · mars → juin 2026</p>
+  <div class="legend">
+    <span><span class="chip" style="background:var(--teal)"></span>Coline (data / IA)</span>
+    <span><span class="chip" style="background:var(--terra)"></span>Solenn (dév / web)</span>
+    <span><span class="chip" style="background:var(--pink)"></span>Solenn + Coline</span>
+  </div>
+
+  <div class="g-outer">
+    <div class="g-grid" id="gantt"></div>
+  </div>
+  <p class="footer">Généré le 12 juin 2026 · source : Linear « Mode &amp; Météo — SmartWear »</p>
+</div>
+
+<script>
+const data = [
+  {epic:"M1 — Catalogue & scraping", tasks:[
+    {name:"6 scrapers marques",         c:"teal",  s:2,  e:18},
+    {name:"Pipeline multiprocessing",   c:"teal",  s:6,  e:24},
+    {name:"Base PostgreSQL + dédup",    c:"teal",  s:10, e:28},
+    {name:"Reclassification produits",  c:"teal",  s:14, e:30},
+    {name:"Dataset images (23 classes)",c:"teal",  s:16, e:34},
+  ]},
+  {epic:"M2 — Infrastructure & site opérationnels", tasks:[
+    {name:"Infrastructure du site",    c:"terra", s:6,  e:34},
+    {name:"Restructuration Git",       c:"terra", s:10, e:30},
+    {name:"Dév. site web (Solenn)",    c:"terra", s:8,  e:60},
+    {name:"Intégration API météo",     c:"terra", s:20, e:42},
+    {name:"Météo ↔ reco",             c:"terra", s:42, e:54},
+    {name:"Mise sous Docker",          c:"teal",  s:30, e:58},
+    {name:"Tests & déploiement",       c:"terra", s:62, e:74},
+    {name:"Doc Docker",                c:"teal",  s:66, e:78},
+    {name:"Schéma architecture",       c:"pink",  s:50, e:66},
+  ]},
+  {epic:"M3 — IA, vision & recommandations", tasks:[
+    {name:"Modèle CNN MobileNetV2 (ONNX)",c:"teal", s:14, e:44},
+    {name:"Classification 12 styles",   c:"teal",  s:34, e:54},
+    {name:"Analyse vision vêtement",    c:"teal",  s:44, e:62},
+    {name:"Analyse tenue complète",     c:"teal",  s:46, e:66},
+    {name:"Agent conseil tenue",        c:"teal",  s:54, e:70},
+    {name:"Auth bcrypt",                c:"terra", s:40, e:52},
+    {name:"Upload + rembg",             c:"terra", s:46, e:60},
+    {name:"IA Groq chatbot",            c:"terra", s:50, e:64},
+    {name:"Intégration ONNX FastAPI",   c:"terra", s:62, e:78},
+    {name:"/api/analyse-vetement",      c:"terra", s:64, e:80},
+    {name:"/api/analyse-tenue",         c:"terra", s:66, e:82},
+    {name:"Affichage tenue reco",       c:"terra", s:68, e:84},
+    {name:"Auto style_mode",            c:"terra", s:70, e:86},
+  ]},
+  {epic:"Livrables & soutenance", tasks:[
+    {name:"Dossier technique",  c:"pink", s:80, e:98},
+    {name:"Prépa soutenance",   c:"pink", s:84, e:99},
+  ]},
+];
+
+const g = document.getElementById('gantt');
+
+function addCell(cls, html, extra){
+  const d = document.createElement('div');
+  d.className = cls;
+  if(extra) Object.assign(d.style, extra);
+  d.innerHTML = html;
+  g.appendChild(d);
+  return d;
+}
+
+/* header */
+addCell('g-h-label','Tâche');
+['Mars','Avril','Mai','Juin'].forEach(m => addCell('g-h-month', m));
+
+for(const ep of data){
+  /* epic row spans all 5 columns */
+  const epLabel = document.createElement('div');
+  epLabel.className = 'g-epic-label';
+  epLabel.style.cssText = 'grid-column:1';
+  epLabel.textContent = ep.epic;
+  g.appendChild(epLabel);
+
+  for(let i=0;i<4;i++){
+    const d = document.createElement('div');
+    d.className = 'g-epic-bar';
+    d.style.cssText = 'border-left:0.5px solid rgba(255,255,255,.1);min-height:32px;';
+    g.appendChild(d);
+  }
+
+  for(const t of ep.tasks){
+    addCell('g-name', t.name);
+
+    /* 4 month cells merged as one lane */
+    const lane = document.createElement('div');
+    lane.className = 'g-lane';
+    lane.style.cssText = 'grid-column:2/6;';
+    
+    /* inner grid lines */
+    const lines = document.createElement('div');
+    lines.style.cssText = 'position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr 1fr 1fr;pointer-events:none;';
+    for(let i=0;i<4;i++){
+      const seg = document.createElement('div');
+      seg.style.cssText = i===0 ? 'border-left:none;' : 'border-left:0.5px solid var(--color-border-tertiary);';
+      lines.appendChild(seg);
+    }
+    lane.appendChild(lines);
+
+    const bar = document.createElement('div');
+    bar.className = `bar ${t.c}`;
+    bar.style.left = t.s + '%';
+    bar.style.width = (t.e - t.s) + '%';
+    lane.appendChild(bar);
+
+    g.appendChild(lane);
+  }
+}
+</script>
