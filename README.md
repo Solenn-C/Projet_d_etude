@@ -102,9 +102,7 @@ Ouvrir → http://localhost:3000
 
 ## 3. Architecture technique
 
-```
-
-```
+![Description](assets/images/architecture.png)
 
 ---
 
@@ -333,7 +331,7 @@ Méthode **Agile** avec sprints itératifs de 3 semaines. Backlog géré dans **
 
 ### Diagramme de Gantt (résumé)
 
-METTRE LE LIEN HTML DU GANTT
+[Voir le Gantt interactif](https://htmlpreview.github.io/?https://github.com/Solenn-C/Projet_d_etude/blob/main/gantt_smartwear_2.html)
 
 ### Suivi
 
